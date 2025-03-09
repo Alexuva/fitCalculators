@@ -1,3 +1,13 @@
+/**
+ * Calculadora de fuerza explosiva
+ * Datos necesarios: 
+ * - Sexo: Hombre o mujer
+ * - Edad: minimo 16
+ * - Peso corporal (KG)
+ * - Altura de salto vertical con contramovimiento (CMJ) en cm
+ */
+
+
 class ExplosiveStrenght {
 
     _height;
