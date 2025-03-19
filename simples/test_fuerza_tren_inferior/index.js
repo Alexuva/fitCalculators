@@ -148,85 +148,85 @@ class LowerBodyTest {
   strengthLvl_complex = {
     "men": {
       "≤53": {
-        "low": { "max": 70, "min": null },
+        "low": { "max": null, "min": 70 },
         "normal": { "max": 112, "min": 70 },
         "strong": { "max": 131.5, "min": 112.1 },
         "stronger": { "max": 146.2, "min": 131.6 },
         "veryStrong": { "max": 180.3, "min": 146.3 },
         "elite": { "max": 194.9, "min": 180.4 },
-        "pro": { "max": null, "min": 195 }
+        "pro": { "max": 195, "min": null }
       },
       "53.1-59": {
-        "low": { "max": 80, "min": null },
+        "low": { "max": null, "min": 80 },
         "normal": { "max": 119.2, "min": 80 },
         "strong": { "max": 140.0, "min": 119.3 },
         "stronger": { "max": 155.5, "min": 140.1 },
         "veryStrong": { "max": 191.0, "min": 155.6 },
         "elite": { "max": 207.4, "min": 191.9 },
-        "pro": { "max": null, "min": 207.5 }
+        "pro": { "max": 207.5, "min": null }
       },
       "59.1-66": {
-        "low": { "max": 90, "min": null },
+        "low": { "max": null, "min": 90 },
         "normal": { "max": 130.7, "min": 90 },
         "strong": { "max": 153.5, "min": 130.8 },
         "stronger": { "max": 170.5, "min": 153.6 },
         "veryStrong": { "max": 210.3, "min": 170.6 },
         "elite": { "max": 227.4, "min": 210.4 },
-        "pro": { "max": null, "min": 227.5 }
+        "pro": { "max": 227.5, "min": null }
       },
       "66.1-74": {
-        "low": { "max": 100, "min": null },
+        "low": { "max": null, "min": 100 },
         "normal": { "max": 140.8, "min": 100 },
         "strong": { "max": 165.3, "min": 140.9 },
         "stronger": { "max": 183.7, "min": 165.4 },
         "veryStrong": { "max": 226.5, "min": 183.8 },
         "elite": { "max": 244.9, "min": 226.6 },
-        "pro": { "max": null, "min": 245 }
+        "pro": { "max": 245, "min": null }
       },
       "74.1-83": {
-        "low": { "max": 110, "min": null },
+        "low": { "max": null, "min": 110 },
         "normal": { "max": 148, "min": 110 },
         "strong": { "max": 173.7, "min": 148.1 },
         "stronger": { "max": 193.0, "min": 173.8 },
         "veryStrong": { "max": 238.1, "min": 193.1 },
         "elite": { "max": 257.4, "min": 238.2 },
-        "pro": { "max": null, "min": 257.5 }
+        "pro": { "max": 257.5, "min": null }
       },
       "83.1-93": {
-        "low": { "max": 120, "min": null },
+        "low": { "max": null, "min": 120 },
         "normal": { "max": 159.5, "min": 120 },
         "strong": { "max": 187.2, "min": 159.6 },
         "stronger": { "max": 208.0, "min": 187.3 },
         "veryStrong": { "max": 256.6, "min": 208.1 },
         "elite": { "max": 277.4, "min": 256.7 },
-        "pro": { "max": null, "min": 277.5 }
+        "pro": { "max": 277.5, "min": null }
       },
       "93.1-105": {
-        "low": { "max": 140, "min": null },
+        "low": { "max": null, "min": 140 },
         "normal": { "max": 166.7, "min": 140 },
         "strong": { "max": 195.7, "min": 166.8 },
         "stronger": { "max": 217.4, "min": 195.8 },
         "veryStrong": { "max": 268.2, "min": 217.5 },
         "elite": { "max": 289.9, "min": 268.3 },
-        "pro": { "max": null, "min": 290 }
+        "pro": { "max": 290, "min": null }
       },
       "105.1-120": {
-        "low": { "max": 160, "min": null },
+        "low": { "max": null, "min": 160 },
         "normal": { "max": 175.3, "min": 160 },
         "strong": { "max": 205.8, "min": 175.4 },
         "stronger": { "max": 228.7, "min": 205.9 },
         "veryStrong": { "max": 282.0, "min": 228.8 },
         "elite": { "max": 304.9, "min": 282.1 },
-        "pro": { "max": null, "min": 305 }
+        "pro": { "max": 305, "min": null }
       },
       ">120": {
-        "low": { "max": 190, "min": null },
+        "low": { "max": null, "min": 190 },
         "normal": { "max": 205, "min": 190 },
         "strong": { "max": 246.7, "min": 205.1 },
         "stronger": { "max": 263.0, "min": 246.8 },
         "veryStrong": { "max": 291.1, "min": 263.1 },
         "elite": { "max": 317.4, "min": 291.2 },
-        "pro": { "max": null, "min": 317.5 }
+        "pro": { "max": 317.5, "min": null }
       }
     },
     "women": {
@@ -355,6 +355,8 @@ class LowerBodyTest {
       }
     }
 
+    
+
     return "Level not found";
 
   }
@@ -363,5 +365,5 @@ class LowerBodyTest {
 
 
 let calculator = new LowerBodyTest();
-let level = calculator.evaluateStrenght_complex("women", 42, 140);
+let level = calculator.evaluateStrenght_complex("men", 70, 207);
 console.log(level);
