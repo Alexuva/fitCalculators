@@ -23,13 +23,13 @@
             </select>
         </div>
     </div>
-    <div id="simple" style="display: none;">
+    <div id="simple" style="display: none;" class="flex">
         <div>
             <label><span>Número de sentadillas sin peso hasta el fallo (sin parar)</span></label>
-            <input id="squats" type="text" min="1" max="300" maxlength="3" name="squats-input" placeholder="Introduce el número de sentadillas">
+            <input id="squats" type="text" min="1" max="200" maxlength="3" name="squats-input" placeholder="Introduce el número de sentadillas">
         </div>
     </div>
-    <div id="complex" style="display: none;">
+    <div id="complex" style="display: none;" class="flex">
         <div>
             <label><span>Tu peso</span><sup>kg</sup></label>
             <input id="weight" type="text" min="30" max="250" maxlength="6" name="weight-input" placeholder="Introduce tu peso en kg.">
@@ -45,13 +45,18 @@
     </button>
 </form>
             
-<p class="result" style="visibility: hidden;">Tu FFMI aproximado es:</p>
+<p class="result" style="visibility: hidden;">Tu nivel de fuerza de tren inferior es:</p>
 <p class="result"><strong id="show-result"></strong></p>
 
 <style>
     .resultado{
         background: #FFE636;
         font-weight: bold;
+    }
+
+    input:not(:placeholder-shown):invalid,
+    select:invalid:not(:focus) {
+        border: 1px solid red !important;
     }
 </style>
 
@@ -91,6 +96,9 @@
         //Regex para comprobar si los números cumplen con la condición de 2 decimales
         const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
 
+        //Regex para comprobar si los números cumplen con la condición de ser enteros
+        const INTEGERS_REGEX = new RegExp(/^\d+$/);
+
         //Comprobar que ha introducido género
         GENDER_INPUT.addEventListener('change', ()=>{
             if(GENDER_INPUT.value !== 'men' && GENDER_INPUT.value !== 'women'){
@@ -103,6 +111,13 @@
 
         //Comprobar que ha introducido edad
         AGE_INPUT.addEventListener('input', ()=>{
+
+            //Comprobar si el numero es un entero
+            if(!INTEGERS_REGEX.test(AGE_INPUT.value)){
+                AGE_INPUT.setCustomValidity('Introduce una edad válida');
+                AGE_INPUT.reportValidity();
+                return
+            }
             
             const VALUE = parseInt(AGE_INPUT.value);
             const MIN = parseInt(AGE_INPUT.getAttribute('min'));
@@ -111,9 +126,7 @@
             if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
                 AGE_INPUT.setCustomValidity(`La edad mínima son ${MIN}`);
                 AGE_INPUT.reportValidity();
-                AGE_INPUT.style.border = '1px solid red';
             }else{
-                AGE_INPUT.style.border = '1px solid #ced4da';
                 AGE_INPUT.setCustomValidity('');
             }
         })
@@ -157,17 +170,22 @@
 
         //Si el tipo de test es simple, comprobar que ha introducido el número de sentadillas
         SQUATS_INPUT.addEventListener('input', ()=>{
+
+            //Comprobar si el numero es un entero
+            if(!INTEGERS_REGEX.test(SQUATS_INPUT.value)){
+                SQUATS_INPUT.setCustomValidity('Introduce un número de sentadillas válido');
+                SQUATS_INPUT.reportValidity();
+                return
+            }
             
             const VALUE = parseInt(SQUATS_INPUT.value);
             const MIN = parseInt(SQUATS_INPUT.getAttribute('min'));
             const MAX = parseInt(SQUATS_INPUT.getAttribute('max'));
 
             if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
-                SQUATS_INPUT.setCustomValidity(`El mínimo sin ${MIN} sentadilla/s`);
+                SQUATS_INPUT.setCustomValidity(`Escribe un número entre el mínimo de ${MIN} y el máximo de ${MAX} sentadilla/s`);
                 SQUATS_INPUT.reportValidity();
-                SQUATS_INPUT.style.border = '1px solid red';
             }else{
-                SQUATS_INPUT.style.border = '1px solid #ced4da';
                 SQUATS_INPUT.setCustomValidity('');
             }
 
@@ -180,12 +198,10 @@
             if(!DECIMALS_REGEX.test(WEIGHT_INPUT.value)){
                 WEIGHT_INPUT.setCustomValidity('Introduce un peso válido');
                 WEIGHT_INPUT.reportValidity();
-                WEIGHT_INPUT.style.border = '1px solid red';
                 return
             }
 
             //Resetear borde y validación del input
-            WEIGHT_INPUT.style.border = '1px solid #ced4da';
             WEIGHT_INPUT.setCustomValidity('');
             
             const VALUE = parseFloat(WEIGHT_INPUT.value);
@@ -195,9 +211,7 @@
             if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
                 WEIGHT_INPUT.setCustomValidity(`Introduce un peso válido entre ${MIN} kg y ${MAX} kg`);
                 WEIGHT_INPUT.reportValidity();
-                WEIGHT_INPUT.style.border = '1px solid red';
             }else{
-                WEIGHT_INPUT.style.border = '1px solid #ced4da';
                 WEIGHT_INPUT.setCustomValidity('');
             }
         })
@@ -209,12 +223,10 @@
             if(!DECIMALS_REGEX.test(SQUATRM_INPUT.value)){
                 SQUATRM_INPUT.setCustomValidity('Introduce un peso válido');
                 SQUATRM_INPUT.reportValidity();
-                SQUATRM_INPUT.style.border = '1px solid red';
                 return
             }
 
             //Resetear borde y validación del input
-            SQUATRM_INPUT.style.border = '1px solid #ced4da';
             SQUATRM_INPUT.setCustomValidity('');
 
             const VALUE = parseFloat(SQUATRM_INPUT.value.replace(',','.'));
@@ -224,16 +236,14 @@
             if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
                 SQUATRM_INPUT.setCustomValidity(`Introduce un peso entre ${MIN} kg y el máximo ${MAX} kg`);
                 SQUATRM_INPUT.reportValidity();
-                SQUATRM_INPUT.style.border = '1px solid red';
             }else{
-                SQUATRM_INPUT.style.border = '1px solid #ced4da';
                 SQUATRM_INPUT.setCustomValidity('');
             }
         })
 
         FORM.addEventListener('submit', (e)=>{
             e.preventDefault();
-            
+
             //Volver a comprobar si se ha introducido genero
             if(GENDER_INPUT.value !== 'men' && GENDER_INPUT.value !== 'women'){
                 GENDER_INPUT.setCustomValidity('Selecciona tu sexo');
@@ -248,6 +258,14 @@
                 return
             }
 
+            //Cambiar texto botón
+            CALCULATE_BTN.innerHTML = 'Calculando...';
+
+            //Ocultar resultado anterior
+            RESULT_BOX.forEach((box)=>{
+                box.style.visibility = 'hidden';
+            });
+
             let gender = GENDER_INPUT.value;
             let age = parseInt(AGE_INPUT.value);
             let squat = TEST_TYPE_INPUT.value === 'simple' ? parseInt(SQUATS_INPUT.value) : 0;
@@ -258,10 +276,71 @@
 
             if(TEST_TYPE_INPUT.value === 'complex'){
                 let result = CALCULATOR.evaluateStrenght_complex(gender, weight, squatRm);
-                console.log(result);
+                
+                setTimeout(()=>{
+                    
+                    //Scroll smooth hasta el resultado
+                    RESULT_TITLE.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+                    //Volver a poner el texto en el boton
+                    CALCULATE_BTN.innerHTML = 'Calcular';
+
+                    //Mostrar el resultado
+                    RESULT_BOX.forEach((box)=>{
+                        box.style.visibility = 'visible';
+                    });
+
+                    if(result ==='low'){
+                        RESULT_TITLE.innerHTML = 'Bajo';
+                    }else if(result === 'normal'){
+                        RESULT_TITLE.innerHTML = 'Normal';
+                    }else if(result ==='strong'){
+                        RESULT_TITLE.innerHTML = 'Fuerte';
+                    }else if(result === 'stronger'){
+                        RESULT_TITLE.innerHTML = 'Bastante fuerte';
+                    }else if(result === 'veryStrong'){
+                        RESULT_TITLE.innerHTML = 'Muy fuerte';
+                    }else if(result ==='elite'){
+                        RESULT_TITLE.innerHTML = 'Élite';
+                    }else if(result === 'pro'){
+                        RESULT_TITLE.innerHTML = 'Pro';
+                    }
+                }, 500)
+                
+                
+
             }else{
                 let result = CALCULATOR.evaluateStrenght_simple(gender, age, squat);
-                console.log(result);
+
+                setTimeout(()=>{
+
+                    //Scroll smooth hasta el resultado
+                    RESULT_TITLE.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+                    //Volver a poner el texto en el boton
+                    CALCULATE_BTN.innerHTML = 'Calcular';
+
+                    //Mostrar el resultado
+                    RESULT_BOX.forEach((box)=>{
+                        box.style.visibility = 'visible';
+                    });
+
+                    if(result === 'veryLow'){
+                        RESULT_TITLE.innerHTML = 'Muy baja';
+                    }else if(result === 'low'){
+                        RESULT_TITLE.innerHTML = 'Baja';
+                    }else if(result === 'somewhatLow'){
+                        RESULT_TITLE.innerHTML = 'Algo baja';
+                    }else if(result === 'normal'){
+                        RESULT_TITLE.innerHTML = 'Normal';
+                    }else if(result === 'good'){
+                        RESULT_TITLE.innerHTML = 'Bueno';
+                    }else if(result === 'veryGood'){
+                        RESULT_TITLE.innerHTML = 'Muy bueno';
+                    }else if(result === 'excellent'){
+                        RESULT_TITLE.innerHTML = 'Excelente';
+                    }
+                }, 500)
             }
 
 
