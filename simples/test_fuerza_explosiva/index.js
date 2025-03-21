@@ -85,7 +85,7 @@ class ExplosiveStrenght {
         }else if(this._relativePower >= 50.1 && this._relativePower <= 60){
             this._explosivePower = "high";
         }else if(this._relativePower >= 60.1 && this._relativePower <= 70){
-            this._explosivePower = "very high";
+            this._explosivePower = "veryHigh";
         }else if(this._relativePower >= 70.1){
             this._explosivePower = "excelent";
         }

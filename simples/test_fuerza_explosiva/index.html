@@ -1,0 +1,309 @@
+<form class="form-container">
+    <div class="flex">
+        <div>
+            <label><span>Tu Sexo</span></label>
+            <select id="gender" type="select" name="gender-input" required>
+                <option disabled selected>Selecciona tu sexo</option>
+                <option value="men">Hombre</option>
+                <option value="women">Mujer</option>
+            </select>
+        </div>
+        <div>
+            <label><span>Tu Edad</span></label>
+            <input id="age" type="text" min="16" max="99" maxlength="2" name="age-input" placeholder="Introduce tu edad" required>
+        </div>
+    </div>
+    <div class="flex">
+        <div>
+            <label><span>Tu peso</span><sup>kg</sup></label>
+            <input id="weight" type="text" min="20" max="250" maxlength="6" name="weight-input" placeholder="Introduce tu peso en kg." required>
+        </div>
+        <div>
+            <label><span>Altura de salto vertical con contramovimiento</span><sup>cm</sup></label>
+            <input id="height" type="text" min="0" max="1000" maxlength="6" name="height" placeholder="Introduce la altura conseguida en salto vertical" required>
+        </div>
+    </div>
+
+    <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+        Calcular
+    </button>
+</form>
+            
+<p class="result" style="visibility: hidden;">Tu potencia relativa es: <span><strong id="show-result-number"></strong></span></p>
+<p class="result">Tu nivel de fuerza explosiva es <strong id="show-result"></strong></p>
+
+<style>
+    .resultado{
+        background: #FFE636;
+        font-weight: bold;
+    }
+
+    input:not(:placeholder-shown):invalid,
+    select:invalid:not(:focus) {
+        border: 1px solid red !important;
+    }
+</style>
+
+<script type="text/javascript">
+(function() {
+
+        //Input de género
+        const GENDER_INPUT = document.querySelector('#gender');
+        //Input de edad
+        const AGE_INPUT = document.querySelector('#age');
+        //Input de peso
+        const WEIGHT_INPUT = document.querySelector('#weight');
+        //Input altura salto vertical
+        const HEIGHT_INPUT = document.querySelector('#height');
+
+        //Cajas con el resultado
+        const RESULT_BOX = document.querySelectorAll('.result');
+        //Resultado resaltado
+        const RESULT_TITLE = document.querySelector('#show-result');
+        //Resultado en número
+        const RESULT_NUMBER = document.querySelector('#show-result-number');
+
+        //Botón de calcular
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+        
+        //Formulario
+        const FORM = document.querySelector('.form-container');
+
+        //Regex para comprobar si los números cumplen con la condición de 2 decimales
+        const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+
+        //Regex para comprobar si los números cumplen con la condición de ser enteros
+        const INTEGERS_REGEX = new RegExp(/^\d+$/);
+
+        //Comprobar que ha introducido género
+        GENDER_INPUT.addEventListener('change', ()=>{
+            if(GENDER_INPUT.value !== 'men' && GENDER_INPUT.value !== 'women'){
+                GENDER_INPUT.setCustomValidity('Selecciona tu sexo');
+                GENDER_INPUT.reportValidity();
+            }else{
+                GENDER_INPUT.setCustomValidity('');
+            }
+        })
+
+        //Comprobar que ha introducido edad
+        AGE_INPUT.addEventListener('input', ()=>{
+
+            //Comprobar si el numero es un entero
+            if(!INTEGERS_REGEX.test(AGE_INPUT.value)){
+                AGE_INPUT.setCustomValidity('Introduce una edad válida');
+                AGE_INPUT.reportValidity();
+                return
+            }
+            
+            const VALUE = parseInt(AGE_INPUT.value);
+            const MIN = parseInt(AGE_INPUT.getAttribute('min'));
+            const MAX = parseInt(AGE_INPUT.getAttribute('max'));
+
+            if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+                AGE_INPUT.setCustomValidity(`La edad mínima son ${MIN}`);
+                AGE_INPUT.reportValidity();
+            }else{
+                AGE_INPUT.setCustomValidity('');
+            }
+        })
+
+        //Comprobar que ha introducido el peso
+        WEIGHT_INPUT.addEventListener('input', ()=>{
+
+            //Comprobar si el numero tiene 2 decimales como mucho
+            if(!DECIMALS_REGEX.test(WEIGHT_INPUT.value)){
+                WEIGHT_INPUT.setCustomValidity('Introduce un peso válido');
+                WEIGHT_INPUT.reportValidity();
+                return
+            }
+
+            //Resetear borde y validación del input
+            WEIGHT_INPUT.setCustomValidity('');
+            
+            const VALUE = parseFloat(WEIGHT_INPUT.value);
+            const MIN = parseFloat(WEIGHT_INPUT.getAttribute('min'));
+            const MAX = parseFloat(WEIGHT_INPUT.getAttribute('max'));
+
+            if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+                WEIGHT_INPUT.setCustomValidity(`Introduce un peso válido entre ${MIN} kg y ${MAX} kg`);
+                WEIGHT_INPUT.reportValidity();
+            }else{
+                WEIGHT_INPUT.setCustomValidity('');
+            }
+        })
+
+        //Comprobar que ha introducido el peso
+        HEIGHT_INPUT.addEventListener('input', ()=>{
+
+          //Comprobar si el numero tiene 2 decimales como mucho
+          if(!INTEGERS_REGEX.test(HEIGHT_INPUT.value)){
+            HEIGHT_INPUT.setCustomValidity('Introduce una altura válida');
+            HEIGHT_INPUT.reportValidity();
+            return
+          }
+
+          //Resetear borde y validación del input
+          HEIGHT_INPUT.setCustomValidity('');
+
+          const VALUE = parseFloat(HEIGHT_INPUT.value);
+          const MIN = parseFloat(HEIGHT_INPUT.getAttribute('min'));
+          const MAX = parseFloat(HEIGHT_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            HEIGHT_INPUT.setCustomValidity(`Introduce una altura válida entre ${MIN} cm y ${MAX} cm`);
+            HEIGHT_INPUT.reportValidity();
+          }else{
+            HEIGHT_INPUT.setCustomValidity('');
+          }
+        })
+
+        FORM.addEventListener('submit', (e)=>{
+          e.preventDefault();
+
+          //Volver a comprobar si se ha introducido genero
+          if(GENDER_INPUT.value !== 'men' && GENDER_INPUT.value !== 'women'){
+            GENDER_INPUT.setCustomValidity('Selecciona tu sexo');
+            GENDER_INPUT.reportValidity();
+            return
+          }
+
+          //Cambiar texto botón
+          CALCULATE_BTN.innerHTML = 'Calculando...';
+
+          //Ocultar resultado anterior
+          RESULT_BOX.forEach((box)=>{
+              box.style.visibility = 'hidden';
+          });
+
+          let gender = GENDER_INPUT.value;
+          let age = parseInt(AGE_INPUT.value);
+          let weight = parseFloat(WEIGHT_INPUT.value.replace(',','.'));
+          let height = parseFloat(HEIGHT_INPUT.value.replace(',','.'));
+
+          const CALCULATOR = new ExplosiveStrenght(height, weight, gender, age);
+            
+          let power = CALCULATOR.power();
+          let relative = CALCULATOR.relativePower();
+          let result = CALCULATOR.explosivePower;
+
+          setTimeout(()=>{
+
+              //Scroll smooth hasta el resultado
+              RESULT_TITLE.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+              //Volver a poner el texto en el boton
+              CALCULATE_BTN.innerHTML = 'Calcular';
+
+              //Mostrar el resultado
+              RESULT_BOX.forEach((box)=>{
+                  box.style.visibility = 'visible';
+              });
+
+              RESULT_NUMBER.innerHTML = `${relative} W/kg`;
+
+              if(result === 'veryLow'){
+                  RESULT_TITLE.innerHTML = 'Muy baja';
+              }else if(result === 'low'){
+                  RESULT_TITLE.innerHTML = 'Baja';
+              }else if(result === 'normal'){
+                  RESULT_TITLE.innerHTML = 'Normal';
+              }else if(result === 'high'){
+                  RESULT_TITLE.innerHTML = 'Alto';
+              }else if(result === 'veryHigh'){
+                  RESULT_TITLE.innerHTML = 'Muy alto';
+              }else if(result === 'excellent'){
+                  RESULT_TITLE.innerHTML = 'Excelente';
+              }
+          }, 500)
+
+        })            
+})();
+
+
+class ExplosiveStrenght {
+
+  _height;
+  _weight;
+  _gender;
+  _age;
+  _ageFactor;
+  _genderFactor;
+  _power;
+  _relativePower;
+  _explosivePower;
+
+  _genderFactors = {
+    "men": 1,
+    "women": 0.85
+  }
+
+  _ageFactors = {
+    "16-25": 1,
+    "26-35": 0.95,
+    "36-45": 0.90,
+    "46-55": 0.85,
+    "56-65": 0.80,
+    ">65": 0.75
+  }
+
+  constructor(height, weight, gender, age) {
+    this._height = height;
+    this._weight = weight;
+    this._gender = gender;
+    this._age = age;
+    this.setFactors(age, gender);
+  }
+
+  setFactors(age, gender) {
+    this._genderFactor = this._genderFactors[gender];
+
+    const ageRanges = Object.keys(this._ageFactors);
+    const ageRange = ageRanges.find(range => {
+      if (range.startsWith('>')) {
+        return age > parseInt(range.substring(1))
+      } else {
+        const [min, max] = range.split('-');
+        return (age >= parseInt(min) && age <= parseInt(max))
+      }
+    })
+
+    this._ageFactor = this._ageFactors[ageRange];
+  }
+
+  power() {
+    let heightPoints = 60.7 * this._height;
+    let weightPoints = 45.3 * this._weight;
+    let bodyPoints = (heightPoints + weightPoints) - 2055;
+    this._power = bodyPoints * this._ageFactor * this._genderFactor;
+    return this._power;
+  }
+
+  relativePower() {
+    this._relativePower = parseFloat((this._power / this._weight).toFixed(1));
+    return this._relativePower;
+  }
+
+  get explosivePower() {
+
+    this.power();
+    this.relativePower();
+
+    if (this._relativePower < 30) {
+      this._explosivePower = "very low";
+    } else if (this._relativePower >= 30 && this._relativePower <= 40) {
+      this._explosivePower = "low";
+    } else if (this._relativePower >= 40.1 && this._relativePower <= 50) {
+      this._explosivePower = "normal"
+    } else if (this._relativePower >= 50.1 && this._relativePower <= 60) {
+      this._explosivePower = "high";
+    } else if (this._relativePower >= 60.1 && this._relativePower <= 70) {
+      this._explosivePower = "veryHigh";
+    } else if (this._relativePower >= 70.1) {
+      this._explosivePower = "excelent";
+    }
+
+    return this._explosivePower;
+  }
+
+}
+</script>
