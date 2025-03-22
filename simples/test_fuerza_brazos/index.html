@@ -1,0 +1,682 @@
+<form class="form-container">
+    <div class="flex">
+        <div>
+            <label><span>Tu Sexo</span></label>
+            <select id="gender" type="select" name="gender-input" required>
+                <option disabled selected>Selecciona tu sexo</option>
+                <option value="men">Hombre</option>
+                <option value="women">Mujer</option>
+            </select>
+        </div>
+      </div>
+      <div class="flex">
+        <div>
+            <label><span>Tu Edad</span></label>
+            <input id="age" type="text" min="16" max="99" maxlength="2" name="age-input" placeholder="Introduce tu edad" required>
+        </div>
+        <div>
+          <label><span>Tu peso</span><sup>kg</sup></label>
+          <input id="weight" type="text" min="20" max="250" maxlength="6" name="weight-input" placeholder="Introduce tu peso en kg." required>
+      </div>
+    </div>
+    <div class="flex">
+      <div>
+        <label><span>¿Conoces tu 1RM en curl de bíceps con barra?</span></label>
+        <select id="test-type" type="select" name="test-type-input" required>
+            <option disabled selected>Selecciona una opción</option>
+            <option value="yes">Si</option>
+            <option value="no">No</option>
+        </select>
+      </div>
+    </div>
+    <div id="noRm" style="display: none;" class="flex">
+      <div>
+        <label><span>1RM en curl de bíceps con barra</span><sup>kg</sup></label>
+        <input id="exerciseRm" type="text" min="1" max="900" maxlength="5" name="exerciseRm-input" placeholder="Introduce el peso en kg.">
+      </div>
+    </div>
+    <div id="rm" style="display: none;">
+      <div class="flex">
+        <div>
+          <label><span>Peso utilizado en el ejercicio</span><sup>kg</sup></label>
+          <input id="exerciseWeight" type="text" min="1" max="900" maxlength="5" name="exerciseWeight-1-input" placeholder="Introduce el peso en kg.">
+        </div>
+        <div>
+            <label><span>Repeticiones al fallo realizadas</span></label>
+            <input id="exerciseReps" type="text" min="1" max="100" maxlength="3" name="reps-2-input" placeholder="Introduce el número de repeticiones.">
+        </div>
+      </div>
+      <div id='optionalInputs' class="flex">
+        <p>Opcional</p>
+        <div>
+            <small>Indica tu rendimiento con <u>otro peso</u> y <u>un número de repeticiones diferente</u> en el mismo ejercicio para que el cálculo sea más preciso</small>
+            <div class="flex">
+              <div>
+                <label><span>Peso utilizado en el ejercicio</span><sup>kg</sup></label>
+                <input id="exerciseWeight2" type="text" min="1" max="900" maxlength="5" name="exerciseWeight-2-input" placeholder="Introduce el peso en kg.">
+              </div>
+              <div>
+                  <label><span>Repeticiones al fallo realizadas</span></label>
+                  <input id="exerciseReps2" type="text" min="1" max="100" maxlength="3" name="exerciseReps-2-input" placeholder="Introduce el número de repeticiones.">
+              </div>
+            </div>  
+        </div>
+      </div>
+    </div>
+    <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+        Calcular
+    </button>
+</form>
+            
+<p class="result" style="visibility: hidden;">Tu nivel de fuerza de brazos es:</p>
+<p class="result"><strong id="showResult"></strong></p>
+
+<style>
+    .resultado{
+        background: #FFE636;
+        font-weight: bold;
+    }
+
+    input:not(:placeholder-shown):invalid,
+    select:invalid:not(:focus) {
+        border: 1px solid red !important;
+    }
+</style>
+
+<script type="text/javascript">
+(function() {
+
+        //Input de género
+        const GENDER_INPUT = document.querySelector('#gender');
+        //Input de edad
+        const AGE_INPUT = document.querySelector('#age');
+        //Input de peso
+        const WEIGHT_INPUT = document.querySelector('#weight');
+        //Tipo de prueba
+        const TEST_TYPE_INPUT = document.querySelector('#test-type');
+
+        //Caja de calculo simple
+        const NO_RM = document.querySelector('#noRm');
+        //Input de rm
+        const EXERCISE_RM = document.querySelector('#exerciseRm');
+
+        //Caja de calculo de RM
+        const RM_BOX = document.querySelector('#rm');
+        //Input de peso 1
+        const EXERCISE_WEIGHT = document.querySelector('#exerciseWeight');
+        //Input de repeticiones
+        const EXERCISE_REPS = document.querySelector('#exerciseReps');
+        //Título de los inputs opcionales
+        const OPTIONAL_INPUTS_TITLE = document.querySelector('#optionalInputs p');
+        //Input de peso 2
+        const EXERCISE_WEIGHT_2 = document.querySelector('#exerciseWeight2');
+        //Input de repeticiones 2
+        const EXERCISE_REPS_2 = document.querySelector('#exerciseReps2');
+
+        //Cajas con el resultado
+        const RESULT_BOX = document.querySelectorAll('.result');
+        //Resultado resaltado
+        const RESULT_TITLE = document.querySelector('#showResult');
+
+        //Botón de calcular
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+        
+        //Formulario
+        const FORM = document.querySelector('.form-container');
+
+        //Regex para comprobar si los números cumplen con la condición de 2 decimales
+        const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+
+        //Regex para comprobar si los números cumplen con la condición de ser enteros
+        const INTEGERS_REGEX = new RegExp(/^\d+$/);
+
+        //Ancho de la window
+        let windowWidth = window.innerWidth;
+
+        //Responsive para el título de los inputs opcionales
+        if(windowWidth > 365 && windowWidth < 683){
+          OPTIONAL_INPUTS_TITLE.style.bottom = '86%';
+        }else if(windowWidth < 365){
+          OPTIONAL_INPUTS_TITLE.style.bottom = '89.5%';
+        }else{
+          OPTIONAL_INPUTS_TITLE.style.bottom = '87.5%';
+        }
+        
+        window.addEventListener('resize', (e)=>{
+            windowWidth = window.innerWidth;
+            if(windowWidth > 365 && windowWidth < 683){
+              OPTIONAL_INPUTS_TITLE.style.bottom = '86%';
+            }else if(windowWidth < 365){
+              OPTIONAL_INPUTS_TITLE.style.bottom = '89.5%';
+            }else{
+              OPTIONAL_INPUTS_TITLE.style.bottom = '87.5%';
+            }
+        })
+        //Fin responsive para el titulo de los inputs opcionales
+
+        //Comprobar que ha introducido género
+        GENDER_INPUT.addEventListener('change', ()=>{
+            if(GENDER_INPUT.value !== 'men' && GENDER_INPUT.value !== 'women'){
+                GENDER_INPUT.setCustomValidity('Selecciona tu sexo');
+                GENDER_INPUT.reportValidity();
+            }else{
+                GENDER_INPUT.setCustomValidity('');
+            }
+        })
+
+        //Comprobar que ha introducido edad
+        AGE_INPUT.addEventListener('input', ()=>{
+
+            //Comprobar si el numero es un entero
+            if(!INTEGERS_REGEX.test(AGE_INPUT.value)){
+                AGE_INPUT.setCustomValidity('Introduce una edad válida');
+                AGE_INPUT.reportValidity();
+                return
+            }
+            
+            const VALUE = parseInt(AGE_INPUT.value);
+            const MIN = parseInt(AGE_INPUT.getAttribute('min'));
+            const MAX = parseInt(AGE_INPUT.getAttribute('max'));
+
+            if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+                AGE_INPUT.setCustomValidity(`La edad mínima son ${MIN}`);
+                AGE_INPUT.reportValidity();
+            }else{
+                AGE_INPUT.setCustomValidity('');
+            }
+        })
+
+        //Comprobar que ha introducido el peso
+        WEIGHT_INPUT.addEventListener('input', ()=>{
+
+            //Comprobar si el numero tiene 2 decimales como mucho
+            if(!DECIMALS_REGEX.test(WEIGHT_INPUT.value)){
+                WEIGHT_INPUT.setCustomValidity('Introduce un peso válido');
+                WEIGHT_INPUT.reportValidity();
+                return
+            }
+
+            //Resetear borde y validación del input
+            WEIGHT_INPUT.setCustomValidity('');
+            
+            const VALUE = parseFloat(WEIGHT_INPUT.value);
+            const MIN = parseFloat(WEIGHT_INPUT.getAttribute('min'));
+            const MAX = parseFloat(WEIGHT_INPUT.getAttribute('max'));
+
+            if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+                WEIGHT_INPUT.setCustomValidity(`Introduce un peso válido entre ${MIN} kg y ${MAX} kg`);
+                WEIGHT_INPUT.reportValidity();
+            }else{
+                WEIGHT_INPUT.setCustomValidity('');
+            }
+        })
+
+        //Comprobar si el usuario ha seleccionado si conoce su 1RM
+        TEST_TYPE_INPUT.addEventListener('change', ()=>{
+            
+            if(TEST_TYPE_INPUT.value !== 'yes' && TEST_TYPE_INPUT.value !== 'no'){
+                TEST_TYPE_INPUT.setCustomValidity('Selecciona una opción');
+                TEST_TYPE_INPUT.reportValidity();
+            }else{
+                TEST_TYPE_INPUT.setCustomValidity('');
+            }
+
+            if(TEST_TYPE_INPUT.value === 'no'){  
+
+              //Hacemos requeridos los inputs correspondientes
+              EXERCISE_WEIGHT.required = true;
+              EXERCISE_REPS.required = true;
+
+              //Quitamos el requerido, o no, de los inputs de peso y 1RM
+              EXERCISE_RM.required = false;
+
+              NO_RM.style.display = 'none';
+              RM_BOX.style.display = 'block';
+            
+            }else if(TEST_TYPE_INPUT.value === 'yes'){
+              
+              //Hacemos requerido el input correspondiente
+              EXERCISE_RM.required = true;
+
+              //Quitamos el requerido, o no, de los inputs de peso y 1RM
+              EXERCISE_WEIGHT.required = false;
+              EXERCISE_REPS.required = false;
+
+              NO_RM.style.display = 'flex';
+              RM_BOX.style.display = 'none';
+            
+            }
+
+        })
+
+        //Comprobar que se ha introducido el peso en el caso de que conozca su 1RM
+        EXERCISE_RM.addEventListener('input', ()=>{
+
+          //Comprobar si el numero tiene 2 decimales como mucho
+          if(!DECIMALS_REGEX.test(EXERCISE_RM.value)){
+            EXERCISE_RM.setCustomValidity('Introduce un peso válido');
+            EXERCISE_RM.reportValidity();
+              return
+          }
+
+          //Resetear borde y validación del input
+          EXERCISE_RM.setCustomValidity('');
+
+          const VALUE = parseFloat(EXERCISE_RM.value);
+          const MIN = parseFloat(EXERCISE_RM.getAttribute('min'));
+          const MAX = parseFloat(EXERCISE_RM.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            EXERCISE_RM.setCustomValidity(`Introduce un peso válido entre ${MIN} kg y ${MAX} kg`);
+            EXERCISE_RM.reportValidity();
+          }else{
+            EXERCISE_RM.setCustomValidity('');
+          }
+        })
+
+        //Comprobar que se ha introducido el peso si no conoce el 1RM
+        EXERCISE_WEIGHT.addEventListener('input', ()=>{
+
+          //Comprobar si el numero tiene 2 decimales como mucho
+          if(!DECIMALS_REGEX.test(EXERCISE_WEIGHT.value)){
+            EXERCISE_WEIGHT.setCustomValidity('Introduce un peso válido');
+            EXERCISE_WEIGHT.reportValidity();
+              return
+          }
+
+          //Resetear borde y validación del input
+          EXERCISE_WEIGHT.setCustomValidity('');
+
+          const VALUE = parseFloat(EXERCISE_WEIGHT.value);
+          const MIN = parseFloat(EXERCISE_WEIGHT.getAttribute('min'));
+          const MAX = parseFloat(EXERCISE_WEIGHT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            EXERCISE_WEIGHT.setCustomValidity(`Introduce un peso válido entre ${MIN} kg y ${MAX} kg`);
+            EXERCISE_WEIGHT.reportValidity();
+          }else{
+            EXERCISE_WEIGHT.setCustomValidity('');
+          }
+
+        })
+
+        //Comprobar que se ha introducido el número de repeticiones si no conoce el 1RM
+        EXERCISE_REPS.addEventListener('input', ()=>{
+
+          //Comprobar si el numero es un entero
+          if(!INTEGERS_REGEX.test(EXERCISE_REPS.value)){
+            EXERCISE_REPS.setCustomValidity('Introduce un número de repeticiones válido');
+            EXERCISE_REPS.reportValidity();
+              return
+          }
+
+          const VALUE = parseInt(EXERCISE_REPS.value);
+          const MIN = parseInt(EXERCISE_REPS.getAttribute('min'));
+          const MAX = parseInt(EXERCISE_REPS.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            EXERCISE_REPS.setCustomValidity(`Introduce un número de repeticiones comprendido entre ${MIN} y ${MAX}`);
+            EXERCISE_REPS.reportValidity();
+          }else{
+            EXERCISE_REPS.setCustomValidity('');
+          }
+
+        })
+
+        //Comprobar que se ha introducido el peso 2 si no conoce el 1RM
+        EXERCISE_WEIGHT_2.addEventListener('input', ()=>{
+
+          if(!EXERCISE_WEIGHT_2.value){
+            EXERCISE_REPS_2.required = false;
+            return
+          }
+
+          EXERCISE_REPS_2.required = true;
+
+          //Comprobar si el numero tiene 2 decimales como mucho
+          if(!DECIMALS_REGEX.test(EXERCISE_WEIGHT_2.value)){
+            EXERCISE_WEIGHT_2.setCustomValidity('Introduce un peso válido');
+            EXERCISE_WEIGHT_2.reportValidity();
+              return
+          }
+
+          //Resetear borde y validación del input
+          EXERCISE_WEIGHT_2.setCustomValidity('');
+
+          const VALUE = parseFloat(EXERCISE_WEIGHT_2.value);
+          const MIN = parseFloat(EXERCISE_WEIGHT_2.getAttribute('min'));
+          const MAX = parseFloat(EXERCISE_WEIGHT_2.getAttribute('max'));
+
+          if(VALUE === parseFloat(EXERCISE_WEIGHT.value)){
+            EXERCISE_WEIGHT_2.setCustomValidity('Introduce un peso diferente al introducido anteriormente');
+            EXERCISE_WEIGHT_2.reportValidity();
+            return
+          }
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            EXERCISE_WEIGHT_2.setCustomValidity(`Introduce un peso válido entre ${MIN} kg y ${MAX} kg`);
+            EXERCISE_WEIGHT_2.reportValidity();
+          }else{
+            EXERCISE_WEIGHT_2.setCustomValidity('');
+          }
+
+        })
+
+        //Comprobar que se ha introducido el número de repeticiones si no conoce el 1RM
+        EXERCISE_REPS_2.addEventListener('input', ()=>{
+
+          if(!EXERCISE_REPS_2.value){
+            EXERCISE_WEIGHT_2.required = false;
+            return
+          }
+
+          EXERCISE_WEIGHT_2.required = true;
+
+          //Comprobar si el numero es un entero
+          if(!INTEGERS_REGEX.test(EXERCISE_REPS_2.value)){
+            EXERCISE_REPS_2.setCustomValidity('Introduce un número de repeticiones válido');
+            EXERCISE_REPS_2.reportValidity();
+              return
+          }
+
+          const VALUE = parseInt(EXERCISE_REPS_2.value);
+          const MIN = parseInt(EXERCISE_REPS_2.getAttribute('min'));
+          const MAX = parseInt(EXERCISE_REPS_2.getAttribute('max'));
+
+          if(VALUE === parseInt(EXERCISE_REPS.value)){
+            EXERCISE_REPS_2.setCustomValidity('Introduce un número de repeticiones diferente al introducido anteriormente');
+            EXERCISE_REPS_2.reportValidity();
+            return 
+          }
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            EXERCISE_REPS_2.setCustomValidity(`Introduce un número de repeticiones comprendido entre ${MIN} y ${MAX}`);
+            EXERCISE_REPS_2.reportValidity();
+          }else{
+            EXERCISE_REPS_2.setCustomValidity('');
+          }
+
+        })
+
+        FORM.addEventListener('submit', (e)=>{
+          e.preventDefault();
+
+          //Volver a comprobar si se ha introducido genero
+          if(GENDER_INPUT.value !== 'men' && GENDER_INPUT.value !== 'women'){
+            GENDER_INPUT.setCustomValidity('Selecciona tu sexo');
+            GENDER_INPUT.reportValidity();
+            return
+          }
+
+          //Volver a comprobar si se ha introducido un tipo de test
+          if(TEST_TYPE_INPUT.value!== 'yes' && TEST_TYPE_INPUT.value!== 'no'){
+            TEST_TYPE_INPUT.setCustomValidity('Selecciona una opción');
+            TEST_TYPE_INPUT.reportValidity();
+            return 
+          }
+
+          //Cambiar texto botón
+          CALCULATE_BTN.innerHTML = 'Calculando...';
+
+          //Ocultar resultado anterior
+          RESULT_BOX.forEach((box)=>{
+              box.style.visibility = 'hidden';
+          });
+          debugger;
+
+          let gender = GENDER_INPUT.value;
+          let age = parseInt(AGE_INPUT.value);
+          let weight = parseFloat(WEIGHT_INPUT.value.replace(',','.'));
+          let rm = TEST_TYPE_INPUT.value === 'yes' ? parseFloat(EXERCISE_RM.value.replace(',','.')) : null;
+          let exerciseWeight = TEST_TYPE_INPUT.value === 'no' ? parseFloat(EXERCISE_WEIGHT.value.replace(',','.')) : null;
+          let exerciseReps = TEST_TYPE_INPUT.value === 'no' ? parseInt(EXERCISE_REPS.value) : null;
+          let exerciseWeight2 = !EXERCISE_WEIGHT_2.value ? null : parseFloat(EXERCISE_WEIGHT_2.value.replace(',','.'));
+          let exerciseReps2 = !EXERCISE_REPS_2.value ? null : parseInt(EXERCISE_REPS_2.value);
+
+          const CALCULATOR = new ArmsStrenght(gender, age, weight, rm, exerciseWeight, exerciseWeight2, exerciseReps, exerciseReps2);
+            
+          setTimeout(()=>{
+
+            let relative;
+            let level;
+            let result;
+
+            if(TEST_TYPE_INPUT.value === 'no'){
+              
+              result = CALCULATOR.WithoutRM;
+              relative = CALCULATOR.RelativeStrenght;
+              level = CALCULATOR.StrengthLevel;
+
+            }else{
+                
+              relative = CALCULATOR.RelativeStrenght;
+              level = CALCULATOR.StrengthLevel;
+            
+            }
+
+              //Scroll smooth hasta el resultado
+              RESULT_TITLE.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+              //Volver a poner el texto en el boton
+              CALCULATE_BTN.innerHTML = 'Calcular';
+
+              //Mostrar el resultado
+              RESULT_BOX.forEach((box)=>{
+                  box.style.visibility = 'visible';
+              });
+
+              if(level === 'veryLow'){
+                  RESULT_TITLE.innerHTML = 'Muy baja';
+              }else if(level === 'low'){
+                  RESULT_TITLE.innerHTML = 'Baja';
+              }else if(level === 'somewhatLow'){
+                RESULT_TITLE.innerHTML = 'Algo baja';
+              }else if(level === 'normal'){
+                  RESULT_TITLE.innerHTML = 'Normal';
+              }else if(level === 'good'){
+                  RESULT_TITLE.innerHTML = 'Buena';
+              }else if(level === 'veryGood'){
+                  RESULT_TITLE.innerHTML = 'Muy buena';
+              }else if(level === 'excellent'){
+                  RESULT_TITLE.innerHTML = 'Excelente';
+              }
+
+          }, 500)
+
+        })            
+})();
+
+class ArmsStrenght {
+
+  _gender;
+  _age;
+  _bodyWeight;
+  _maxWeight = null;
+  _weight_1;
+  _weight_2 = null;
+  _reps_1;
+  _reps_2 = null;
+  _mayhew;
+  _wathan;
+  _relativeStrenght;
+  _strengthLevel;
+
+  _strengthLevels = {
+      "men": {
+          "16-25": {
+              "veryLow": { "max": null, "min": 0.10 },
+              "low": { "max": 0.14, "min": 0.10 },
+              "somewhatLow": { "max": 0.19, "min": 0.15 },
+              "normal": { "max": 0.29, "min": 0.20 },
+              "good": { "max": 0.39, "min": 0.30 },
+              "veryGood": { "max": 0.50, "min": 0.40 },
+              "excellent": { "max": 0.50, "min": null }
+          },
+          "26-35": {
+              "veryLow": { "max": null, "min": 0.11 },
+              "low": { "max": 0.15, "min": 0.11 },
+              "somewhatLow": { "max": 0.21, "min": 0.16 },
+              "normal": { "max": 0.31, "min": 0.22 },
+              "good": { "max": 0.43, "min": 0.32 },
+              "veryGood": { "max": 0.55, "min": 0.44 },
+              "excellent": { "max": 0.55, "min": null }
+          },
+          "36-45": {
+              "veryLow": { "max": null, "min": 0.10 },
+              "low": { "max": 0.14, "min": 0.10 },
+              "somewhatLow": { "max": 0.19, "min": 0.15 },
+              "normal": { "max": 0.29, "min": 0.20 },
+              "good": { "max": 0.39, "min": 0.30 },
+              "veryGood": { "max": 0.50, "min": 0.40 },
+              "excellent": { "max": 0.50, "min": null }
+          },
+          "46-55": {
+              "veryLow": { "max": null, "min": 0.09 },
+              "low": { "max": 0.12, "min": 0.09 },
+              "somewhatLow": { "max": 0.17, "min": 0.13 },
+              "normal": { "max": 0.27, "min": 0.18 },
+              "good": { "max": 0.37, "min": 0.28 },
+              "veryGood": { "max": 0.45, "min": 0.38 },
+              "excellent": { "max": 0.45, "min": null }
+          },
+          "56-65": {
+              "veryLow": { "max": null, "min": 0.08 },
+              "low": { "max": 0.11, "min": 0.08 },
+              "somewhatLow": { "max": 0.15, "min": 0.12 },
+              "normal": { "max": 0.24, "min": 0.16 },
+              "good": { "max": 0.31, "min": 0.25 },
+              "veryGood": { "max": 0.40, "min": 0.32 },
+              "excellent": { "max": 0.40, "min": null }
+          },
+          ">65": {
+              "veryLow": { "max": null, "min": 0.07 },
+              "low": { "max": 0.10, "min": 0.07 },
+              "somewhatLow": { "max": 0.14, "min": 0.11 },
+              "normal": { "max": 0.21, "min": 0.15 },
+              "good": { "max": 0.27, "min": 0.22 },
+              "veryGood": { "max": 0.32, "min": 0.28 },
+              "excellent": { "max": 0.32, "min": null }
+          }
+      },
+      "women": {
+          "16-25": {
+              "veryLow": { "max": null, "min": 0.07 },
+              "low": { "max": 0.10, "min": 0.07 },
+              "somewhatLow": { "max": 0.14, "min": 0.11 },
+              "normal": { "max": 0.21, "min": 0.15 },
+              "good": { "max": 0.27, "min": 0.22 },
+              "veryGood": { "max": 0.32, "min": 0.28 },
+              "excellent": { "max": 0.32, "min": null }
+          },
+          "26-35": {
+              "veryLow": { "max": null, "min": 0.08 },
+              "low": { "max": 0.11, "min": 0.08 },
+              "somewhatLow": { "max": 0.15, "min": 0.12 },
+              "normal": { "max": 0.24, "min": 0.16 },
+              "good": { "max": 0.31, "min": 0.25 },
+              "veryGood": { "max": 0.40, "min": 0.32 },
+              "excellent": { "max": 0.40, "min": null }
+          },
+          "36-45": {
+              "veryLow": { "max": null, "min": 0.07 },
+              "low": { "max": 0.10, "min": 0.07 },
+              "somewhatLow": { "max": 0.14, "min": 0.11 },
+              "normal": { "max": 0.21, "min": 0.15 },
+              "good": { "max": 0.27, "min": 0.22 },
+              "veryGood": { "max": 0.32, "min": 0.28 },
+              "excellent": { "max": 0.32, "min": null }
+          },
+          "46-55": {
+              "veryLow": { "max": null, "min": 0.05 },
+              "low": { "max": 0.08, "min": 0.05 },
+              "somewhatLow": { "max": 0.12, "min": 0.09 },
+              "normal": { "max": 0.18, "min": 0.13 },
+              "good": { "max": 0.24, "min": 0.19 },
+              "veryGood": { "max": 0.30, "min": 0.25 },
+              "excellent": { "max": 0.30, "min": null }
+          },
+          "56-65": {
+              "veryLow": { "max": null, "min": 0.03 },
+              "low": { "max": 0.07, "min": 0.03 },
+              "somewhatLow": { "max": 0.10, "min": 0.07 },
+              "normal": { "max": 0.14, "min": 0.11 },
+              "good": { "max": 0.21, "min": 0.15 },
+              "veryGood": { "max": 0.27, "min": 0.22 },
+              "excellent": { "max": 0.27, "min": null }
+          },
+          ">65": {
+              "veryLow": { "max": null, "min": 0.02 },
+              "low": { "max": 0.04, "min": 0.02 },
+              "somewhatLow": { "max": 0.08, "min": 0.05 },
+              "normal": { "max": 0.12, "min": 0.09 },
+              "good": { "max": 0.18, "min": 0.13 },
+              "veryGood": { "max": 0.24, "min": 0.19 },
+              "excellent": { "max": 0.24, "min": null }
+          }
+      }
+  }
+
+  constructor(gender, age, bodyWeight, maxWeight, weight_1, weight_2, reps_1, reps_2){
+      this._gender = gender;
+      this._age = age;
+      this._maxWeight = maxWeight;
+      this._weight_1 = weight_1;
+      this._weight_2 = weight_2;
+      this._reps_1 = reps_1;
+      this._reps_2 = reps_2;
+      this._bodyWeight = bodyWeight;
+  }
+
+  Mayhew(){
+      this._mayhew = 1.008 * ((100 * this._weight_1) / ((52.2 + 41.9) * (Math.pow(2.7183, -0.055 * this._reps_1))));
+  }
+
+  Wathan(){
+      this._wathan = 1.008 * ((100 * this._weight_1) / ((48.8 + 53.8) * (Math.pow(2.7183, -0.075 * this._reps_1))));
+  }
+
+  get WithoutRM(){
+      
+      if(this._weight_2 == null){
+          this.Mayhew();
+          this.Wathan();
+          this._maxWeight = parseFloat(((this._mayhew + this._wathan) / 2).toFixed(1));
+      }else{
+          this._maxWeight = parseFloat((this._weight_1 + ((this._weight_2 - this._weight_1)/(this._reps_2 - this._reps_1)) * (1 - this._reps_1)).toFixed(1));
+      }    
+      
+      return this._maxWeight;
+  }
+
+  get RelativeStrenght(){
+      this._relativeStrenght = parseFloat((this._maxWeight / this._bodyWeight).toFixed(2));
+      return this._relativeStrenght;
+  }
+
+  get StrengthLevel(){
+      const ageRanges = Object.keys(this._strengthLevels[this._gender]);
+      const ageRange = ageRanges.find(range => {
+          if (range.startsWith('>')) {
+              return this._age > parseInt(range.substring(1));
+          } else {
+              const [min, max] = range.split('-');
+              return (this._age >= parseInt(min) && this._age <= parseInt(max));
+          }
+      });
+
+      const levels = this._strengthLevels[this._gender][ageRange];
+      for (const level in levels) {
+          const { min, max } = levels[level];
+          if (max === null && this._relativeStrenght < min) {
+              return level;
+          } else if (min === null && this._relativeStrenght > max) {
+              return level;
+          } else if (this._relativeStrenght >= min && this._relativeStrenght <= max) {
+              return level;
+          }
+      }
+      
+  }
+
+}
+</script>
