@@ -87,7 +87,7 @@ class ExplosiveStrenght {
         }else if(this._relativePower >= 60.1 && this._relativePower <= 70){
             this._explosivePower = "veryHigh";
         }else if(this._relativePower >= 70.1){
-            this._explosivePower = "excelent";
+            this._explosivePower = "excellent";
         }
 
         return this._explosivePower;
@@ -95,7 +95,7 @@ class ExplosiveStrenght {
 
 }
 
-const calculator = new ExplosiveStrenght(70, 60, "women", 30);
+const calculator = new ExplosiveStrenght(120, 90, "men", 19);
 const explosiveLvl = calculator.explosivePower;
 console.log(calculator._power);
 console.log(calculator._relativePower);

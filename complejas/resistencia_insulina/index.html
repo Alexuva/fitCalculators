@@ -1,0 +1,174 @@
+<form class="form-container">
+  <div class="flex">
+      <div>
+          <label><span>Glucosa en ayunas</span><sup>mg/dL</sup></label>
+          <input id="glucose" type="text" min="50" max="300" maxlength="3" name="glucose-input" placeholder="Introduce tu glucosa en ayunas" required>
+      </div>
+      <div>
+        <label><span>Insulina en ayunas</span><sup>μU/mL</sup></label>
+        <input id="insuline" type="text" min="1" max="50" maxlength="4" name="insuline-input" placeholder="Introduce tu insulina en ayunas" required>
+      </div>
+  </div>
+
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+
+<p class="result" style="visibility: hidden;">Tu índice HOMA-IR es <span><strong id="show-result-number"></strong></span></p>
+<p class="result" style="visibility: hidden;">Esto indica un nivel:  <strong id="show-result"></strong></p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+(function() {
+
+      //Inputs
+      //Glucosa
+      const GLUCOSE = document.querySelector('#glucose');
+      //Insulina
+      const INSULINE = document.querySelector('#insuline');
+
+      //Cajas con el resultado
+      const RESULT_BOX = document.querySelectorAll('.result');
+      //Resultado resaltado
+      const RESULT_TITLE = document.querySelector('#show-result');
+      //Resultado en número
+      const RESULT_NUMBER = document.querySelector('#show-result-number');
+
+      //Botón de calcular
+      const CALCULATE_BTN = document.querySelector('#calculate-btn');
+      
+      //Formulario
+      const FORM = document.querySelector('.form-container');
+
+      //Regex para comprobar si los números cumplen con la condición de 2 decimales
+      const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de ser enteros
+      const INTEGERS_REGEX = new RegExp(/^\d+$/);
+      
+      //Comprobar que ha introducido el colesterol total
+      GLUCOSE.addEventListener('input', ()=>{
+
+        //Comprobar si el numero es un entero
+        if(!INTEGERS_REGEX.test(GLUCOSE.value)){
+          TOTAL_COLESTEROL.setCustomValidity('Introduce un número válido');
+          TOTAL_COLESTEROL.reportValidity();
+          return
+        }
+
+        const VALUE = parseInt(GLUCOSE.value);
+        const MIN = parseInt(GLUCOSE.getAttribute('min'));
+        const MAX = parseInt(GLUCOSE.getAttribute('max'));
+
+        if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+          GLUCOSE.setCustomValidity(`Introduce un número válido entre ${MIN} y ${MAX}`);
+          GLUCOSE.reportValidity();
+        }else{
+          GLUCOSE.setCustomValidity('');
+        }
+
+      })
+
+      //Comprobar que ha introducido el colesterol HDL-C
+      INSULINE.addEventListener('input', ()=>{
+
+        //Comprobar si el numero es un entero
+        if(!INTEGERS_REGEX.test(INSULINE.value)){
+          INSULINE.setCustomValidity('Introduce un número válido');
+          INSULINE.reportValidity();
+          return
+        }
+
+        const VALUE = parseInt(INSULINE.value);
+        const MIN = parseInt(INSULINE.getAttribute('min'));
+        const MAX = parseInt(INSULINE.getAttribute('max'));
+
+        if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+          INSULINE.setCustomValidity(`Introduce un número válido entre ${MIN} y ${MAX}`);
+          INSULINE.reportValidity();
+        }else{
+          INSULINE.setCustomValidity('');
+        }
+
+      })
+
+
+      FORM.addEventListener('submit', (e)=>{
+        e.preventDefault();
+
+        //Cambiar texto botón
+        CALCULATE_BTN.innerHTML = 'Calculando...';
+
+        //Ocultar resultado anterior
+        RESULT_BOX.forEach((box)=>{
+            box.style.visibility = 'hidden';
+        });
+
+        let glucose = parseInt(GLUCOSE.value);
+        let insuline = parseInt(INSULINE.value);
+
+        const CALCULATOR = new InsulinResistance(glucose, insuline);
+        const homar = CALCULATOR.homaIR;
+        const result = CALCULATOR.insulineResistanceLevel;
+
+        setTimeout(()=>{
+
+            //Scroll smooth hasta el resultado
+            RESULT_TITLE.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+            //Volver a poner el texto en el boton
+            CALCULATE_BTN.innerHTML = 'Calcular';
+
+            //Mostrar el resultado
+            RESULT_BOX.forEach((box)=>{
+                box.style.visibility = 'visible';
+            });
+
+            RESULT_NUMBER.innerHTML = `${homar}`;
+            RESULT_TITLE.innerHTML = `${result}`;
+
+        }, 500)
+
+      })            
+})();
+
+class InsulinResistance {
+    _glucose;
+    _insuline;
+    _homaIR;
+    _insulineResistanceLevel;
+
+    constructor(glucose, insuline){
+        this._glucose = glucose;
+        this._insuline = insuline;
+    }
+
+    get homaIR(){
+        this._homaIR = parseFloat(((this._glucose * this._insuline) / 405).toFixed(2));
+        return this._homaIR;
+    }
+
+    get insulineResistanceLevel(){
+        if(this._homaIR < 2.5){
+            return "Normal";
+        } else if(this._homaIR >= 2.5 && this._homaIR <= 3.9){
+            return "Resistencia leve a la insulina";
+        } else if(this._homaIR > 3.9){
+            return "Resistencia alta a la insulina";
+        }
+    }
+
+}
+</script>

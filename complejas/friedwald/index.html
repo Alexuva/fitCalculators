@@ -1,0 +1,213 @@
+<form class="form-container">
+    <div class="flex">
+      <div>
+        <label><span>Unidad de medida</span></label>
+        <select id="unit" type="select" name="unit-input" required>
+            <option value="mg/dl" selected>mg/dl</option>
+            <option value="mmol/l">mmol/l</option>
+        </select>
+      </div>
+    </div>
+    <div class="flex">
+        <div>
+            <label><span>Colesterol total</span></label>
+            <input id="totalColesterol" type="text" min="16" max="1000" maxlength="4" name="totalColesterol-input" placeholder="Introduce tu colesterol total" required>
+        </div>
+        <div>
+          <label><span>Colesterol HDL-C</span></label>
+          <input id="hdlColesterol" type="text" min="0" max="1000" maxlength="4" name="hdlColesterol-input" placeholder="Introduce tu colesterol HDL-C" required>
+        </div>
+    </div>
+    <div class="flex">
+      <div>
+          <label><span>Triglicéridos</span></label>
+          <input id="trigliceridos" type="text" min="0" max="1000" maxlength="4" name="trigliceridos-input" placeholder="Introduce tus Trigliceridos" required>
+      </div>
+    </div>
+
+    <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+        Calcular
+    </button>
+</form>
+
+<p class="result" style="visibility: hidden;">Total LDLD-c:</p>
+<p class="result"><strong id="show-result"></strong></p>
+
+<style>
+    .resultado{
+        background: #FFE636;
+        font-weight: bold;
+    }
+
+    input:not(:placeholder-shown):invalid,
+    select:invalid:not(:focus) {
+        border: 1px solid red !important;
+    }
+</style>
+
+<script type="text/javascript">
+(function() {
+
+        //Inputs
+        //Colesterol total
+        const TOTAL_COLESTEROL = document.querySelector('#totalColesterol');
+        //Unidades de medida
+        const UNIT = document.querySelector('#unit');
+        //Colesterol HDL-C
+        const HDL_COLESTEROL = document.querySelector('#hdlColesterol');
+        //Triglicéridos
+        const TRIGLICERIDOS = document.querySelector('#trigliceridos');
+
+        //Cajas con el resultado
+        const RESULT_BOX = document.querySelectorAll('.result');
+        //Resultado resaltado
+        const RESULT_TITLE = document.querySelector('#show-result');
+
+        //Botón de calcular
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+        
+        //Formulario
+        const FORM = document.querySelector('.form-container');
+
+        //Regex para comprobar si los números cumplen con la condición de 2 decimales
+        const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+
+        //Regex para comprobar si los números cumplen con la condición de ser enteros
+        const INTEGERS_REGEX = new RegExp(/^\d+$/);
+        
+        //Comprobar que ha introducido el colesterol total
+        TOTAL_COLESTEROL.addEventListener('input', ()=>{
+
+          //Comprobar si el numero es un entero
+          if(!INTEGERS_REGEX.test(TOTAL_COLESTEROL.value)){
+            TOTAL_COLESTEROL.setCustomValidity('Introduce un número válido');
+            TOTAL_COLESTEROL.reportValidity();
+            return
+          }
+
+          const VALUE = parseInt(TOTAL_COLESTEROL.value);
+          const MIN = parseInt(TOTAL_COLESTEROL.getAttribute('min'));
+          const MAX = parseInt(TOTAL_COLESTEROL.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            TOTAL_COLESTEROL.setCustomValidity(`Introduce un número válido entre ${MIN} y ${MAX}`);
+            TOTAL_COLESTEROL.reportValidity();
+          }else{
+            TOTAL_COLESTEROL.setCustomValidity('');
+          }
+
+        })
+
+        //Comprobar que ha introducido el colesterol HDL-C
+        HDL_COLESTEROL.addEventListener('input', ()=>{
+
+          //Comprobar si el numero es un entero
+          if(!INTEGERS_REGEX.test(HDL_COLESTEROL.value)){
+            HDL_COLESTEROL.setCustomValidity('Introduce un número válido');
+            HDL_COLESTEROL.reportValidity();
+            return
+          }
+
+          const VALUE = parseInt(HDL_COLESTEROL.value);
+          const MIN = parseInt(HDL_COLESTEROL.getAttribute('min'));
+          const MAX = parseInt(HDL_COLESTEROL.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            HDL_COLESTEROL.setCustomValidity(`Introduce un número válido entre ${MIN} y ${MAX}`);
+            HDL_COLESTEROL.reportValidity();
+          }else{
+            HDL_COLESTEROL.setCustomValidity('');
+          }
+
+        })
+
+        //Comprobar que ha introducido el colesterol HDL-C
+        TRIGLICERIDOS.addEventListener('input', ()=>{
+
+          //Comprobar si el numero es un entero
+          if(!INTEGERS_REGEX.test(TRIGLICERIDOS.value)){
+            TRIGLICERIDOS.setCustomValidity('Introduce un número válido');
+            TRIGLICERIDOS.reportValidity();
+            return
+          }
+
+          const VALUE = parseInt(TRIGLICERIDOS.value);
+          const MIN = parseInt(TRIGLICERIDOS.getAttribute('min'));
+          const MAX = parseInt(TRIGLICERIDOS.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            TRIGLICERIDOS.setCustomValidity(`Introduce un número válido entre ${MIN} y ${MAX}`);
+            TRIGLICERIDOS.reportValidity();
+          }else{
+            TRIGLICERIDOS.setCustomValidity('');
+          }
+
+        })
+
+
+        FORM.addEventListener('submit', (e)=>{
+          e.preventDefault();
+
+          //Cambiar texto botón
+          CALCULATE_BTN.innerHTML = 'Calculando...';
+
+          //Ocultar resultado anterior
+          RESULT_BOX.forEach((box)=>{
+              box.style.visibility = 'hidden';
+          });
+
+          let unit = UNIT.value;
+          let totalColesterol = parseInt(TOTAL_COLESTEROL.value);
+          let hdlColesterol = parseInt(HDL_COLESTEROL.value);
+          let trigliceridos = parseInt(TRIGLICERIDOS.value);
+
+          const CALCULATOR = new Friedwald(totalColesterol, hdlColesterol, trigliceridos, unit);
+          const result = CALCULATOR.friedwald;
+
+          setTimeout(()=>{
+
+              //Scroll smooth hasta el resultado
+              RESULT_TITLE.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+              //Volver a poner el texto en el boton
+              CALCULATE_BTN.innerHTML = 'Calcular';
+
+              //Mostrar el resultado
+              RESULT_BOX.forEach((box)=>{
+                  box.style.visibility = 'visible';
+              });
+
+              RESULT_TITLE.innerHTML = `${result} ${unit}`;
+
+          }, 500)
+
+        })            
+})();
+
+class Friedwald {
+    _totalCholesterol;
+    _hdlCholesterol;
+    _triglycerides;
+    _friedwald;
+    _unit;
+
+    constructor(totalCholesterol, hdlCholesterol, triglycerides, unit) {
+        this._totalCholesterol = totalCholesterol;
+        this._hdlCholesterol = hdlCholesterol;
+        this._triglycerides = triglycerides;
+        this._unit = unit;
+    }
+
+    get friedwald() {
+        if(this._unit === 'mmol/l'){
+            this._friedwald = parseFloat((this._totalCholesterol - this._hdlCholesterol - (this._triglycerides / 2.2)).toFixed(2));
+        }else{
+            this._friedwald = parseFloat((this._totalCholesterol - this._hdlCholesterol - (this._triglycerides / 5)).toFixed(1));
+        }
+
+        return this._friedwald;
+    }
+
+}
+
+</script>

@@ -1,16 +1,8 @@
 <form class="form-container">
     <div class="flex">
         <div>
-            <label><span>Tu Sexo</span></label>
-            <select id="gender" type="select" name="gender-input" required>
-                <option disabled selected>Selecciona tu sexo</option>
-                <option value="men">Hombre</option>
-                <option value="women">Mujer</option>
-            </select>
-        </div>
-        <div>
-            <label><span>Tu Edad</span></label>
-            <input id="age" type="text" min="16" max="99" maxlength="2" name="age-input" placeholder="Introduce tu edad" required>
+            <label><span>Colesterol total</span><sup>mg/dl</sup></label>
+            <input id="colesterol" type="text" min="16" max="99" maxlength="2" name="age-input" placeholder="Introduce tu edad" required>
         </div>
     </div>
     <div class="flex">
@@ -19,7 +11,7 @@
             <input id="weight" type="text" min="20" max="250" maxlength="6" name="weight-input" placeholder="Introduce tu peso en kg." required>
         </div>
         <div>
-            <label><span>Altura de salto vertical</span><sup>cm</sup></label>
+            <label><span>Altura de salto vertical con contramovimiento</span><sup>cm</sup></label>
             <input id="height" type="text" min="0" max="1000" maxlength="6" name="height" placeholder="Introduce la altura conseguida en salto vertical" required>
         </div>
     </div>
@@ -30,7 +22,7 @@
 </form>
             
 <p class="result" style="visibility: hidden;">Tu potencia relativa es: <span><strong id="show-result-number"></strong></span></p>
-<p class="result" style="visibility: hidden;">Tu nivel de fuerza explosiva es: <strong id="show-result"></strong></p>
+<p class="result">Tu nivel de fuerza explosiva es <strong id="show-result"></strong></p>
 
 <style>
     .resultado{
@@ -299,7 +291,7 @@ class ExplosiveStrenght {
     } else if (this._relativePower >= 60.1 && this._relativePower <= 70) {
       this._explosivePower = "veryHigh";
     } else if (this._relativePower >= 70.1) {
-      this._explosivePower = "excellent";
+      this._explosivePower = "excelent";
     }
 
     return this._explosivePower;

@@ -1,0 +1,181 @@
+<form class="form-container">
+  <div class="flex">
+      <div>
+          <label><span>Colesterol LDL</span><sup>mg/dL</sup></label>
+          <input id="ldlColesterol" type="text" min="30" max="300" maxlength="3" name="ldlColesterol-input" placeholder="Introduce tu colesterol LDL" required>
+      </div>
+      <div>
+        <label><span>Colesterol HDL</span><sup>mg/dL</sup></label>
+        <input id="hdlColesterol" type="text" min="10" max="150" maxlength="3" name="hdlColesterol-input" placeholder="Introduce tu colesterol HDL" required>
+      </div>
+  </div>
+
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+
+<p class="result" style="visibility: hidden;">Tu relación LDL/HDL es  <span><strong id="show-result-number"></strong></span></p>
+<p class="result" style="visibility: hidden;">Esto indica un nivel de riesgo <strong id="show-result"></strong></p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+(function() {
+
+      //Inputs
+      //Colesterol LDL
+      const COLESTEROL_LDL = document.querySelector('#ldlColesterol');
+      //Colesterol HDL
+      const COLESTEROL_HDL = document.querySelector('#hdlColesterol');
+
+      //Cajas con el resultado
+      const RESULT_BOX = document.querySelectorAll('.result');
+      //Resultado resaltado
+      const RESULT_TITLE = document.querySelector('#show-result');
+      //Resultado en número
+      const RESULT_NUMBER = document.querySelector('#show-result-number');
+
+      //Botón de calcular
+      const CALCULATE_BTN = document.querySelector('#calculate-btn');
+      
+      //Formulario
+      const FORM = document.querySelector('.form-container');
+
+      //Regex para comprobar si los números cumplen con la condición de 2 decimales
+      const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de ser enteros
+      const INTEGERS_REGEX = new RegExp(/^\d+$/);
+      
+      //Comprobar que ha introducido el colesterol ldl
+      COLESTEROL_LDL.addEventListener('input', ()=>{
+
+        //Comprobar si el numero es un entero
+        if(!INTEGERS_REGEX.test(COLESTEROL_LDL.value)){
+          COLESTEROL_LDL.setCustomValidity('Introduce un número válido');
+          COLESTEROL_LDL.reportValidity();
+          return
+        }
+
+        const VALUE = parseInt(COLESTEROL_LDL.value);
+        const MIN = parseInt(COLESTEROL_LDL.getAttribute('min'));
+        const MAX = parseInt(COLESTEROL_LDL.getAttribute('max'));
+
+        if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+          COLESTEROL_LDL.setCustomValidity(`Introduce un número válido entre ${MIN} y ${MAX}`);
+          COLESTEROL_LDL.reportValidity();
+        }else{
+          COLESTEROL_LDL.setCustomValidity('');
+        }
+
+      })
+
+      //Comprobar que ha introducido el colesterol HDL-C
+      COLESTEROL_HDL.addEventListener('input', ()=>{
+
+        //Comprobar si el numero es un entero
+        if(!INTEGERS_REGEX.test(COLESTEROL_HDL.value)){
+          COLESTEROL_HDL.setCustomValidity('Introduce un número válido');
+          COLESTEROL_HDL.reportValidity();
+          return
+        }
+
+        const VALUE = parseInt(COLESTEROL_HDL.value);
+        const MIN = parseInt(COLESTEROL_HDL.getAttribute('min'));
+        const MAX = parseInt(COLESTEROL_HDL.getAttribute('max'));
+
+        if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+          COLESTEROL_HDL.setCustomValidity(`Introduce un número válido entre ${MIN} y ${MAX}`);
+          COLESTEROL_HDL.reportValidity();
+        }else{
+          COLESTEROL_HDL.setCustomValidity('');
+        }
+
+      })
+
+
+      FORM.addEventListener('submit', (e)=>{
+        e.preventDefault();
+
+        //Cambiar texto botón
+        CALCULATE_BTN.innerHTML = 'Calculando...';
+
+        //Ocultar resultado anterior
+        RESULT_BOX.forEach((box)=>{
+            box.style.visibility = 'hidden';
+        });
+
+        let ldlColesterol = parseInt(COLESTEROL_LDL.value);
+        let hdlColesterol = parseInt(COLESTEROL_HDL.value);
+
+        const CALCULATOR = new ColesterolRelation(ldlColesterol, hdlColesterol);
+        const relation = CALCULATOR.colesterolRelation;
+        const result = CALCULATOR.riskLvl;
+
+        setTimeout(()=>{
+
+            //Scroll smooth hasta el resultado
+            RESULT_TITLE.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+            //Volver a poner el texto en el boton
+            CALCULATE_BTN.innerHTML = 'Calcular';
+
+            //Mostrar el resultado
+            RESULT_BOX.forEach((box)=>{
+                box.style.visibility = 'visible';
+            });
+
+            RESULT_NUMBER.innerHTML = `${relation}`;
+            if(result === 'Low'){
+                RESULT_TITLE.innerHTML = 'bajo';
+            }else if(result === 'Normal'){
+                RESULT_TITLE.innerHTML = 'moderado';
+            }else if(result === 'High'){
+                RESULT_TITLE.innerHTML = 'alto';
+            }
+
+        }, 500)
+
+      })            
+})();
+
+class ColesterolRelation {
+    _ldl;
+    _hdl;
+    _colesterolRelation;
+    _riskLvl;
+
+    constructor(ldl, hdl){
+        this._ldl = ldl;
+        this._hdl = hdl;
+    }
+
+    get colesterolRelation(){
+        this._colesterolRelation = parseFloat((this._ldl / this._hdl).toFixed(2))
+        return this._colesterolRelation;
+    }
+
+    get riskLvl(){
+        if(this._colesterolRelation < 2.0){
+            this._riskLvl = 'Low'
+        }else if(this._colesterolRelation >= 2.0 && this._colesterolRelation <= 3.5){
+            this._riskLvl = 'Normal'
+        }else{
+            this._riskLvl = 'High'
+        }
+        return this._riskLvl;
+    }
+
+}
+</script>
