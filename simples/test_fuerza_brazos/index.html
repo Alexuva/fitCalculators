@@ -1,7 +1,7 @@
 <form class="form-container">
     <div class="flex">
         <div>
-            <label><span>Tu Sexo</span></label>
+            <label><span>Tu sexo</span></label>
             <select id="gender" type="select" name="gender-input" required>
                 <option disabled selected>Selecciona tu sexo</option>
                 <option value="men">Hombre</option>
@@ -11,7 +11,7 @@
       </div>
       <div class="flex">
         <div>
-            <label><span>Tu Edad</span></label>
+            <label><span>Tu edad</span></label>
             <input id="age" type="text" min="16" max="99" maxlength="2" name="age-input" placeholder="Introduce tu edad" required>
         </div>
         <div>
@@ -441,7 +441,7 @@
             let level;
             let result;
 
-            if(TEST_TYPE_INPUT.value === 'no'){
+            if(TEST_TYPE_INPUT.value === 'no' || exerciseWeight2 === null){
               
               result = CALCULATOR.WithoutRM;
               relative = CALCULATOR.RelativeStrenght;
@@ -466,17 +466,17 @@
               });
 
               if(level === 'veryLow'){
-                  RESULT_TITLE.innerHTML = 'Muy baja';
+                  RESULT_TITLE.innerHTML = 'Muy bajo';
               }else if(level === 'low'){
-                  RESULT_TITLE.innerHTML = 'Baja';
+                  RESULT_TITLE.innerHTML = 'Bajo';
               }else if(level === 'somewhatLow'){
-                RESULT_TITLE.innerHTML = 'Algo baja';
+                RESULT_TITLE.innerHTML = 'Algo bajo';
               }else if(level === 'normal'){
                   RESULT_TITLE.innerHTML = 'Normal';
               }else if(level === 'good'){
-                  RESULT_TITLE.innerHTML = 'Buena';
+                  RESULT_TITLE.innerHTML = 'Bueno';
               }else if(level === 'veryGood'){
-                  RESULT_TITLE.innerHTML = 'Muy buena';
+                  RESULT_TITLE.innerHTML = 'Muy bueno';
               }else if(level === 'excellent'){
                   RESULT_TITLE.innerHTML = 'Excelente';
               }
