@@ -164,7 +164,7 @@ class ArmsStrenght {
 
     get WithoutRM(){
         
-        if(this._weight_2 == null){
+        if(this._weight_2 === null){
             this.Mayhew();
             this.Wathan();
             this._maxWeight = parseFloat(((this._mayhew + this._wathan) / 2).toFixed(1));
