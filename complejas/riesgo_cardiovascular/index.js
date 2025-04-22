@@ -243,6 +243,121 @@ class CardiovascularRisk {
         return this._riskLevel[this._gender].diabetes[this._diabetes];
     }
 
+    getRiskLevel(points){
+        let risk = '';
+        if(this._gender === "men"){
+            switch(true){
+                case points <= 0:
+                    risk = {risk: "< 1%", level: "bajo"};
+                    break;
+                case points === 1:
+                    risk = {risk: "1%", level: "bajo"};
+                    break;
+                case points === 2:
+                    risk = {risk: "1%", level: "bajo"};
+                    break;
+                case points === 3:
+                    risk = {risk: "2%", level: "bajo"}
+                    break;
+                case points === 4:
+                    risk = {risk: "2%", level: "bajo"}
+                    break;
+                case points === 5:
+                    risk = {risk: "3%", level: "bajo"}
+                    break;
+                case points === 6:
+                    risk = {risk: "4%", level: "bajo"}
+                    break;
+                case points === 7:
+                    risk = {risk: "5%", level: "bajo"}
+                    break;
+                case points === 8:
+                    risk = {risk: "6%", level: "bajo"}
+                    break;
+                case points === 9:
+                    risk = {risk: "8%", level: "bajo"}
+                    break;
+                case points === 10:
+                    risk = {risk: "10%", level: "moderado"}
+                    break;
+                case points === 11:
+                    risk = {risk: "13%", level: "moderado"}
+                    break;
+                case points === 12:
+                    risk = {risk: "16%", level: "moderado"}
+                    break;
+                case points === 13:
+                    risk = {risk: "25%", level: "alto"}
+                    break;
+                case points === 14:
+                    risk = {risk: "30%", level: "alto"}
+                    break;
+                case points === 15:
+                    risk = {risk: "34%", level: "alto"}
+                    break;
+                case points >= 16:
+                    risk = {risk: ">= 40%", level: "alto"}
+                    break;
+            }
+        }else{
+            switch(true){
+                case points <= 9:
+                    risk = {risk: "< 1%", level: "bajo"};
+                    break;
+                case points === 10:
+                    risk = {risk: "1%", level: "bajo"};
+                    break;
+                case points === 11:
+                    risk = {risk: "1%", level: "bajo"};
+                    break;
+                case points === 12:
+                    risk = {risk: "1%", level: "bajo"};
+                    break;
+                case points === 13:
+                    risk = {risk: "1%", level: "bajo"};
+                    break;
+                case points === 14:
+                    risk = {risk: "2%", level: "bajo"};
+                    break;
+                case points === 15:
+                    risk = {risk: "3%", level: "bajo"};
+                    break;
+                case points === 16:
+                    risk = {risk: "4%", level: "bajo"};
+                    break;
+                case points === 17:
+                    risk = {risk: "5%", level: "bajo"};
+                    break;
+                case points === 18:
+                    risk = {risk: "6%", level: "bajo"};
+                    break;
+                case points === 19:
+                    risk = {risk: "8%", level: "bajo"};
+                    break;
+                case points === 20:
+                    risk = {risk: "11%", level: "moderado"};
+                    break;
+                case points === 21:
+                    risk = {risk: "14%", level: "moderado"};
+                    break;
+                case points === 22:
+                    risk = {risk: "17%", level: "moderado"};
+                    break;
+                case points === 23:
+                    risk = {risk: "22%", level: "alto"};
+                    break;
+                case points === 24:
+                    risk = {risk: "27%", level: "alto"};
+                    break;
+                case points >= 25:
+                    risk = {risk: ">= 30%", level: "alto"};
+                    break;
+            }
+        }
+
+        return risk;
+    }
+
 }
 
 // Test de la calculadora de riesgo cardiovascular
@@ -261,6 +376,13 @@ function testCardiovascularRisk() {
         "no"            // diabetes
     );
 
+    const puntosTest1 = test1.getAgePoints() + 
+                       test1.getTotalCholesterolPoints() + 
+                       test1.getHdlCholesterolPoints() + 
+                       test1.getSystolicBloodPressurePoints() + 
+                       test1.getSmokingPoints() + 
+                       test1.getDiabetesPoints();
+
     console.log("Prueba 1 - Hombre con valores normales:");
     console.log("Puntos por edad:", test1.getAgePoints());
     console.log("Puntos por colesterol total:", test1.getTotalCholesterolPoints());
@@ -268,6 +390,8 @@ function testCardiovascularRisk() {
     console.log("Puntos por presión sistólica:", test1.getSystolicBloodPressurePoints());
     console.log("Puntos por tabaquismo:", test1.getSmokingPoints());
     console.log("Puntos por diabetes:", test1.getDiabetesPoints());
+    console.log("Puntos totales:", puntosTest1);
+    console.log("Nivel de riesgo:", test1.getRiskLevel(puntosTest1));
     console.log("\n");
 
     // Caso de prueba 2: Mujer mayor con factores de riesgo
@@ -282,6 +406,13 @@ function testCardiovascularRisk() {
         "yes"           // diabetes
     );
 
+    const puntosTest2 = test2.getAgePoints() + 
+                       test2.getTotalCholesterolPoints() + 
+                       test2.getHdlCholesterolPoints() + 
+                       test2.getSystolicBloodPressurePoints() + 
+                       test2.getSmokingPoints() + 
+                       test2.getDiabetesPoints();
+
     console.log("Prueba 2 - Mujer con factores de riesgo:");
     console.log("Puntos por edad:", test2.getAgePoints());
     console.log("Puntos por colesterol total:", test2.getTotalCholesterolPoints());
@@ -289,6 +420,8 @@ function testCardiovascularRisk() {
     console.log("Puntos por presión sistólica:", test2.getSystolicBloodPressurePoints());
     console.log("Puntos por tabaquismo:", test2.getSmokingPoints());
     console.log("Puntos por diabetes:", test2.getDiabetesPoints());
+    console.log("Puntos totales:", puntosTest2);
+    console.log("Nivel de riesgo:", test2.getRiskLevel(puntosTest2));
     console.log("\n");
 
     // Caso de prueba 3: Valores límite
@@ -303,6 +436,13 @@ function testCardiovascularRisk() {
         "no"            // diabetes
     );
 
+    const puntosTest3 = test3.getAgePoints() + 
+                       test3.getTotalCholesterolPoints() + 
+                       test3.getHdlCholesterolPoints() + 
+                       test3.getSystolicBloodPressurePoints() + 
+                       test3.getSmokingPoints() + 
+                       test3.getDiabetesPoints();
+
     console.log("Prueba 3 - Valores límite:");
     console.log("Puntos por edad:", test3.getAgePoints());
     console.log("Puntos por colesterol total:", test3.getTotalCholesterolPoints());
@@ -310,6 +450,8 @@ function testCardiovascularRisk() {
     console.log("Puntos por presión sistólica:", test3.getSystolicBloodPressurePoints());
     console.log("Puntos por tabaquismo:", test3.getSmokingPoints());
     console.log("Puntos por diabetes:", test3.getDiabetesPoints());
+    console.log("Puntos totales:", puntosTest3);
+    console.log("Nivel de riesgo:", test3.getRiskLevel(puntosTest3));
 }
 
 // Ejecutar las pruebas
