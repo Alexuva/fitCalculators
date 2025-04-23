@@ -219,6 +219,8 @@ class HealthyHabits {
 			this._State ='En general, tienes unos hábitos muy saludables.';
 		}
 
+		return this._State;
+
 	}
 
 }

@@ -1,0 +1,576 @@
+<form class="form-container">
+  <div class="flex">
+      <div>
+          <label><span>Tu Sexo</span></label>
+          <select id="gender" type="select" name="gender-input" required>
+              <option disabled selected>Selecciona tu sexo</option>
+              <option value="men">Hombre</option>
+              <option value="women">Mujer</option>
+          </select>
+      </div>
+      <div>
+          <label><span>Tu Edad</span></label>
+          <input id="age" type="text" min="16" max="99" maxlength="2" name="age-input" placeholder="Introduce tu edad" required>
+      </div>
+  </div>
+  <div class="flex">
+      <div>
+          <label><span>Tu peso</span><sup>kg</sup></label>
+          <input id="weight" type="text" min="20" max="250" maxlength="6" name="weight-input" placeholder="Introduce tu peso en kg." required>
+      </div>
+      <div>
+          <label><span>Altura</span><sup>cm</sup></label>
+          <input id="height" type="text" min="0" max="1000" maxlength="6" name="height" placeholder="Introduce tu altura en cm" required>
+      </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>Porcentaje graso estimado</span><sup>%</sup></label>
+      <input id="fat" type="text" min="0" max="100" maxlength="5" name="fat-input" placeholder="Introduce tu porcentaje graso" required>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Cuántos vasos de agua bebes al día?(aproximadamente)</span></label>
+        <select id="water" type="select" name="water-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">1-2 vasos (0.25L - 0.5L)</option>
+            <option value="1">3-4 vasos (0.75L - 1L)</option>
+            <option value="2">5-6 vasos (1.25L - 1.5L)</option>
+            <option value="3">7-8 vasos (1.75L - 2L)</option>
+            <option value="4">Más de 8 vasos (>2L)</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Cuántas porciones de frutas y verduras consumes al día?</span></label>
+        <select id="fruit" type="select" name="fruit-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Ninguna</option>
+            <option value="1">1-2 porciones</option>
+            <option value="2">3-4 porciones</option>
+            <option value="3">5 porciones</option>
+            <option value="4">Más de 5 porciones</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Cuántas horas duermes en promedio por noche?</span></label>
+        <select id="sleep" type="select" name="sleep-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Menos de 5 horas</option>
+            <option value="1">5-6 horas</option>
+            <option value="2">6-7 horas</option>
+            <option value="4">7-9 horas</option>
+            <option value="3">Más de 9 horas</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Cuántas horas pasas sentado al día?</span></label>
+        <select id="seat" type="select" name="seat-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Más de 10 horas</option>
+            <option value="1">8-10 horas</option>
+            <option value="2">6-8 horas</option>
+            <option value="3">4-6 horas</option>
+            <option value="4">Menos de 4 horas</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Cuántos pasos caminas en promedio al día?</span></label>
+        <select id="steps" type="select" name="steps-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Menos de 3000</option>
+            <option value="1">3000-4000</option>
+            <option value="2">4000-6000</option>
+            <option value="3">6000-8000</option>
+            <option value="4">Más de 8000</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Cuánto tiempo dedicas a ejercicio moderado-intenso por semana?</span></label>
+        <select id="exercise" type="select" name="exercise-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Nada</option>
+            <option value="1">Menos de 1 hora</option>
+            <option value="2">1-2 horas</option>
+            <option value="3">2-3 horas</option>
+            <option value="4">Más de 3 horas</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Fumas?</span></label>
+        <select id="smoke" type="select" name="smoke-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Si, más de 20 cigarrillos al día</option>
+            <option value="0">Si, 10-20 cigarrillos al día</option>
+            <option value="0">Si, menos de 10 cigarrillos al día</option>
+            <option value="0">Si, pero solo ocasionalmente</option>
+            <option value="4">No fumo</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Cuál es tu consumo semanal de alcohol?</span></label>
+      <select id="alcohol" type="select" name="alcohol-input" required>
+          <option disabled selected>Selecciona</option>
+          <option value="0">Más de 14 copas</option>
+          <option value="0">7-14 copas</option>
+          <option value="0">4-6 copas</option>
+          <option value="0">1-3 copas</option>
+          <option value="4">No bebo nada de alcohol</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Con qué frecuencia sientes un alto nivel de estrés?</span></label>
+        <select id="stress" type="select" name="stress-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">En todos los momentos del día</option>
+            <option value="1">Algunas veces al día</option>
+            <option value="2">Algunas veces por semana</option>
+            <option value="3">Solamente de manera ocasional</option>
+            <option value="4">Prácticamente nunca</option>
+        </select>
+    </div>
+  </div>
+
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+          
+<p class="result" style="visibility: hidden;">En general, tienes unos hábitos <span><strong id="show-result"></strong></span> saludables.</p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+(function() {
+
+      //Input de género
+      const GENDER_INPUT = document.querySelector('#gender');
+      //Input de edad
+      const AGE_INPUT = document.querySelector('#age');
+      //Input de peso
+      const WEIGHT_INPUT = document.querySelector('#weight');
+      //Input altura salto vertical
+      const HEIGHT_INPUT = document.querySelector('#height');
+      //Input de porcentaje graso
+      const FAT_INPUT = document.querySelector('#fat');
+      //Input de agua
+      const WATER_INPUT = document.querySelector('#water');
+      //Input de frutas y verduras
+      const FRUIT_INPUT = document.querySelector('#fruit');
+      //Input de sueño
+      const SLEEP_INPUT = document.querySelector('#sleep');
+      //Input de sentado
+      const SEAT_INPUT = document.querySelector('#seat');
+      //Input de pasos
+      const STEPS_INPUT = document.querySelector('#steps');
+      //Input de ejercicio
+      const EXERCISE_INPUT = document.querySelector('#exercise');
+      //Input de fumar
+      const SMOKE_INPUT = document.querySelector('#smoke');
+      //Input de alcohol
+      const ALCOHOL_INPUT = document.querySelector('#alcohol');
+      //Input de estrés
+      const STRESS_INPUT = document.querySelector('#stress');
+
+      //Cajas con el resultado
+      const RESULT_BOX = document.querySelectorAll('.result');
+      //Resultado resaltado
+      const RESULT_TITLE = document.querySelector('#show-result');
+
+      //Botón de calcular
+      const CALCULATE_BTN = document.querySelector('#calculate-btn');
+      
+      //Formulario
+      const FORM = document.querySelector('.form-container');
+
+      //Regex para comprobar si los números cumplen con la condición de 2 decimales
+      const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de 1 decimal
+      const DECIMAL_REGEX = new RegExp(/^(\d+|\d+,\d{1}|\d+.\d{1})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de ser enteros
+      const INTEGERS_REGEX = new RegExp(/^\d+$/);
+
+      //Comprobar que ha introducido género
+      GENDER_INPUT.addEventListener('change', ()=>{
+          if(GENDER_INPUT.value !== 'men' && GENDER_INPUT.value !== 'women'){
+              GENDER_INPUT.setCustomValidity('Selecciona tu sexo');
+              GENDER_INPUT.reportValidity();
+          }else{
+              GENDER_INPUT.setCustomValidity('');
+          }
+      })
+
+      //Comprobar que ha introducido edad
+      AGE_INPUT.addEventListener('input', ()=>{
+
+          //Comprobar si el numero es un entero
+          if(!INTEGERS_REGEX.test(AGE_INPUT.value)){
+              AGE_INPUT.setCustomValidity('Introduce una edad válida');
+              AGE_INPUT.reportValidity();
+              return
+          }
+          
+          const VALUE = parseInt(AGE_INPUT.value);
+          const MIN = parseInt(AGE_INPUT.getAttribute('min'));
+          const MAX = parseInt(AGE_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+              AGE_INPUT.setCustomValidity(`La edad mínima son ${MIN}`);
+              AGE_INPUT.reportValidity();
+          }else{
+              AGE_INPUT.setCustomValidity('');
+          }
+      })
+
+      //Comprobar que ha introducido el peso
+      WEIGHT_INPUT.addEventListener('input', ()=>{
+
+          //Comprobar si el numero tiene 2 decimales como mucho
+          if(!DECIMALS_REGEX.test(WEIGHT_INPUT.value)){
+              WEIGHT_INPUT.setCustomValidity('Introduce un peso válido');
+              WEIGHT_INPUT.reportValidity();
+              return
+          }
+
+          //Resetear borde y validación del input
+          WEIGHT_INPUT.setCustomValidity('');
+          
+          const VALUE = parseFloat(WEIGHT_INPUT.value);
+          const MIN = parseFloat(WEIGHT_INPUT.getAttribute('min'));
+          const MAX = parseFloat(WEIGHT_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+              WEIGHT_INPUT.setCustomValidity(`Introduce un peso válido entre ${MIN} kg y ${MAX} kg`);
+              WEIGHT_INPUT.reportValidity();
+          }else{
+              WEIGHT_INPUT.setCustomValidity('');
+          }
+      })
+
+      //Comprobar que ha introducido el peso
+      HEIGHT_INPUT.addEventListener('input', ()=>{
+
+        //Comprobar si el numero tiene 2 decimales como mucho
+        if(!INTEGERS_REGEX.test(HEIGHT_INPUT.value)){
+          HEIGHT_INPUT.setCustomValidity('Introduce una altura válida');
+          HEIGHT_INPUT.reportValidity();
+          return
+        }
+
+        //Resetear borde y validación del input
+        HEIGHT_INPUT.setCustomValidity('');
+
+        const VALUE = parseFloat(HEIGHT_INPUT.value);
+        const MIN = parseFloat(HEIGHT_INPUT.getAttribute('min'));
+        const MAX = parseFloat(HEIGHT_INPUT.getAttribute('max'));
+
+        if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+          HEIGHT_INPUT.setCustomValidity(`Introduce una altura válida entre ${MIN} cm y ${MAX} cm`);
+          HEIGHT_INPUT.reportValidity();
+        }else{
+          HEIGHT_INPUT.setCustomValidity('');
+        }
+      })
+
+      //Comprobar que ha introducido el peso
+      FAT_INPUT.addEventListener('input', ()=>{
+
+        //Comprobar si el numero tiene 2 decimales como mucho
+        if(!DECIMAL_REGEX.test(FAT_INPUT.value)){
+          FAT_INPUT.setCustomValidity('Introduce un porcentaje graso válido (máx 1 decimal)');
+          FAT_INPUT.reportValidity();
+          return
+        }
+
+        //Resetear borde y validación del input
+        FAT_INPUT.setCustomValidity('');
+
+        const VALUE = parseFloat(FAT_INPUT.value);
+        const MIN = parseFloat(FAT_INPUT.getAttribute('min'));
+        const MAX = parseFloat(FAT_INPUT.getAttribute('max'));
+
+        if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+          FAT_INPUT.setCustomValidity(`Introduce una porcentaje válido entre ${MIN}% y ${MAX}%`);
+          FAT_INPUT.reportValidity();
+        }else{
+          FAT_INPUT.setCustomValidity('');
+        }
+      })
+
+      const SELECTS = document.querySelectorAll('select');
+      SELECTS.forEach(select => {
+        select.addEventListener('change', () => {
+          if (select.value !== "" && select.selectedIndex !== 0) {
+            select.setCustomValidity('');
+          }
+        });
+      });
+
+      FORM.addEventListener('submit', (e)=>{
+        e.preventDefault();
+
+        //Volver a comprobar si se ha introducido genero
+        if(GENDER_INPUT.value !== 'men' && GENDER_INPUT.value !== 'women'){
+          GENDER_INPUT.setCustomValidity('Selecciona tu sexo');
+          GENDER_INPUT.reportValidity();
+          return
+        }
+
+        const selects = document.querySelectorAll('select');
+        let isValid = true;
+  
+        selects.forEach(select => {
+          if (select.value === "" || select.selectedIndex === 0) {
+            select.setCustomValidity('Por favor, selecciona una opción');
+            select.reportValidity();
+            isValid = false;
+          } else {
+            select.setCustomValidity('');
+          }
+        });
+
+        if (!isValid) {
+          return;
+        }
+
+        //Cambiar texto botón
+        CALCULATE_BTN.innerHTML = 'Calculando...';
+
+        //Ocultar resultado anterior
+        RESULT_BOX.forEach((box)=>{
+            box.style.visibility = 'hidden';
+        });
+
+        let gender = GENDER_INPUT.value;
+        let age = parseInt(AGE_INPUT.value);
+        let weight = parseFloat(WEIGHT_INPUT.value.replace(',','.'));
+        let height = parseFloat(HEIGHT_INPUT.value.replace(',','.'));
+        let fat = parseFloat(FAT_INPUT.value.replace(',','.'));
+        let water = parseInt(WATER_INPUT.value);
+        let fruit = parseInt(FRUIT_INPUT.value);
+        let sleep = parseInt(SLEEP_INPUT.value);
+        let seat = parseInt(SEAT_INPUT.value);
+        let steps = parseInt(STEPS_INPUT.value);
+        let exercise = parseInt(EXERCISE_INPUT.value);
+        let smoke = parseInt(SMOKE_INPUT.value);
+        let alcohol = parseInt(ALCOHOL_INPUT.value);
+        let stress = parseInt(STRESS_INPUT.value);
+
+        const CALCULATOR = new HealthyHabits(gender, age, weight, height, fat, water, fruit, sleep, seat, steps, exercise, smoke, alcohol, stress);
+        CALCULATOR.IMC;
+        CALCULATOR.Fat;
+        let result = CALCULATOR.TotalPoints;
+          
+        setTimeout(()=>{
+
+            //Scroll smooth hasta el resultado
+            RESULT_TITLE.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+            //Volver a poner el texto en el boton
+            CALCULATE_BTN.innerHTML = 'Calcular';
+
+            //Mostrar el resultado
+            RESULT_BOX.forEach((box)=>{
+                box.style.visibility = 'visible';
+            });
+            
+            RESULT_TITLE.innerHTML = result;
+            
+        }, 500)
+
+      })            
+})();
+
+
+class HealthyHabits {
+	_gender;
+	_age;
+	_height;
+	_weight;
+	_fatPercentage;
+	_water;
+	_fruits;
+	_sleep;
+	_seated;
+	_steps;
+	_exerciseTime;
+	_smoking;
+	_alcohol;
+	_stress;
+	_IMC;
+	_Fat;
+	_TotalPoints;
+	_State;
+
+	_fatLevels = {
+    "men": {
+        "15-39": {
+            "low": { "max": null, "min": 8, "points": 4 },
+            "normal": { "max": 20, "min": 8, "points": 0 },
+            "high": { "max": 25, "min": 20, "points": -2 },
+            "veryHigh": { "max": 25, "min": null, "points": -4 }
+        },
+        "40-59": {
+            "low": { "max": null, "min": 11, "points": 4 },
+            "normal": { "max": 22, "min": 11, "points": 0 },
+            "high": { "max": 28, "min": 22, "points": -2 },
+            "veryHigh": { "max": 28, "min": null, "points": -4 }
+        },
+        "60+": {
+            "low": { "max": null, "min": 13, "points": 4 },
+            "normal": { "max": 25, "min": 13, "points": 0 },
+            "high": { "max": 30, "min": 25, "points": -2 },
+            "veryHigh": { "max": 30, "min": null, "points": -4 }
+        }
+    },
+    "women": {
+        "15-39": {
+            "low": { "max": null, "min": 16, "points": 4 },
+            "normal": { "max": 28, "min": 16, "points": 0 },
+            "high": { "max": 39, "min": 28, "points": -2 },
+            "veryHigh": { "max": 39, "min": null, "points": -4 }
+        },
+        "40-59": {
+            "low": { "max": null, "min": 18, "points": 4 },
+            "normal": { "max": 30, "min": 18, "points": 0 },
+            "high": { "max": 40, "min": 30, "points": -2 },
+            "veryHigh": { "max": 40, "min": null, "points": -4 }
+        },
+        "60+": {
+            "low": { "max": null, "min": 20, "points": 4 },
+            "normal": { "max": 32, "min": 20, "points": 0 },
+            "high": { "max": 42, "min": 32, "points": -2 },
+            "veryHigh": { "max": 42, "min": null, "points": -4 }
+        }
+    }
+	}
+
+	constructor(
+		gender,
+		age,
+		height,
+		weight,
+		fatPercentage,
+		water,
+		fruits,
+		sleep,
+		seated,
+		steps,
+		exerciseTime,
+		smoking,
+		alcohol,
+		stress,	
+	){
+		this._gender = gender;
+		this._age = age;
+		this._height = height;
+		this._weight = weight;
+		this._fatPercentage = fatPercentage;
+		this._water = water;
+		this._fruits = fruits;
+		this._sleep = sleep;
+		this._seated = seated;
+		this._steps = steps;
+		this._exerciseTime = exerciseTime;
+		this._smoking = smoking;
+		this._alcohol = alcohol;
+		this._stress = stress;
+	}
+
+	get IMC(){
+		const value = this._weight / ((this._height / 100) ** 2);
+
+		if (value < 18.5) {
+			this._IMC = 0
+		}else if(value >= 18.5 && value <= 24.9){
+			this._IMC = 4
+		}else if(value >= 25 && value <= 29.9){
+			this._IMC = 2
+		}else{
+			this._IMC = 0
+		}
+
+		return this._IMC;
+	}
+
+	get Fat(){
+		const ageRanges = Object.keys(this._fatLevels[this._gender]);
+		const ageRange = ageRanges.find(range => {
+			if (range.startsWith('>')) {
+					return this._age > parseInt(range.substring(1));
+			} else {
+					const [min, max] = range.split('-');
+					return (this._age >= parseInt(min) && this._age <= parseInt(max));
+			}
+		});
+
+		const levels = this._fatLevels[this._gender][ageRange];
+		for (const level in levels) {
+			const { min, max, points } = levels[level];
+			if (max === null && this._fatPercentage < min) {
+					this._Fat = points;
+					return this._Fat;
+			} else if (min === null && this._fatPercentage > max) {
+					this._Fat = points;
+					return this._Fat;
+			} else if (this._fatPercentage >= min && this._fatPercentage <= max) {
+					this._Fat = points;
+					return this._Fat;	
+			}
+		}
+	}
+
+	get TotalPoints(){
+		const points = this._IMC + this._Fat + this._water + this._fruits + this._sleep + this._seated + this._steps + this._exerciseTime + this._smoking + this._alcohol + this._stress;
+
+		if(points >= 0 && points <= 9){
+			this._TotalPoints = points;
+			this._State = 'muy poco';
+		}else if(points >= 10 && points  <= 19){
+			this._TotalPoints = points;
+			this._State ='poco';
+		}else if(points >= 20 && points <= 29){
+			this._TotalPoints = points;
+			this._State ='algo';
+		}else if(points >= 30 && points <= 39){
+			this._TotalPoints = points;
+			this._State ='';
+		}else{
+			this._TotalPoints = points;
+			this._State ='muy';
+		}
+
+    return this._State;
+	
+  }
+
+}
+</script>
