@@ -1,0 +1,450 @@
+<form class="form-container">
+  <div class="flex">
+      <div>
+          <label><span>Tu Edad</span></label>
+          <input id="age" type="text" min="13" max="99" maxlength="2" name="age-input" placeholder="Introduce tu edad" required>
+      </div>
+  </div>
+  <div class="flex">
+      <div>
+          <label><span>¿Cuántas horas duermes habitualmente por noche?</span></label>
+          <input id="sleep" type="text" min="0" max="24" maxlength="4" name="sleep-input" placeholder="Introduce tus horas de sueño" required>
+      </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>Desde que te acuestas, ¿cuánto tiempo tardas normalmente en quedarte dormido?</span></label>
+        <select id="fallSleep" type="select" name="fallSleep-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Más de 60 minutos</option>
+            <option value="1">Entre 45-60 minutos</option>
+            <option value="2">Entre 30-45 minutos</option>
+            <option value="3">Entre 15-30 minutos</option>
+            <option value="4">Menos de 15 minutos</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>Durante la noche, ¿cuántas veces te despiertas habitualmente?</span></label>
+        <select id="awake" type="select" name="awake-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Más de 4 veces</option>
+            <option value="1">3-4 veces</option>
+            <option value="2">2 veces</option>
+            <option value="3">1 vez</option>
+            <option value="4">No me despierto ninguna vez</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Cuánto tiempo permaneces despierto en total durante estos despertares nocturnos?</span></label>
+        <select id="awakeTime" type="select" name="awakeTime-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Más de 60 minutos</option>
+            <option value="1">Entre 45-60 minutos</option>
+            <option value="2">Entre 30-45 minutos</option>
+            <option value="3">Entre 15-30 minutos</option>
+            <option value="4">Menos de 15 minutos</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿A qué hora te acuestas habitualmente entre semana?</span></label>
+        <select id="sleepTime" type="select" name="sleepTime-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Nunca a la misma hora (varía más de 2 horas cada día)</option>
+            <option value="1">Casi nunca a la misma hora (varía entre 1-2 horas)</option>
+            <option value="2">A veces a la misma hora, pero suele variar entre 30-60 minutos cada día</option>
+            <option value="3">Casi siempre a la misma hora, aunque varía entre 15-30 minutos cada día</option>
+            <option value="4">Siempre a la misma hora (±10 minutos de diferencia)</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿A qué hora te levantas habitualmente entre semana?</span></label>
+        <select id="awakeHour" type="select" name="awakeHour-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Nunca a la misma hora (varía más de 2 horas cada día)</option>
+            <option value="1">Casi nunca a la misma hora (varía entre 1-2 horas)</option>
+            <option value="2">A veces a la misma hora, pero suele variar entre 30-60 minutos cada día</option>
+            <option value="3">Casi siempre a la misma hora, aunque varía entre 15-30 minutos cada día</option>
+            <option value="4">Siempre a la misma hora (±10 minutos de diferencia)</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Cuánto tiempo antes de acostarte dejas de usar dispositivos electrónicos (móvil, tablet, ordenador, TV)?</span></label>
+        <select id="electronics" type="select" name="electronics-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Los uso hasta que me duermo</option>
+            <option value="1">Los dejo 30 minutos antes</option>
+            <option value="2">Los dejo 1 hora antes</option>
+            <option value="3">Los dejo 2 horas antes</option>
+            <option value="4">Los dejo más de 2 horas antes</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Cómo es el ambiente en tu dormitorio?</span></label>
+        <select id="room" type="select" name="room-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Ruidoso, con luz y temperatura inadecuada</option>
+            <option value="1">Con algún ruido y luz, temperatura poco adecuada</option>
+            <option value="2">Relativamente silencioso y oscuro</option>
+            <option value="3">Bastante silencioso y oscuro</option>
+            <option value="4">Totalmente silencioso, oscuro y temperatura ideal</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Cuánto tiempo dejas pasar entre la última comida importante y el momento de acostarte?</span></label>
+      <select id="meal" type="select" name="meal-input" required>
+          <option disabled selected>Selecciona</option>
+          <option value="0">Menos de 30 minutos</option>
+          <option value="1">Entre 30-60 minutos</option>
+          <option value="2">Entre 1-2 horas</option>
+          <option value="3">Entre 2-3 horas</option>
+          <option value="4">Más de 3 horas</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Consumes alguna de estas sustancias en las horas previas a dormir de manera habitual? (café, alcohol, tabaco, refrescos con cafeína)</span></label>
+        <select id="caffeine" type="select" name="caffeine-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Consumo varias de estas sustancias 2 horas antes</option>
+            <option value="1">Consumo una de estas sustancias 2 horas antes</option>
+            <option value="2">Consumo alguna de estas sustancias 4 horas antes</option>
+            <option value="3">Consumo alguna de estas sustancias 6 horas antes</option>
+            <option value="4">No consumo ninguna de estas sustancias</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span> ¿Realizas actividad física intensa en las horas previas a dormir de manera habitual?</span></label>
+        <select id="exercise" type="select" name="exercise-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Hago ejercicio intenso 1 hora antes</option>
+            <option value="1">Hago ejercicio intenso 2 horas antes</option>
+            <option value="2">Hago ejercicio moderado 2 horas antes</option>
+            <option value="3">Hago ejercicio suave 2 horas antes</option>
+            <option value="4">No hago ejercicio en las 3 horas previas</option>
+        </select>
+    </div>
+  </div>
+
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+          
+<p class="result" style="visibility: hidden;">Tu calidad del sueño es <span><strong id="show-result"></strong></span></p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+(function() {
+
+      //Input de edad
+      const AGE_INPUT = document.querySelector('#age');
+      //Input de peso
+      const SLEEP_INPUT = document.querySelector('#sleep');
+      //Input de tiempo hasta dormir
+      const FALLSLEEP_INPUT = document.querySelector('#fallSleep');
+      //Input de tiempo despierto
+      const AWAKE_INPUT = document.querySelector('#awake');
+      //Input de tiempo despierto
+      const AWAKE_TIME_INPUT = document.querySelector('#awakeTime');
+      //Input de tiempo acostarse
+      const SLEEP_TIME_INPUT = document.querySelector('#sleepTime');
+      //Input de tiempo levantar
+      const AWAKE_HOUR_INPUT = document.querySelector('#awakeHour');
+      //Input de uso de aparatos electronicos
+      const ELECTRONICS_INPUT = document.querySelector('#electronics');
+      //Input de habitacion
+      const ROOM_INPUT = document.querySelector('#room');
+      //Input de tiempo entre comida y acostarse
+      const MEAL_INPUT = document.querySelector('#meal');
+      //Input de uso de cafeína
+      const CAFFEINE_INPUT = document.querySelector('#caffeine');
+      //Input de ejercicio
+      const EXERCISE_INPUT = document.querySelector('#exercise');
+
+
+      //Cajas con el resultado
+      const RESULT_BOX = document.querySelectorAll('.result');
+      //Resultado resaltado
+      const RESULT_TITLE = document.querySelector('#show-result');
+
+      //Botón de calcular
+      const CALCULATE_BTN = document.querySelector('#calculate-btn');
+      
+      //Formulario
+      const FORM = document.querySelector('.form-container');
+
+      //Regex para comprobar si los números cumplen con la condición de 2 decimales
+      const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de 1 decimal
+      const DECIMAL_REGEX = new RegExp(/^(\d+|\d+,\d{1}|\d+.\d{1})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de ser enteros
+      const INTEGERS_REGEX = new RegExp(/^\d+$/);
+
+      //Comprobar que ha introducido edad
+      AGE_INPUT.addEventListener('input', ()=>{
+
+          //Comprobar si el numero es un entero
+          if(!INTEGERS_REGEX.test(AGE_INPUT.value)){
+              AGE_INPUT.setCustomValidity('Introduce una edad válida');
+              AGE_INPUT.reportValidity();
+              return
+          }
+          
+          const VALUE = parseInt(AGE_INPUT.value);
+          const MIN = parseInt(AGE_INPUT.getAttribute('min'));
+          const MAX = parseInt(AGE_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+              AGE_INPUT.setCustomValidity(`La edad mínima son ${MIN}`);
+              AGE_INPUT.reportValidity();
+          }else{
+              AGE_INPUT.setCustomValidity('');
+          }
+      })
+
+      //Comprobar que ha introducido el peso
+      SLEEP_INPUT.addEventListener('input', ()=>{
+
+        //Comprobar si el numero tiene 2 decimales como mucho
+        if(!DECIMAL_REGEX.test(SLEEP_INPUT.value)){
+          SLEEP_INPUT.setCustomValidity('Introduce el formato correcto para las horas (máx 1 decimal)');
+          SLEEP_INPUT.reportValidity();
+          return
+        }
+
+        //Resetear borde y validación del input
+        SLEEP_INPUT.setCustomValidity('');
+
+        const VALUE = parseFloat(SLEEP_INPUT.value);
+        const MIN = parseFloat(SLEEP_INPUT.getAttribute('min'));
+        const MAX = parseFloat(SLEEP_INPUT.getAttribute('max'));
+
+        if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+          SLEEP_INPUT.setCustomValidity(`Introduce un número de horas entre ${MIN}hora/s y ${MAX}hora/s`);
+          SLEEP_INPUT.reportValidity();
+        }else{
+          SLEEP_INPUT.setCustomValidity('');
+        }
+      })
+
+      const SELECTS = document.querySelectorAll('select');
+      SELECTS.forEach(select => {
+        select.addEventListener('change', () => {
+          if (select.value !== "" && select.selectedIndex !== 0) {
+            select.setCustomValidity('');
+          }
+        });
+      });
+
+      FORM.addEventListener('submit', (e)=>{
+        e.preventDefault();
+
+        const selects = document.querySelectorAll('select');
+        let isValid = true;
+  
+        selects.forEach(select => {
+          if (select.value === "" || select.selectedIndex === 0) {
+            select.setCustomValidity('Por favor, selecciona una opción');
+            select.reportValidity();
+            isValid = false;
+          } else {
+            select.setCustomValidity('');
+          }
+        });
+
+        if (!isValid) {
+          return;
+        }
+
+        //Cambiar texto botón
+        CALCULATE_BTN.innerHTML = 'Calculando...';
+
+        //Ocultar resultado anterior
+        RESULT_BOX.forEach((box)=>{
+            box.style.visibility = 'hidden';
+        });
+
+        let age = parseInt(AGE_INPUT.value);
+        let sleep = parseFloat(SLEEP_INPUT.value.replace(',','.'));
+        let fallSleep = parseInt(FALLSLEEP_INPUT.value);
+        let awake = parseInt(AWAKE_INPUT.value);
+        let awakeTime = parseInt(AWAKE_TIME_INPUT.value);
+        let sleepTime = parseInt(SLEEP_TIME_INPUT.value);
+        let awakeHour = parseInt(AWAKE_HOUR_INPUT.value);
+        let electronics = parseInt(ELECTRONICS_INPUT.value);
+        let room = parseInt(ROOM_INPUT.value);
+        let meal = parseInt(MEAL_INPUT.value);
+        let caffeine = parseInt(CAFFEINE_INPUT.value);
+        let exercise = parseInt(EXERCISE_INPUT.value);
+        
+
+        const CALCULATOR = new SleepQuality(age, sleep, fallSleep, awake, awakeTime, sleepTime, awakeHour, electronics, room, meal, caffeine, exercise);
+        let sleepHours = CALCULATOR.calculateQualitySleepHours();
+        let result = CALCULATOR.totalPoints;
+          
+        setTimeout(()=>{
+
+            //Scroll smooth hasta el resultado
+            RESULT_TITLE.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+            //Volver a poner el texto en el boton
+            CALCULATE_BTN.innerHTML = 'Calcular';
+
+            //Mostrar el resultado
+            RESULT_BOX.forEach((box)=>{
+                box.style.visibility = 'visible';
+            });
+            
+            RESULT_TITLE.innerHTML = result;
+            
+        }, 500)
+
+      })            
+})();
+
+
+class SleepQuality {
+
+  _age;
+  _totalSleepHours;
+  _totalSleepHourPoints;
+  _fallAsleep;
+  _timesAwake;
+  _timesAwakeDuration;
+  _hourToSleep;
+  _hourToWakeUp;
+  _electronicsTime;
+  _roomQuality;
+  _lastMeal;
+  _caffeine;
+  _intenseExercise;
+  _State;
+  _TotalPoints;
+
+  constructor(
+    age,
+    totalSleepHours,
+    fallAsleep,
+    timesAwake,
+    timesAwakeDuration,
+    hourToSleep,
+    hourToWakeUp,
+    electronicsTime,
+    roomQuality,
+    lastMeal,
+    caffeine,
+    intenseExercise
+  ){
+    this._age = age;
+    this._totalSleepHours = totalSleepHours;
+    this._fallAsleep = fallAsleep;
+    this._timesAwake = timesAwake;
+    this._timesAwakeDuration = timesAwakeDuration;
+    this._hourToSleep = hourToSleep;
+    this._hourToWakeUp = hourToWakeUp;
+    this._electronicsTime = electronicsTime;
+    this._roomQuality = roomQuality;
+    this._lastMeal = lastMeal;
+    this._caffeine = caffeine;
+    this._intenseExercise = intenseExercise;
+  }
+
+  calculateQualitySleepHours(){
+    if(this._age >= 13 && this._age <= 17){
+      if(this._totalSleepHours < 6){
+        this._totalSleepHourPoints = 0;
+        return this._totalSleepHourPoints;
+      }else if(this._totalSleepHours >= 6 && this._totalSleepHours <= 7){
+        this._totalSleepHourPoints = 1;
+        return this._totalSleepHourPoints;
+      }else if(this._totalSleepHours >= 7 && this._totalSleepHours <= 8){
+        this._totalSleepHourPoints = 2;
+        return this._totalSleepHourPoints;
+      }else if(this._totalSleepHours >= 8 && this._totalSleepHours <= 9){
+        this._totalSleepHourPoints = 4;
+        return this._totalSleepHourPoints;
+      }else if(this._totalSleepHours >= 9 && this._totalSleepHours <= 10){
+        this._totalSleepHourPoints = 2;
+        return this._totalSleepHourPoints;
+      }else if(this._totalSleepHours >= 10 && this._totalSleepHours <= 11){
+        this._totalSleepHourPoints = 1;
+        return this._totalSleepHourPoints;
+      }else{
+        this._totalSleepHourPoints = 0;
+        return this._totalSleepHourPoints;
+      }
+    }else{
+      if(this._totalSleepHours < 5){
+        this._totalSleepHourPoints = 0;
+        return this._totalSleepHourPoints;
+      }else if(this._totalSleepHours >= 5 && this._totalSleepHours <= 6){
+        this._totalSleepHourPoints = 1;
+        return this._totalSleepHourPoints;
+      }else if(this._totalSleepHours >= 6 && this._totalSleepHours <= 7){
+        this._totalSleepHourPoints = 2;
+        return this._totalSleepHourPoints;
+      }else if(this._totalSleepHours >= 7 && this._totalSleepHours <= 9){
+        this._totalSleepHourPoints = 4;
+        return this._totalSleepHourPoints;
+      }else if(this._totalSleepHours >= 9 && this._totalSleepHours <= 10){
+        this._totalSleepHourPoints = 1;
+        return this._totalSleepHourPoints;
+      }else{
+        this._totalSleepHourPoints = 0;
+        return this._totalSleepHourPoints;
+      }
+    }
+  }
+
+  get totalPoints(){
+    const points = this._totalSleepHourPoints + this._fallAsleep + this._timesAwake + this._timesAwakeDuration + this._hourToSleep + this._hourToWakeUp + this._electronicsTime + this._roomQuality + this._lastMeal + this._caffeine + this._intenseExercise;
+    
+    if(points >= 0 && points <= 12){
+      this._TotalPoints = points;
+      this._State = 'deficiente';
+    }else if(points >= 13 && points  <= 25){
+      this._TotalPoints = points;
+      this._State ='regular';
+    }else if(points >= 26 && points <= 38){
+      this._TotalPoints = points;
+      this._State ='buena';
+    }else if(points >= 39 && points <= 44){
+      this._TotalPoints = points;
+      this._State ='excelente';
+    }
+
+    return this._State;
+  }
+
+}
+</script>

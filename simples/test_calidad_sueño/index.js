@@ -163,16 +163,16 @@ class SleepQuality {
 		
 		if(points >= 0 && points <= 12){
 			this._TotalPoints = points;
-			this._State = 'Tu calidad de sueño es deficiente';
+			this._State = 'deficiente';
 		}else if(points >= 13 && points  <= 25){
 			this._TotalPoints = points;
-			this._State ='Tu calidad de sueño es regular';
+			this._State ='regular';
 		}else if(points >= 26 && points <= 38){
 			this._TotalPoints = points;
-			this._State ='Tu calidad de sueño es buena';
+			this._State ='buena';
 		}else if(points >= 39 && points <= 44){
 			this._TotalPoints = points;
-			this._State ='Tu calidad de sueño es excelente';
+			this._State ='excelente';
 		}
 
 		return this._State;
