@@ -1,0 +1,660 @@
+<form class="form-container">
+  <div class="flex">
+      <div>
+          <label><span>Tu Sexo</span></label>
+          <select id="gender" type="select" name="gender-input" required>
+              <option disabled selected>Selecciona tu sexo</option>
+              <option value="men">Hombre</option>
+              <option value="women">Mujer</option>
+          </select>
+      </div>
+      <div>
+          <label><span>Tu Edad</span></label>
+          <input id="age" type="text" min="18" max="99" maxlength="2" name="age-input" placeholder="Introduce tu edad" required>
+      </div>
+  </div>
+  <div class="flex">
+      <div>
+          <label><span>Colesterol total</span><sup>mg/dL</sup></label>
+          <input id="totalColesterol" type="text" min="100" max="400" maxlength="3" name="totalColesterol-input" placeholder="Introduce tu colesterol total" required>
+      </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>Colesterol HDL</span><sup>mg/dL</sup></label>
+        <input id="colesterolHDL" type="text" min="10" max="150" maxlength="3" name="colesterolHDL-input" placeholder="Introduce tu colesterol HDL" required>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>Presión arterial sistólica</span><sup>mmHg</sup></label>
+        <input id="sistolicPressure" type="text" min="90" max="200" maxlength="3" name="sistolicPressure-input" placeholder="Introduce tu presión arterial sistólica" required>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Fumas?</span></label>
+      <select id="smoke" type="select" name="smoke-input" required>
+          <option disabled selected>Selecciona</option>
+          <option value="yes">Sí</option>
+          <option value="no">No</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Estás bajo tratamiento antihipertensivo?</span></label>
+      <select id="hypertensiveTreatment" type="select" name="hypertensiveTreatment-input" required>
+          <option disabled selected>Selecciona</option>
+          <option value="yes">Sí</option>
+          <option value="no">No</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Tienes diabetes?</span></label>
+      <select id="diabetes" type="select" name="diabetes-input" required>
+          <option disabled selected>Selecciona</option>
+          <option value="yes">Sí</option>
+          <option value="no">No</option>
+      </select>
+    </div>
+  </div>
+
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+          
+<p class="result" style="visibility: hidden;">Tu riesgo cardiovascular a 10 años es <strong id="show-result-number"></strong> que se corresponde con un <strong>riesgo <span id="show-result"></span></strong></p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+(function() {
+
+      //Input de género
+      const GENDER_INPUT = document.querySelector('#gender');
+      //Input de edad
+      const AGE_INPUT = document.querySelector('#age');
+      //Input de colesterol total
+      const TOTAL_COL = document.querySelector('#totalColesterol');
+      //Input de colesterol HDL
+      const COL_HDL = document.querySelector('#colesterolHDL');
+      //Input de presión arterial sistólica
+      const SISTOLIC_PRESSURE = document.querySelector('#sistolicPressure');
+      //Input de fumador
+      const SMOKE_INPUT = document.querySelector('#smoke');
+      //Input de tratamiento antihipertensivo
+      const HYPERTENSIVE_TREATMENT_INPUT = document.querySelector('#hypertensiveTreatment');
+      //Input de diabetes
+      const DIABETES_INPUT = document.querySelector('#diabetes');
+
+      //Cajas con el resultado
+      const RESULT_BOX = document.querySelectorAll('.result');
+      //Resultado resaltado
+      const RESULT_TITLE = document.querySelector('#show-result');
+      //Resultado en número
+      const RESULT_NUMBER = document.querySelector('#show-result-number');
+
+      //Botón de calcular
+      const CALCULATE_BTN = document.querySelector('#calculate-btn');
+      
+      //Formulario
+      const FORM = document.querySelector('.form-container');
+
+      //Regex para comprobar si los números cumplen con la condición de 2 decimales
+      const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de 1 decimal
+      const UN_DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1}|\d+.\d{1})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de ser enteros
+      const INTEGERS_REGEX = new RegExp(/^\d+$/);
+
+      //Comprobar que ha introducido género
+      GENDER_INPUT.addEventListener('change', ()=>{
+          if(GENDER_INPUT.value !== 'men' && GENDER_INPUT.value !== 'women'){
+              GENDER_INPUT.setCustomValidity('Selecciona tu sexo');
+              GENDER_INPUT.reportValidity();
+          }else{
+              GENDER_INPUT.setCustomValidity('');
+          }
+      })
+
+      //Comprobar que ha introducido edad
+      AGE_INPUT.addEventListener('input', ()=>{
+
+          //Comprobar si el numero es un entero
+          if(!INTEGERS_REGEX.test(AGE_INPUT.value)){
+              AGE_INPUT.setCustomValidity('Introduce una edad válida');
+              AGE_INPUT.reportValidity();
+              return
+          }
+          
+          const VALUE = parseInt(AGE_INPUT.value);
+          const MIN = parseInt(AGE_INPUT.getAttribute('min'));
+          const MAX = parseInt(AGE_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+              AGE_INPUT.setCustomValidity(`La edad mínima son ${MIN}`);
+              AGE_INPUT.reportValidity();
+          }else{
+              AGE_INPUT.setCustomValidity('');
+          }
+      })
+
+      //Comprobar que ha introducido colesterol total
+      TOTAL_COL.addEventListener('input', ()=>{
+
+          //Comprobar si el numero tiene 2 decimales como mucho
+          if(!INTEGERS_REGEX.test(TOTAL_COL.value)){
+            TOTAL_COL.setCustomValidity('Introduce un valor válido');
+            TOTAL_COL.reportValidity();
+            return
+          }
+
+          //Resetear borde y validación del input
+          TOTAL_COL.setCustomValidity('');
+          
+          const VALUE = parseFloat(TOTAL_COL.value);
+          const MIN = parseFloat(TOTAL_COL.getAttribute('min'));
+          const MAX = parseFloat(TOTAL_COL.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            TOTAL_COL.setCustomValidity(`Introduce un valor válido entre ${MIN}mg/dL y ${MAX}mg/dL`);
+            TOTAL_COL.reportValidity();
+          }else{
+            TOTAL_COL.setCustomValidity('');
+          }
+      })
+
+      //Comprobar que ha introducido colesterol total
+      COL_HDL.addEventListener('input', ()=>{
+
+        //Comprobar si el numero tiene 2 decimales como mucho
+        if(!INTEGERS_REGEX.test(COL_HDL.value)){
+          COL_HDL.setCustomValidity('Introduce un valor válido');
+          COL_HDL.reportValidity();
+          return
+        }
+
+        //Resetear borde y validación del input
+        COL_HDL.setCustomValidity('');
+
+        const VALUE = parseFloat(COL_HDL.value);
+        const MIN = parseFloat(COL_HDL.getAttribute('min'));
+        const MAX = parseFloat(COL_HDL.getAttribute('max'));
+
+        if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+          COL_HDL.setCustomValidity(`Introduce un valor válido entre ${MIN}mg/dL y ${MAX}mg/dL`);
+          COL_HDL.reportValidity();
+        }else{
+          COL_HDL.setCustomValidity('');
+        }
+
+      })
+
+      //Comprobar que ha introducido presión arterial sistólica
+      SISTOLIC_PRESSURE.addEventListener('input', ()=>{
+
+        //Comprobar si el numero tiene 2 decimales como mucho
+        if(!INTEGERS_REGEX.test(SISTOLIC_PRESSURE.value)){
+          SISTOLIC_PRESSURE.setCustomValidity('Introduce un valor válido');
+          SISTOLIC_PRESSURE.reportValidity();
+          return
+        }
+
+        //Resetear borde y validación del input
+        SISTOLIC_PRESSURE.setCustomValidity('');
+
+        const VALUE = parseFloat(SISTOLIC_PRESSURE.value);
+        const MIN = parseFloat(SISTOLIC_PRESSURE.getAttribute('min'));
+        const MAX = parseFloat(SISTOLIC_PRESSURE.getAttribute('max'));
+
+        if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+          SISTOLIC_PRESSURE.setCustomValidity(`Introduce un valor válido entre ${MIN}mmHg y ${MAX}mmHg`);
+          SISTOLIC_PRESSURE.reportValidity();
+        }else{
+          SISTOLIC_PRESSURE.setCustomValidity('');
+        }
+
+      })
+
+      const SELECTS = document.querySelectorAll('select');
+      SELECTS.forEach(select => {
+        select.addEventListener('change', () => {
+          if (select.value !== "" && select.selectedIndex !== 0) {
+            select.setCustomValidity('');
+          }
+        });
+      });
+
+      FORM.addEventListener('submit', (e)=>{
+        e.preventDefault();
+
+        const selects = document.querySelectorAll('select');
+        let isValid = true;
+  
+        selects.forEach(select => {
+          if (select.value === "" || select.selectedIndex === 0) {
+            select.setCustomValidity('Por favor, selecciona una opción');
+            select.reportValidity();
+            isValid = false;
+          } else {
+            select.setCustomValidity('');
+          }
+        });
+
+        if (!isValid) {
+          return;
+        }
+
+        //Cambiar texto botón
+        CALCULATE_BTN.innerHTML = 'Calculando...';
+
+        //Ocultar resultado anterior
+        RESULT_BOX.forEach((box)=>{
+            box.style.visibility = 'hidden';
+        });
+
+        let gender = GENDER_INPUT.value;
+        let age = parseInt(AGE_INPUT.value);
+        let totalColesterol = parseFloat(TOTAL_COL.value);
+        let colesterolHDL = parseFloat(COL_HDL.value);
+        let sistolicPressure = parseFloat(SISTOLIC_PRESSURE.value);
+        let smoke = SMOKE_INPUT.value;
+        let hypertensiveTreatment = HYPERTENSIVE_TREATMENT_INPUT.value;
+        let diabetes = DIABETES_INPUT.value;
+
+        const CALCULATOR = new CardiovascularRisk(gender, age, totalColesterol, colesterolHDL, sistolicPressure, smoke, hypertensiveTreatment, diabetes);
+        let points = CALCULATOR.getAgePoints() + 
+                      CALCULATOR.getTotalCholesterolPoints() + 
+                      CALCULATOR.getHdlCholesterolPoints() + 
+                      CALCULATOR.getSystolicBloodPressurePoints() + 
+                      CALCULATOR.getSmokingPoints() + 
+                      CALCULATOR.getDiabetesPoints();
+        let result = CALCULATOR.getRiskLevel(points);
+
+        setTimeout(()=>{
+
+            //Scroll smooth hasta el resultado
+            RESULT_TITLE.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+            //Volver a poner el texto en el boton
+            CALCULATE_BTN.innerHTML = 'Calcular';
+
+            //Mostrar el resultado
+            RESULT_BOX.forEach((box)=>{
+                box.style.visibility = 'visible';
+            });
+
+            RESULT_TITLE.innerHTML = result.level;
+            RESULT_NUMBER.innerHTML = result.risk;
+
+        }, 500)
+
+      })            
+})();
+
+
+class CardiovascularRisk {
+
+_gender;
+_age;
+_totalCholesterol;
+_hdlCholesterol;
+_systolicBloodPressure;
+_smoking;
+_antihypertensiveTreatment;
+_diabetes;
+
+_riskLevel = {
+    "men" : {            
+        "age": [
+            { min: 20, max: 34, points: -9 },
+            { min: 35, max: 39, points: -4 },
+            { min: 40, max: 44, points: 0 },
+            { min: 45, max: 49, points: 3 },
+            { min: 50, max: 54, points: 6 },
+            { min: 55, max: 59, points: 8 },
+            { min: 60, max: 64, points: 10 },
+            { min: 65, max: 69, points: 11 },
+            { min: 70, max: 74, points: 12 },
+            { min: 75, max: 80, points: 13 }
+        ],
+        "totalCholesterol" : [
+            { min: 160, max: null, points: 0 },
+            { min: 160, max: 199, points: 1 },
+            { min: 200, max: 239, points: 2 },
+            { min: 240, max: 279, points: 3 },
+            { min: null, max: 280, points: 4 }
+        ],
+        "hdlCholesterol" : [
+            { min: 40, max: null, points: 2 },
+            { min: 40, max: 49, points: 1 },
+            { min: 50, max: 59, points: 0 },
+            { min: null, max: 60, points: -1 }
+        ],
+        "systolicBloodPressure" : {
+            "noAntihypertensiveTreatment" : [
+                { min: 120, max: null, points: 0 },
+                { min: 120, max: 129, points: 1 },
+                { min: 130, max: 139, points: 2 },
+                { min: 140, max: 159, points: 3 },
+                { min: null, max: 160, points: 4 }
+            ],
+            "antihypertensiveTreatment" : [
+                { min: 120, max: null, points: 0 },
+                { min: 120, max: 129, points: 3 },
+                { min: 130, max: 139, points: 4 },
+                { min: 140, max: 159, points: 5 },
+                { min: null, max: 160, points: 6 }
+            ]
+        },
+        "smoking" : {
+            "no" : 0,
+            "yes" : 2
+        },
+        "diabetes" : {
+            "no" : 0,
+            "yes" : 2
+        }
+    },
+    "women" : {
+        "age" : [
+            { min: 20, max: 34, points: -7 },
+            { min: 35, max: 39, points: -3 },
+            { min: 40, max: 44, points: 0 },
+            { min: 45, max: 49, points: 3 },
+            { min: 50, max: 54, points: 6 },
+            { min: 55, max: 59, points: 8 },
+            { min: 60, max: 64, points: 10 },
+            { min: 65, max: 69, points: 12 },
+            { min: 70, max: 74, points: 14 },
+            { min: 75, max: 80, points: 16 }
+        ],
+        "totalCholesterol" : [
+            { min: 160, max: null, points: 0 },
+            { min: 160, max: 199, points: 1 },
+            { min: 200, max: 239, points: 2 },
+            { min: 240, max: 279, points: 3 },
+            { min: null, max: 280, points: 4 }
+        ],
+        "hdlCholesterol" : [
+            { min: 40, max: null, points: 2 },
+            { min: 40, max: 49, points: 1 },
+            { min: 50, max: 59, points: 0 },
+            { min: null, max: 60, points: -1 }
+        ],
+        "systolicBloodPressure" : {
+            "noAntihypertensiveTreatment" : [
+                { min: 120, max: null, points: 0 },
+                { min: 120, max: 129, points: 1 },
+                { min: 130, max: 139, points: 2 },
+                { min: 140, max: 159, points: 3 },
+                { min: null, max: 160, points: 4 }
+            ],
+            "antihypertensiveTreatment" : [
+                { min: 120, max: null, points: 0 },
+                { min: 120, max: 129, points: 3 },
+                { min: 130, max: 139, points: 4 },
+                { min: 140, max: 159, points: 5 },
+                { min: null, max: 160, points: 6 }
+            ]
+        },
+        "smoking" : {
+            "no" : 0,
+            "yes" : 2
+        },
+        "diabetes" : {
+            "no" : 0,
+            "yes" : 2
+        }
+    }
+};
+
+constructor(gender, age, totalCholesterol, hdlCholesterol, systolicBloodPressure, smoking, antihypertensiveTreatment, diabetes){
+    this._gender = gender;
+    this._age = age;
+    this._totalCholesterol = totalCholesterol;
+    this._hdlCholesterol = hdlCholesterol;
+    this._systolicBloodPressure = systolicBloodPressure;
+    this._smoking = smoking;
+    this._antihypertensiveTreatment = antihypertensiveTreatment;
+    this._diabetes = diabetes;
+}
+
+getAgePoints(){
+    let agePoints = 0;
+    for(let range of this._riskLevel[this._gender].age){
+        if(this._age >= range.min && this._age <= range.max){
+            agePoints = range.points;
+            break;
+        } 
+    }
+
+    return agePoints;
+}
+
+getTotalCholesterolPoints() {
+    let chrolesterolPoints = 0;
+    for(let range of this._riskLevel[this._gender].totalCholesterol){
+        if(range.max === null){
+            if(this._totalCholesterol < range.min){
+                chrolesterolPoints = range.points;
+                break;
+            }
+        }else if(range.min === null){
+            if(this._totalCholesterol >= range.max){
+                chrolesterolPoints = range.points;
+                break;
+            }
+        }else if(this._totalCholesterol >= range.min && this._totalCholesterol <= range.max){
+            chrolesterolPoints = range.points;
+            break;
+        }
+    }
+
+    return chrolesterolPoints;
+}
+
+getHdlCholesterolPoints() {
+    let hdlCholesterolPoints = 0;
+    for(let range of this._riskLevel[this._gender].hdlCholesterol){
+        if(range.max === null){
+            if(this._hdlCholesterol < range.min){
+                hdlCholesterolPoints = range.points;
+                break;
+            }
+        }else if(range.min === null){
+            if(this._hdlCholesterol >= range.max){
+                hdlCholesterolPoints = range.points;
+                break;
+            }
+        }else if(this._hdlCholesterol >= range.min && this._hdlCholesterol <= range.max){
+            hdlCholesterolPoints = range.points;
+            break;
+        }
+    }
+
+    return hdlCholesterolPoints;
+}
+
+getSystolicBloodPressurePoints() {
+    let systolicBloodPressurePoints = 0;
+    if(this._antihypertensiveTreatment === "no"){
+        for(let range of this._riskLevel[this._gender].systolicBloodPressure.noAntihypertensiveTreatment){
+            if(range.max === null){
+                if(this._systolicBloodPressure < range.min){
+                    systolicBloodPressurePoints = range.points;
+                    break;
+                }
+            }else if(range.min === null){
+                if(this._systolicBloodPressure >= range.max){
+                    systolicBloodPressurePoints = range.points;
+                    break;
+                }
+            }else if(this._systolicBloodPressure >= range.min && this._systolicBloodPressure <= range.max){
+                systolicBloodPressurePoints = range.points;
+                break;
+            }
+        }
+    }else{
+        for(let range of this._riskLevel[this._gender].systolicBloodPressure.antihypertensiveTreatment){
+            if(range.max === null){
+                if(this._systolicBloodPressure < range.min){
+                    systolicBloodPressurePoints = range.points;
+                    break;
+                }
+            }else if(range.min === null){
+                if(this._systolicBloodPressure >= range.max){
+                    systolicBloodPressurePoints = range.points;
+                    break;
+                }
+            }else if(this._systolicBloodPressure >= range.min && this._systolicBloodPressure <= range.max){
+                systolicBloodPressurePoints = range.points;
+                break;
+            }
+        }
+    }
+
+    return systolicBloodPressurePoints;
+}
+
+getSmokingPoints() {
+    return this._riskLevel[this._gender].smoking[this._smoking];
+}
+
+getDiabetesPoints() {
+    return this._riskLevel[this._gender].diabetes[this._diabetes];
+}
+
+getRiskLevel(points){
+    let risk = '';
+    if(this._gender === "men"){
+        switch(true){
+            case points <= 0:
+                risk = {risk: "< 1%", level: "bajo"};
+                break;
+            case points === 1:
+                risk = {risk: "1%", level: "bajo"};
+                break;
+            case points === 2:
+                risk = {risk: "1%", level: "bajo"};
+                break;
+            case points === 3:
+                risk = {risk: "2%", level: "bajo"}
+                break;
+            case points === 4:
+                risk = {risk: "2%", level: "bajo"}
+                break;
+            case points === 5:
+                risk = {risk: "3%", level: "bajo"}
+                break;
+            case points === 6:
+                risk = {risk: "4%", level: "bajo"}
+                break;
+            case points === 7:
+                risk = {risk: "5%", level: "bajo"}
+                break;
+            case points === 8:
+                risk = {risk: "6%", level: "bajo"}
+                break;
+            case points === 9:
+                risk = {risk: "8%", level: "bajo"}
+                break;
+            case points === 10:
+                risk = {risk: "10%", level: "moderado"}
+                break;
+            case points === 11:
+                risk = {risk: "13%", level: "moderado"}
+                break;
+            case points === 12:
+                risk = {risk: "16%", level: "moderado"}
+                break;
+            case points === 13:
+                risk = {risk: "25%", level: "alto"}
+                break;
+            case points === 14:
+                risk = {risk: "30%", level: "alto"}
+                break;
+            case points === 15:
+                risk = {risk: "34%", level: "alto"}
+                break;
+            case points >= 16:
+                risk = {risk: ">= 40%", level: "alto"}
+                break;
+        }
+    }else{
+        switch(true){
+            case points <= 9:
+                risk = {risk: "< 1%", level: "bajo"};
+                break;
+            case points === 10:
+                risk = {risk: "1%", level: "bajo"};
+                break;
+            case points === 11:
+                risk = {risk: "1%", level: "bajo"};
+                break;
+            case points === 12:
+                risk = {risk: "1%", level: "bajo"};
+                break;
+            case points === 13:
+                risk = {risk: "1%", level: "bajo"};
+                break;
+            case points === 14:
+                risk = {risk: "2%", level: "bajo"};
+                break;
+            case points === 15:
+                risk = {risk: "3%", level: "bajo"};
+                break;
+            case points === 16:
+                risk = {risk: "4%", level: "bajo"};
+                break;
+            case points === 17:
+                risk = {risk: "5%", level: "bajo"};
+                break;
+            case points === 18:
+                risk = {risk: "6%", level: "bajo"};
+                break;
+            case points === 19:
+                risk = {risk: "8%", level: "bajo"};
+                break;
+            case points === 20:
+                risk = {risk: "11%", level: "moderado"};
+                break;
+            case points === 21:
+                risk = {risk: "14%", level: "moderado"};
+                break;
+            case points === 22:
+                risk = {risk: "17%", level: "moderado"};
+                break;
+            case points === 23:
+                risk = {risk: "22%", level: "alto"};
+                break;
+            case points === 24:
+                risk = {risk: "27%", level: "alto"};
+                break;
+            case points >= 25:
+                risk = {risk: ">= 30%", level: "alto"};
+                break;
+        }
+    }
+
+    return risk;
+}
+
+}
+</script>
