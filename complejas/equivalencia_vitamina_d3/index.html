@@ -1,0 +1,137 @@
+<form class="form-container">
+  <div class="flex">
+      <div>
+          <label><span>Cantidad (Unidades Internacionales)</span><sup>UI</sup></label>
+          <input id="vitamine" type="text" min="100" max="100000" maxlength="6" name="vitamine-input" placeholder="Introduce la cantidad en UI" required>
+      </div>
+  </div>
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+          
+<p class="result" style="visibility: hidden;">La equivalencia de vitamina D3 es <span><strong id="show-result"></strong></span></p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+(function() {
+
+      //Input de género
+      const VITAMINE_INPUT = document.querySelector('#vitamine');
+
+      //Cajas con el resultado
+      const RESULT_BOX = document.querySelectorAll('.result');
+      //Resultado resaltado
+      const RESULT_TITLE = document.querySelector('#show-result');
+      //Resultado en número
+      const RESULT_NUMBER = document.querySelector('#show-result-number');
+
+      //Botón de calcular
+      const CALCULATE_BTN = document.querySelector('#calculate-btn');
+      
+      //Formulario
+      const FORM = document.querySelector('.form-container');
+
+      //Regex para comprobar si los números cumplen con la condición de 2 decimales
+      const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de ser enteros
+      const INTEGERS_REGEX = new RegExp(/^\d+$/);
+
+      //Comprobar que ha introducido la cantidad de vitamina D3
+      VITAMINE_INPUT.addEventListener('input', ()=>{
+
+          //Comprobar si el numero es un entero
+          if(!INTEGERS_REGEX.test(VITAMINE_INPUT.value)){
+            VITAMINE_INPUT.setCustomValidity('Introduce una cantidad válida');
+            VITAMINE_INPUT.reportValidity();
+            return
+          }
+          
+          const VALUE = parseInt(VITAMINE_INPUT.value);
+          const MIN = parseInt(VITAMINE_INPUT.getAttribute('min'));
+          const MAX = parseInt(VITAMINE_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            VITAMINE_INPUT.setCustomValidity(`La cantidad mínima es ${MIN}`);
+            VITAMINE_INPUT.reportValidity();
+          }else{
+            VITAMINE_INPUT.setCustomValidity('');
+          }
+      })
+
+      FORM.addEventListener('submit', (e)=>{
+        e.preventDefault();
+
+        //Cambiar texto botón
+        CALCULATE_BTN.innerHTML = 'Calculando...';
+
+        //Ocultar resultado anterior
+        RESULT_BOX.forEach((box)=>{
+            box.style.visibility = 'hidden';
+        });
+
+        let vitamine = parseInt(VITAMINE_INPUT.value);
+
+        const CALCULATOR = new VitamineD3Conversion(vitamine);
+        const { mg, mgc } = CALCULATOR.conversion;
+
+        setTimeout(()=>{
+
+            //Scroll smooth hasta el resultado
+            RESULT_TITLE.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+            //Volver a poner el texto en el boton
+            CALCULATE_BTN.innerHTML = 'Calcular';
+
+            //Mostrar el resultado
+            RESULT_BOX.forEach((box)=>{
+                box.style.visibility = 'visible';
+            });
+
+            RESULT_TITLE.innerHTML = `${mg}mg o ${mgc}mgc`;
+
+        }, 500)
+
+      })            
+})();
+
+
+class VitamineD3Conversion {
+    _ui;
+    _mg;
+    _mgc;
+
+    constructor(ui){
+        this._ui = ui;
+    }
+    
+    get mgConversion(){
+        this._mg = (this._ui / 40_000).toFixed(6);
+        return this._mg;
+    }
+
+    get mgcConversion(){
+        this._mgc = (this._ui / 40).toFixed(2);
+        return this._mgc;
+    }
+
+    get conversion(){
+        const mg = this.mgConversion;
+        const mgc = this.mgcConversion;
+        return { mg, mgc }
+    }
+
+}
+</script>
