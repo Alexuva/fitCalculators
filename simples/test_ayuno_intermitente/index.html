@@ -1,0 +1,202 @@
+<form class="form-container">
+  <div class="flex">
+      <div>
+          <label><span>¿A qué hora fue tu última comida?</span></label>
+          <input id="time" type="time" min="00:00" max="23:59" step="60" name="time-input" placeholder="Introduce la hora" required>
+      </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Qué tipo de ayuno estás siguiendo?</span></label>
+        <select id="fastingType" type="select" name="fastingType-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="a">Ayuno 12/12</option>
+            <option value="b">Ayuno 14/10</option>
+            <option value="c">Ayuno 16/8 (Leangains)</option>
+            <option value="d">Ayuno 18/6</option>
+            <option value="e">Ayuno 20/4 (Guerrero)</option>
+            <option value="f">OMAD (One Meal A Day)</option>
+            <option value="g">Días alternos (un día comes, al siguiente haces ayuno completo)</option>
+            <option value="h">5:2 (Cinco días de comer normalmente, dos días de restricción completa)</option>
+        </select>
+    </div>
+  </div>
+
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+          
+<p class="result" style="visibility: hidden;"><span id="show-result"></span></p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+(function() {
+
+      //Input de edad
+      const TIME_INPUT = document.querySelector('#time');
+      //Input de horas de sueño
+      const FASTING_TYPE = document.querySelector('#fastingType');
+
+      //Cajas con el resultado
+      const RESULT_BOX = document.querySelectorAll('.result');
+      //Resultado resaltado
+      const RESULT_TITLE = document.querySelector('#show-result');
+
+      //Botón de calcular
+      const CALCULATE_BTN = document.querySelector('#calculate-btn');
+      
+      //Formulario
+      const FORM = document.querySelector('.form-container');
+
+      //Regex para comprobar si los números cumplen con la condición de 2 decimales
+      const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de 1 decimal
+      const DECIMAL_REGEX = new RegExp(/^(\d+|\d+,\d{1}|\d+.\d{1})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de ser enteros
+      const INTEGERS_REGEX = new RegExp(/^\d+$/);
+
+      const SELECTS = document.querySelectorAll('select');
+      SELECTS.forEach(select => {
+        select.addEventListener('change', () => {
+          if (select.value !== "" && select.selectedIndex !== 0) {
+            select.setCustomValidity('');
+          }
+        });
+      });
+
+      FORM.addEventListener('submit', (e)=>{
+        e.preventDefault();
+
+        const selects = document.querySelectorAll('select');
+        let isValid = true;
+  
+        selects.forEach(select => {
+          if (select.value === "" || select.selectedIndex === 0) {
+            select.setCustomValidity('Por favor, selecciona una opción');
+            select.reportValidity();
+            isValid = false;
+          } else {
+            select.setCustomValidity('');
+          }
+        });
+
+        if (!isValid) {
+          return;
+        }
+
+        //Cambiar texto botón
+        CALCULATE_BTN.innerHTML = 'Calculando...';
+
+        //Ocultar resultado anterior
+        RESULT_BOX.forEach((box)=>{
+            box.style.visibility = 'hidden';
+        });
+
+        let fastingType = FASTING_TYPE.value;
+        let time = TIME_INPUT.value;
+        
+
+        const CALCULATOR = new FastingCalculator(time, fastingType);
+        let result = CALCULATOR.nextMealTime;
+          
+        setTimeout(()=>{
+
+            //Scroll smooth hasta el resultado
+            RESULT_TITLE.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+            //Volver a poner el texto en el boton
+            CALCULATE_BTN.innerHTML = 'Calcular';
+
+            //Mostrar el resultado
+            RESULT_BOX.forEach((box)=>{
+                box.style.visibility = 'visible';
+            });
+            
+            RESULT_TITLE.innerHTML = result;
+            
+        }, 500)
+
+      })            
+})();
+
+
+class FastingCalculator {
+  _lastMealHour;
+  _fastingType;
+  _nextMealTime;
+
+  constructor(
+    lastMealHour,
+    fastingType,
+  ){
+    const [hours, minutes] = lastMealHour.split(':');
+    const date = new Date();
+    date.setHours(parseInt(hours));
+    date.setMinutes(parseInt(minutes));
+    date.setSeconds(0);
+    date.setMilliseconds(0);
+    this._lastMealHour = date;
+    this._fastingType = fastingType;
+  }
+
+  get nextMealTime() {
+    const nextMeal = new Date(this._lastMealHour);
+    let nextMealText;
+    let hoursToAdd = 0;
+
+    switch(this._fastingType) {
+      case 'a': hoursToAdd = 12; break;
+      case 'b': hoursToAdd = 14; break;
+      case 'c': hoursToAdd = 16; break;
+      case 'd': hoursToAdd = 18; break;
+      case 'e': hoursToAdd = 20; break;
+      case 'f': hoursToAdd = 24; break;
+      case 'g': hoursToAdd = 24; break;
+      case 'h': hoursToAdd = 48; break;
+    }
+
+    // Añadimos las horas y manejamos el cambio de día
+    let totalMinutes = nextMeal.getHours() * 60 + nextMeal.getMinutes();
+    totalMinutes += hoursToAdd * 60;
+    
+    let days = Math.floor(totalMinutes / (24 * 60));
+    let remainingMinutes = totalMinutes % (24 * 60);
+    
+    nextMeal.setHours(Math.floor(remainingMinutes / 60));
+    nextMeal.setMinutes(remainingMinutes % 60);
+    nextMeal.setDate(nextMeal.getDate() + days);
+
+    if(this._fastingType !== 'g' && this._fastingType!== 'h'){
+      if(days === 0){
+        nextMealText = `Hora de tu próxima comida: <strong>${nextMeal.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit', hour12: false})}</strong>`;
+      }else if(days === 1){
+        nextMealText = `Puedes comer a partir de las <strong>${nextMeal.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit', hour12: false})} del día siguiente</strong>`;
+      }else if(days === 2){
+        nextMealText = `Puedes comer a partir de las <strong>${nextMeal.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit', hour12: false})} de dentro de dos días</strong>`;
+      }
+    }else{
+      if(this._fastingType === 'g'){
+        nextMealText = `Puedes comer a partir de las <strong>${nextMeal.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit', hour12: false})} del día siguiente</strong>`;
+      }else if(this._fastingType === 'h'){
+        nextMealText = `Puedes comer a partir de las <strong>${nextMeal.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit', hour12: false})} de dentro de dos días</strong>`;
+      }
+    }
+    
+    return nextMealText;
+  }
+}
+</script>

@@ -13,88 +13,70 @@
  * 		h - 5:2 (Cínco días de comer normalmente, dos días de restricción completa)s
  */	
 
-class FastingCalculator{
+class FastingCalculator {
+  _lastMealHour;
+  _fastingType;
+  _nextMealTime;
 
-	_lastMealHour;
-	_fastingType;
-	_nextMealTime;
+  constructor(
+    lastMealHour,
+    fastingType,
+  ){
+    const [hours, minutes] = lastMealHour.split(':');
+    const date = new Date();
+    date.setHours(parseInt(hours));
+    date.setMinutes(parseInt(minutes));
+    date.setSeconds(0);
+    date.setMilliseconds(0);
+    this._lastMealHour = date;
+    this._fastingType = fastingType;
+  }
 
-	constructor(
-		lastMealHour,
-		fastingType,
-	){
-		const [hours, minutes] = lastMealHour.split(':');
-		const date = new Date();
-		date.setHours(parseInt(hours));
-		date.setMinutes(parseInt(minutes));
-		this._lastMealHour = date;
-		this._fastingType = fastingType;
-	}
+  get nextMealTime() {
+    const nextMeal = new Date(this._lastMealHour);
+    let nextMealText;
+    let hoursToAdd = 0;
 
-	get nextMealTime(){
+    switch(this._fastingType) {
+      case 'a': hoursToAdd = 12; break;
+      case 'b': hoursToAdd = 14; break;
+      case 'c': hoursToAdd = 16; break;
+      case 'd': hoursToAdd = 18; break;
+      case 'e': hoursToAdd = 20; break;
+      case 'f': hoursToAdd = 24; break;
+      case 'g': hoursToAdd = 24; break;
+      case 'h': hoursToAdd = 48; break;
+    }
 
-		const nextMeal = new Date();
-		let nextMealText;
+    // Añadimos las horas y manejamos el cambio de día
+    let totalMinutes = nextMeal.getHours() * 60 + nextMeal.getMinutes();
+    totalMinutes += hoursToAdd * 60;
+    
+    let days = Math.floor(totalMinutes / (24 * 60));
+    let remainingMinutes = totalMinutes % (24 * 60);
+    
+    nextMeal.setHours(Math.floor(remainingMinutes / 60));
+    nextMeal.setMinutes(remainingMinutes % 60);
+    nextMeal.setDate(nextMeal.getDate() + days);
 
-		switch(this._fastingType){
-			case 'a':
-				nextMeal.setHours(this._lastMealHour.getHours() + 12);
-				this._nextMealTime = nextMeal;
-			break;
-			case 'b':
-				nextMeal.setHours(this._lastMealHour.getHours() + 14);
-				this._nextMealTime = nextMeal;
-			break;
-			case 'c':
-				nextMeal.setHours(this._lastMealHour.getHours() + 16);
-				this._nextMealTime = nextMeal;
-			break;
-			case 'd':
-				nextMeal.setHours(this._lastMealHour.getHours() + 18);
-				this._nextMealTime = nextMeal;
-			break;
-			case 'e':
-				nextMeal.setHours(this._lastMealHour.getHours() + 20);
-				this._nextMealTime = nextMeal;
-			break;
-			case 'f':
-				nextMeal.setHours(this._lastMealHour.getHours() + 24);
-				this._nextMealTime = nextMeal;
-			break;
-			case 'g':
-				nextMeal.setDate(this._lastMealHour.getDate() + 1);
-				nextMeal.setMinutes(this._lastMealHour.getMinutes() + 1);
-				this._nextMealTime = nextMeal;
-			break;
-			case 'h':
-				nextMeal.setDate(this._lastMealHour.getDate() + 2);
-				this._nextMealTime = nextMeal;
-			break;
-		}
-
-		const diffTime = nextMeal - this._lastMealHour;
-		const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-		if(this._fastingType !== 'g' && this._fastingType!== 'h'){
-			if(diffDays === 0){
-				nextMealText = `Hora de tu próxima comida: ${nextMeal.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit', hour12: false})}`;
-			}else if(diffDays === 1){
-				nextMealText = `Hora de tu próxima comida: ${nextMeal.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit', hour12: false})} del día siguiente`;
-			}else if(diffDays === 2){
-				nextMealText = `Hora de tu próxima comida: ${nextMeal.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit', hour12: false})} de dentro de dos días`;
-			}
-		}else{
-			if(this._fastingType === 'g'){
-				nextMealText = `Puedes comer a partir de las ${nextMeal.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit', hour12: false})} del día siguiente`;
-			}else if(this._fastingType === 'h'){
-				nextMealText = `Puedes comer a partir de las ${nextMeal.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit', hour12: false})} de dentro de dos días`;
-			}
-		}
-		
-		
-		return nextMealText;
-
-	}
+    if(this._fastingType !== 'g' && this._fastingType!== 'h'){
+      if(days === 0){
+        nextMealText = `Hora de tu próxima comida: <strong>${nextMeal.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit', hour12: false})}</strong>`;
+      }else if(days === 1){
+        nextMealText = `Hora de tu próxima comida: <strong>${nextMeal.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit', hour12: false})} del día siguiente</strong>`;
+      }else if(days === 2){
+        nextMealText = `Hora de tu próxima comida: <strong>${nextMeal.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit', hour12: false})} de dentro de dos días</strong>`;
+      }
+    }else{
+      if(this._fastingType === 'g'){
+        nextMealText = `Puedes comer a partir de las <strong>${nextMeal.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit', hour12: false})} del día siguiente</strong>`;
+      }else if(this._fastingType === 'h'){
+        nextMealText = `Puedes comer a partir de las <strong>${nextMeal.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit', hour12: false})} de dentro de dos días</strong>`;
+      }
+    }
+    
+    return nextMealText;
+  }
 }
 
 // Test with last meal at 20:00
