@@ -1,0 +1,363 @@
+<form class="form-container">
+  <div class="flex">
+    <div>
+      <label><span>Nombre del alimento</span></label>
+      <input id="foodName" type="text" name="foodName-input" placeholder="Introduce el nombre del alimento" required>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>Porción consumida</span><sup>gramos</sup></label>
+      <input id="portion" type="text" min="0" maxlength="6" name="portion-input" placeholder="Introduce los gramos" required>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>Calorías</span><sup>por 100g</sup></label>
+      <input id="calories" type="text" min="0" maxlength="6" name="calories-input" placeholder="Introduce las calorías" required>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>Proteínas</span><sup>gramos por 100g</sup></label>
+      <input id="protein" type="text" min="0" maxlength="6" name="protein-input" placeholder="Introduce los gramos de proteína" required>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>Grasas</span><sup>gramos por 100g</sup></label>
+      <input id="fat" type="text" min="0" maxlength="6" name="fat-input" placeholder="Introduce los gramos de grasa" required>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>Carbohidratos</span><sup>gramos por 100g</sup></label>
+      <input id="carbs" type="text" min="0" maxlength="6" name="carbs-input" placeholder="Introduce los gramos de carbohidratos" required>
+    </div>
+  </div>
+  <div id='optionalInputs'>
+    <p>Opcional</p>
+    <div class="flex">
+      <div>
+        <label><span>Índice de saciedad relativo</span></label>
+        <input id="satietyIndex" type="text" min="0" maxlength="6" name="satietyIndex-input" placeholder="Introduce el índice si lo conoces">
+      </div>
+    </div>
+  </div>
+
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+          
+<p class="result" style="visibility: hidden; line-height: 1.2em;"><span id="show-result"></span></p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+(function() {
+
+      //Inputs
+      const FOOD_NAME_INPUT = document.querySelector('#foodName');
+      const PORTION_INPUT = document.querySelector('#portion');
+      const CALORIES_INPUT = document.querySelector('#calories');
+      const PROTEIN_INPUT = document.querySelector('#protein');
+      const FAT_INPUT = document.querySelector('#fat');
+      const CARBS_INPUT = document.querySelector('#carbs');
+      const SATIETY_INDEX_INPUT = document.querySelector('#satietyIndex');
+
+
+      //Cajas con el resultado
+      const RESULT_BOX = document.querySelectorAll('.result');
+      //Resultado resaltado
+      const RESULT_TITLE = document.querySelector('#show-result');
+      //Resultado en número
+      const RESULT_NUMBER = document.querySelector('#show-result-number');
+
+      //Botón de calcular
+      const CALCULATE_BTN = document.querySelector('#calculate-btn');
+      
+      //Formulario
+      const FORM = document.querySelector('.form-container');
+
+      //Regex para comprobar si los números cumplen con la condición de 2 decimales
+      const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de ser enteros
+      const INTEGERS_REGEX = new RegExp(/^\d+$/);
+
+      const optionalInputs = document.querySelector('#optionalInputs');
+        const optionalInputsTitle = optionalInputs.querySelector('p');
+        let windowWidth = window.innerWidth;
+
+        if(windowWidth > 365 && windowWidth < 683){
+            optionalInputsTitle.style.bottom = '69%';
+        }else if(windowWidth < 365){
+            optionalInputsTitle.style.bottom = '65%';
+        }else{
+            optionalInputsTitle.style.bottom = '71%';
+        }
+        
+        window.addEventListener('resize', (e)=>{
+            windowWidth = window.innerWidth;
+            if(windowWidth > 365 && windowWidth < 683){
+                optionalInputsTitle.style.bottom = '69%';
+            }else if(windowWidth < 365){
+                optionalInputsTitle.style.bottom = '65%';
+            }else{
+                optionalInputsTitle.style.bottom = '71%';
+            }
+        })
+
+      //Comprobar que ha introducido la cantidad de gramos
+      PORTION_INPUT.addEventListener('input', ()=>{
+
+          //Comprobar si el numero es un entero
+          if(!INTEGERS_REGEX.test(PORTION_INPUT.value)){
+            PORTION_INPUT.setCustomValidity('Introduce un número entero válido');
+            PORTION_INPUT.reportValidity();
+            return
+          }
+          
+          const VALUE = parseInt(PORTION_INPUT.value);
+          const MIN = parseInt(PORTION_INPUT.getAttribute('min'));
+          const MAX = parseInt(PORTION_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            PORTION_INPUT.setCustomValidity(`La cantidad mínima son ${MIN} gramos`);
+            PORTION_INPUT.reportValidity();
+          }else{
+            PORTION_INPUT.setCustomValidity('');
+          }
+      })
+
+      //Comprobar que ha introducido la cantidad de gramos
+      PROTEIN_INPUT.addEventListener('input', ()=>{
+
+          //Comprobar si el numero es un entero
+          if(!INTEGERS_REGEX.test(PROTEIN_INPUT.value)){
+            PROTEIN_INPUT.setCustomValidity('Introduce un número entero válido');
+            PROTEIN_INPUT.reportValidity();
+            return
+          }
+          
+          const VALUE = parseInt(PROTEIN_INPUT.value);
+          const MIN = parseInt(PROTEIN_INPUT.getAttribute('min'));
+          const MAX = parseInt(PROTEIN_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            PROTEIN_INPUT.setCustomValidity(`La cantidad mínima son ${MIN} gramos`);
+            PROTEIN_INPUT.reportValidity();
+          }else{
+            PROTEIN_INPUT.setCustomValidity('');
+          }
+      })
+
+      //Comprobar que ha introducido la cantidad de gramos
+      FAT_INPUT.addEventListener('input', ()=>{
+
+        //Comprobar si el numero es un entero
+        if(!INTEGERS_REGEX.test(FAT_INPUT.value)){
+          FAT_INPUT.setCustomValidity('Introduce un número entero válido');
+          FAT_INPUT.reportValidity();
+          return
+        }
+
+        const VALUE = parseInt(FAT_INPUT.value);
+        const MIN = parseInt(FAT_INPUT.getAttribute('min'));
+        const MAX = parseInt(FAT_INPUT.getAttribute('max'));
+
+        if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+          FAT_INPUT.setCustomValidity(`La cantidad mínima son ${MIN} gramos`);
+          FAT_INPUT.reportValidity();
+        }else{
+          FAT_INPUT.setCustomValidity('');
+        }
+      })
+
+      //Comprobar que ha introducido la cantidad de gramos
+      CARBS_INPUT.addEventListener('input', ()=>{
+
+        //Comprobar si el numero es un entero
+        if(!INTEGERS_REGEX.test(CARBS_INPUT.value)){
+          CARBS_INPUT.setCustomValidity('Introduce un número entero válido');
+          CARBS_INPUT.reportValidity();
+          return
+        }
+
+        const VALUE = parseInt(CARBS_INPUT.value);
+        const MIN = parseInt(CARBS_INPUT.getAttribute('min'));
+        const MAX = parseInt(CARBS_INPUT.getAttribute('max'));
+
+        if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+          CARBS_INPUT.setCustomValidity(`La cantidad mínima son ${MIN} gramos`);
+          CARBS_INPUT.reportValidity();
+        }else{
+          CARBS_INPUT.setCustomValidity('');
+        }
+      })
+
+      //Comprobar que ha introducido la cantidad de gramos
+      CALORIES_INPUT.addEventListener('input', ()=>{
+
+        //Comprobar si el numero es un entero
+        if(!INTEGERS_REGEX.test(CALORIES_INPUT.value)){
+          CALORIES_INPUT.setCustomValidity('Introduce un número entero válido');
+          CALORIES_INPUT.reportValidity();
+          return
+        }
+
+        const VALUE = parseInt(CALORIES_INPUT.value);
+        const MIN = parseInt(CALORIES_INPUT.getAttribute('min'));
+        const MAX = parseInt(CALORIES_INPUT.getAttribute('max'));
+
+        if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+          CALORIES_INPUT.setCustomValidity(`La cantidad mínima son ${MIN} calorías`);
+          CALORIES_INPUT.reportValidity();
+        }else{
+          CALORIES_INPUT.setCustomValidity('');
+        }
+      })
+
+      //Comprobar que ha introducido la cantidad de gramos
+      SATIETY_INDEX_INPUT.addEventListener('input', ()=>{
+
+        if(SATIETY_INDEX_INPUT.value.length > 0){
+          //Comprobar si el numero es un entero
+          if(!INTEGERS_REGEX.test(SATIETY_INDEX_INPUT.value)){
+            SATIETY_INDEX_INPUT.setCustomValidity('Introduce un número entero válido');
+            SATIETY_INDEX_INPUT.reportValidity();
+            return
+          }
+        }else{
+          SATIETY_INDEX_INPUT.setCustomValidity('');
+          return
+        }
+        
+        const VALUE = parseInt(SATIETY_INDEX_INPUT.value);
+        const MIN = parseInt(SATIETY_INDEX_INPUT.getAttribute('min'));
+        const MAX = parseInt(SATIETY_INDEX_INPUT.getAttribute('max'));
+
+        if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+          SATIETY_INDEX_INPUT.setCustomValidity(`La cantidad mínima son ${MIN}`);
+          SATIETY_INDEX_INPUT.reportValidity();
+        }else{
+          SATIETY_INDEX_INPUT.setCustomValidity('');
+        }
+      })
+
+      FORM.addEventListener('submit', (e)=>{
+        e.preventDefault();
+
+        //Cambiar texto botón
+        CALCULATE_BTN.innerHTML = 'Calculando...';
+
+        //Ocultar resultado anterior
+        RESULT_BOX.forEach((box)=>{
+            box.style.visibility = 'hidden';
+        });
+
+        
+        let foodName = FOOD_NAME_INPUT.value;
+        let portion = parseInt(PORTION_INPUT.value);
+        let calories = parseInt(CALORIES_INPUT.value);
+        let proteins = parseInt(PROTEIN_INPUT.value);
+        let fats = parseInt(FAT_INPUT.value);
+        let carbohydrates = parseInt(CARBS_INPUT.value);
+        let satietyIndex = SATIETY_INDEX_INPUT.value ? parseInt(SATIETY_INDEX_INPUT.value) : null;
+      
+
+        const CALCULATOR = new SatietyIndex(foodName, portion, calories, proteins, fats, carbohydrates, satietyIndex);
+        let totalCalories = CALCULATOR.TotalCalories;
+        let totalMacros = CALCULATOR.MacroProportions;
+        let estimatedSatietyIndex = CALCULATOR.EstimatedSatietyIndex;
+        let relative = CALCULATOR.RelativeSatietyIndex;
+
+        setTimeout(()=>{
+
+            //Scroll smooth hasta el resultado
+            RESULT_TITLE.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+            //Volver a poner el texto en el boton
+            CALCULATE_BTN.innerHTML = 'Calcular';
+
+            //Mostrar el resultado
+            RESULT_BOX.forEach((box)=>{
+                box.style.visibility = 'visible';
+            });
+            
+            RESULT_TITLE.innerHTML = `El Índice de Saciedad para una porción de <strong>${portion} gramos de ${foodName}</strong> es aproximadamente <strong>${relative}</strong>, en comparación con el pan blanco.`;
+            
+        }, 500)
+
+      })            
+})();
+
+class SatietyIndex {
+
+  _name;
+  _portion;
+  _calories;
+  _proteins;
+  _fats;
+  _carbohydrates;
+  _satietyIndex;
+
+  _totalCalories;
+  _totalMacros;
+
+  constructor(name, portion, calories, proteins, fats, carbohydrates, satietyIndex) {
+      this._name = name;
+      this._portion = portion;
+      this._calories = calories;
+      this._proteins = proteins;
+      this._fats = fats;
+      this._carbohydrates = carbohydrates;
+      this._satietyIndex = satietyIndex;
+  }
+
+  get TotalCalories(){
+      this._totalCalories = Math.round((this._portion * this._calories) / 100);
+      return this._totalCalories;
+  }
+
+  get MacroProportions(){
+
+      let proteins = parseFloat((((this._proteins * this._portion) / 100) / this._totalCalories * 100).toFixed(2));
+      let fats = parseFloat((((this._fats * this._portion) / 100) / this._totalCalories * 100).toFixed(2));
+      let carbohydrates = parseFloat((((this._carbohydrates * this._portion) / 100) / this._totalCalories * 100).toFixed(2));
+      
+      this._totalMacros = { proteins, fats, carbohydrates };
+
+      return this._totalMacros;
+  }
+
+  get EstimatedSatietyIndex(){
+      if(this._satietyIndex === undefined || this._satietyIndex === null){
+          let estimated = (this._totalMacros.proteins * 4) + (this._totalMacros.carbohydrates * 2) + (this._totalMacros.fats * 2);
+          if(estimated <= 50 && estimated >= 300){
+              estimated = Math.max(50, Math.min(300, estimated));
+          }
+          this._satietyIndex = estimated;
+      }
+
+      return this._satietyIndex;
+  }
+
+  get RelativeSatietyIndex(){
+      return parseFloat((this._satietyIndex * (70 / this._totalCalories)).toFixed(2));
+  }
+
+}
+
+</script>
