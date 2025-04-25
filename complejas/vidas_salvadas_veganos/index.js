@@ -68,7 +68,7 @@ class AnimalsSaved {
 
             this._impact[impact] = this._impact[impact] * this._duration; 
 
-            if(this._weight) {
+            if(this._weight !== null) {
                 if(this._weight < 50) {
                     this._impact[impact] = this._impact[impact] * (1 - 0.2);
                 }else if(this._weight >= 50 && this._weight <= 80){
@@ -85,11 +85,11 @@ class AnimalsSaved {
 
         return {
             total,
-            meat: `${this._impact.meat} terrestres`,
-            fish: `${this._impact.fish} peces`,
-            eggs: `${this._impact.eggs} gallinas`,
-            milk: `${this._impact.milk} vacas lecheras`,
-            seafood: `${this._impact.seafood} mariscos`,
+            meat: `${this._impact.meat} ${this._impact.meat > 1? 'terrestres' : 'terrestre'}`,
+            fish: `${this._impact.fish} ${this._impact.fish > 1? 'peces' : 'pez'}`,
+            eggs: `${this._impact.eggs} ${this._impact.eggs > 1? 'gallinas' : 'gallina'}`,
+            milk: `${this._impact.milk} ${this._impact.milk > 1? 'vacas lecheras' : 'vaca lechera'}`,
+            seafood: `${this._impact.seafood} ${this._impact.seafood > 1? 'mariscos' : 'marisco'}`,
         }
 
     }

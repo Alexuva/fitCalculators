@@ -1,0 +1,375 @@
+<form class="form-container">
+  <div class="flex">
+    <div>
+      <label><span>Duración de la dieta vegana</span><sup>meses</sup></label>
+      <input id="veganDuration" type="text" min="1" maxlength="2" name="veganDuration-input" placeholder="Introduce los meses" required>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>Frecuencia previa de consumo</span></label>
+      <select id="previousConsumption" type="select" name="previousConsumption-input" required>
+          <option disabled selected>Selecciona la frecuencia</option>
+          <option value="1">Alta (100% del promedio mensual)</option>
+          <option value="0.5">Moderada (50% del promedio mensual)</option>
+          <option value="0.25">Baja (25% del promedio mensual)</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>Alimentos evitados</span></label>
+      <div class="checkbox-group">
+        <label class="checkbox-label">
+          <input type="checkbox" id="avoidMeat" name="avoided-foods" value="meat">
+          Carne
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="avoidFish" name="avoided-foods" value="fish">
+          Pescado
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="avoidSeafood" name="avoided-foods" value="seafood">
+          Mariscos
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="avoidMilk" name="avoided-foods" value="milk">
+          Lácteos
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="avoidEggs" name="avoided-foods" value="eggs">
+          Huevos
+        </label>
+      </div>
+    </div>
+  </div>
+  <div id='optionalInputs'>
+    <p>Opcional</p>
+    <div class="flex">
+      <div>
+        <label><span>Tu peso</span><sup>kg</sup></label>
+        <input id="weight" type="text" min="0" max="250" maxlength="6" name="weight-input" placeholder="Introduce tu peso en kg.">
+      </div>
+    </div>
+  </div>
+
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+          
+<p class="result" style="visibility: hidden;"><span id="show-result"></span></p>
+
+<style>
+  .result{
+    line-height: 1.2em;
+  }
+
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+  
+  input[type="checkbox"]{
+      width: 1em !important;
+      height: 1em !important;
+      margin-top: unset !important;
+      accent-color: #FFE636
+  }
+  
+  input[type="checkbox"]:checked{
+      appearance: auto !important;
+  }
+
+  .checkbox-group {
+    margin-top: 0.5em;
+    gap: 0.5em;
+    display: flex;
+    flex-direction: column !important;
+    justify-content: space-between;
+  }
+
+  .checkbox-label {
+    display: flex;
+    gap: 0.5em;
+    cursor: pointer;
+  }
+
+  .checkbox-label input[type="checkbox"] {
+    cursor: pointer;
+  }
+</style>
+
+<script type="text/javascript">
+(function() {
+
+      //Inputs
+      const VEGAN_DURATION = document.querySelector('#veganDuration');
+      const PREVIOUS_CONSUMPTION = document.querySelector('#previousConsumption');
+      const AVOID_MEAT = document.querySelector('#avoidMeat');
+      const AVOID_FISH = document.querySelector('#avoidFish');
+      const AVOID_SEAFOOD = document.querySelector('#avoidSeafood');
+      const AVOID_MILK = document.querySelector('#avoidMilk');
+      const AVOID_EGGS = document.querySelector('#avoidEggs');
+      const WEIGHT = document.querySelector('#weight');
+
+      //Cajas con el resultado
+      const RESULT_BOX = document.querySelectorAll('.result');
+      //Resultado resaltado
+      const RESULT_TITLE = document.querySelector('#show-result');
+      //Resultado en número
+      const RESULT_NUMBER = document.querySelector('#show-result-number');
+
+      //Botón de calcular
+      const CALCULATE_BTN = document.querySelector('#calculate-btn');
+      
+      //Formulario
+      const FORM = document.querySelector('.form-container');
+
+      //Regex para comprobar si los números cumplen con la condición de 2 decimales
+      const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de 1 decimal
+      const UN_DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1}|\d+.\d{1})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de ser enteros
+      const INTEGERS_REGEX = new RegExp(/^\d+$/);
+
+      const optionalInputs = document.querySelector('#optionalInputs');
+        const optionalInputsTitle = optionalInputs.querySelector('p');
+        let windowWidth = window.innerWidth;
+
+        if(windowWidth > 365 && windowWidth < 683){
+            optionalInputsTitle.style.bottom = '69%';
+        }else if(windowWidth < 365){
+            optionalInputsTitle.style.bottom = '65%';
+        }else{
+            optionalInputsTitle.style.bottom = '71%';
+        }
+        
+        window.addEventListener('resize', (e)=>{
+            windowWidth = window.innerWidth;
+            if(windowWidth > 365 && windowWidth < 683){
+                optionalInputsTitle.style.bottom = '69%';
+            }else if(windowWidth < 365){
+                optionalInputsTitle.style.bottom = '65%';
+            }else{
+                optionalInputsTitle.style.bottom = '71%';
+            }
+        })
+
+      //Comprobar que ha introducido edad
+      VEGAN_DURATION.addEventListener('input', ()=>{
+
+          //Comprobar si el numero es un entero
+          if(!INTEGERS_REGEX.test(VEGAN_DURATION.value)){
+            VEGAN_DURATION.setCustomValidity('Introduce una duración válida');
+            VEGAN_DURATION.reportValidity();
+              return
+          }
+          
+          const VALUE = parseInt(VEGAN_DURATION.value);
+          const MIN = parseInt(VEGAN_DURATION.getAttribute('min'));
+          const MAX = parseInt(VEGAN_DURATION.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            VEGAN_DURATION.setCustomValidity(`El tiempo mínimo son ${MIN} meses`);
+            VEGAN_DURATION.reportValidity();
+          }else{
+            VEGAN_DURATION.setCustomValidity('');
+          }
+      })
+
+      //Comprobar que ha introducido colesterol total
+      WEIGHT.addEventListener('input', ()=>{
+
+          //Comprobar si el numero tiene 2 decimales como mucho
+          if(WEIGHT.value.length > 0){
+            if(!DECIMALS_REGEX.test(WEIGHT.value)){
+              WEIGHT.setCustomValidity('Introduce un valor válido');
+              WEIGHT.reportValidity();
+              return
+            }
+          }else{
+            WEIGHT.setCustomValidity('');
+            return
+          }
+          
+
+          //Resetear borde y validación del input
+          WEIGHT.setCustomValidity('');
+          
+          const VALUE = parseFloat(WEIGHT.value);
+          const MIN = parseFloat(WEIGHT.getAttribute('min'));
+          const MAX = parseFloat(WEIGHT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX){
+            WEIGHT.setCustomValidity(`Introduce un valor válido entre ${MIN}kg y ${MAX}kg`);
+            WEIGHT.reportValidity();
+          }else{
+            WEIGHT.setCustomValidity('');
+          }
+      })
+
+      const SELECTS = document.querySelectorAll('select');
+      SELECTS.forEach(select => {
+        select.addEventListener('change', () => {
+          if (select.value !== "" && select.selectedIndex !== 0) {
+            select.setCustomValidity('');
+          }
+        });
+      });
+
+      FORM.addEventListener('submit', (e)=>{
+        e.preventDefault();
+
+        const selects = document.querySelectorAll('select');
+        let isValid = true;
+  
+        selects.forEach(select => {
+          if (select.value === "" || select.selectedIndex === 0) {
+            select.setCustomValidity('Por favor, selecciona una opción');
+            select.reportValidity();
+            isValid = false;
+          } else {
+            select.setCustomValidity('');
+          }
+        });
+
+        if (!isValid) {
+          return;
+        }
+
+        //Cambiar texto botón
+        CALCULATE_BTN.innerHTML = 'Calculando...';
+
+        //Ocultar resultado anterior
+        RESULT_BOX.forEach((box)=>{
+            box.style.visibility = 'hidden';
+        });
+
+        let avoidedFood = [];
+        let veganDuration = parseInt(VEGAN_DURATION.value);
+        let previousConsumption = parseFloat(PREVIOUS_CONSUMPTION.value);
+        let avoidMeat = AVOID_MEAT.checked ? avoidedFood.push('meat') : null;
+        let avoidFish = AVOID_FISH.checked ? avoidedFood.push('fish') : null;
+        let avoidSeafood = AVOID_SEAFOOD.checked ? avoidedFood.push('seafood') : null;
+        let avoidMilk = AVOID_MILK.checked ? avoidedFood.push('milk') : null;
+        let avoidEggs = AVOID_EGGS.checked ? avoidedFood.push('eggs') : null;
+        let weight = parseFloat(WEIGHT.value) > 0 ? WEIGHT.value : null;
+        
+
+        const CALCULATOR = new AnimalsSaved(veganDuration, previousConsumption, avoidedFood, weight);
+        let animals = CALCULATOR.getImpact();
+        let result = CALCULATOR.getTotalImpact();
+
+        setTimeout(()=>{
+
+            //Scroll smooth hasta el resultado
+            RESULT_TITLE.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+            //Volver a poner el texto en el boton
+            CALCULATE_BTN.innerHTML = 'Calcular';
+
+            //Mostrar el resultado
+            RESULT_BOX.forEach((box)=>{
+                box.style.visibility = 'visible';
+            });
+
+            RESULT_TITLE.innerHTML = `En <strong>${veganDuration} meses</strong> de una dieta vegana, has salvado aproximadamente <strong>${result.total} ${result.total > 1? 'animales' : 'animal'}</strong>:
+            <ul style="list-style: none;">
+                ${animals.meat > 0 ? `<li><strong>${result.meat}</strong></li>` : ''} ${animals.fish > 0? `<li><strong>${result.fish}</strong></li>` : ''} ${animals.eggs > 0? `<li><strong>${result.eggs}</strong></li>` : ''} ${animals.milk > 0 ? `<li><strong>${result.milk}</strong></li>` : ''} ${animals.seafood > 0? `<li><strong>${result.seafood}</strong></li>` : ''}
+            </ul>`;
+
+        }, 500)
+
+      })            
+})();
+
+
+class AnimalsSaved {
+    
+    _duration;
+    _frequency;
+    _avoidedFood = [];
+    _weight;
+    _impact;
+
+    constructor(duration, frequency, avoidedFood, weight) {
+        this._duration = duration;
+        this._frequency = frequency;
+        this._avoidedFood = avoidedFood;
+        this._weight = weight;
+    }
+
+    getImpact() {
+        let meat;
+        let fish;
+        let eggs;
+        let milk;
+        let seafood;
+
+        for(let type of this._avoidedFood) {
+            if(type === 'meat') {
+                meat = 2 * this._frequency;
+            }else if(type === 'fish') {
+                fish = 2.5 * this._frequency;
+            }else if(type === 'eggs') {
+                eggs = 0.42 * this._frequency;
+            }else if(type === 'milk') {
+                milk = 0.08 * this._frequency;
+            }else if(type === 'seafood') {
+                seafood = 12.5 * this._frequency;
+            }
+        }
+
+        this._impact = {meat, fish, eggs, milk, seafood};
+
+        return this._impact;
+    }
+
+    getTotalImpact(){
+
+        let total = 0;
+        for(let impact in this._impact) {
+            
+            if(this._impact[impact] === undefined || null){
+                this._impact[impact] = 0;
+                continue;
+            } 
+
+            this._impact[impact] = this._impact[impact] * this._duration; 
+
+            if(this._weight !== null) {
+                if(this._weight < 50) {
+                    this._impact[impact] = this._impact[impact] * (1 - 0.2);
+                }else if(this._weight >= 50 && this._weight <= 80){
+                    this._impact[impact] = this._impact[impact] * (1 + 0);
+                }else if(this._weight > 80){
+                    this._impact[impact] = this._impact[impact] * (1 + 0.2);
+                }
+            }
+
+            this._impact[impact] = Math.round(this._impact[impact]);
+
+            total += this._impact[impact];
+        }
+
+        return {
+            total,
+            meat: `${this._impact.meat} ${this._impact.meat > 1? 'terrestres' : 'terrestre'}`,
+            fish: `${this._impact.fish} ${this._impact.fish > 1? 'peces' : 'pez'}`,
+            eggs: `${this._impact.eggs} ${this._impact.eggs > 1? 'gallinas' : 'gallina'}`,
+            milk: `${this._impact.milk} ${this._impact.milk > 1? 'vacas lecheras' : 'vaca lechera'}`,
+            seafood: `${this._impact.seafood} ${this._impact.seafood > 1? 'mariscos' : 'marisco'}`,
+        }
+
+    }
+
+}
+</script>
