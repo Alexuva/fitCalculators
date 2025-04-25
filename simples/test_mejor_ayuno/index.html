@@ -1,0 +1,349 @@
+<form class="form-container">
+  <div class="flex">
+    <div>
+        <label><span> ¿Has realizado ayuno intermitente antes?</span></label>
+        <select id="fastingBefore" type="select" name="fastingBefore-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Nunca</option>
+            <option value="1">Alguna vez de forma esporádica</option>
+            <option value="2">Regularmente durante semanas</option>
+            <option value="3">Soy experimentado (meses o años)</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Cuál es tu horario habitual de comidas?</span></label>
+        <select id="mealTime" type="select" name="mealTime-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Como a todas horas, sin un patrón regular</option>
+            <option value="1">Tengo un horario, pero poco estricto</option>
+            <option value="2">Mantengo horarios bastante regulares</option>
+            <option value="3">Tengo horarios muy estrictos</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Cómo te sientes cuando pasas varias horas sin comer?</span></label>
+        <select id="noMealTime" type="select" name="noMealTime-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Fatal, me mareo o me pongo de mal humor</option>
+            <option value="1">Incómodo pero aguanto</option>
+            <option value="2">Normal, puedo funcionar bien</option>
+            <option value="3">Bien, apenas lo noto; incluso me siento mejor</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Cómo describirías tu relación con la comida?</span></label>
+        <select id="mealRelation" type="select" name="mealRelation-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Tengo ansiedad por la comida y como por impulso frecuentemente</option>
+            <option value="1">Como cuando tengo hambre, sin prestar mucha atención</option>
+            <option value="2">Soy consciente de lo que como, pero a veces me cuesta controlarme</option>
+            <option value="3">Tengo una relación saludable con la comida y como de manera consciente</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Cómo te afecta el hambre a nivel mental/concentración?</span></label>
+        <select id="focus" type="select" name="focus-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Me resulta imposible concentrarme si tengo hambre</option>
+            <option value="1">Me cuesta concentrarme cuando tengo hambre, pero puedo funcionar</option>
+            <option value="2">Noto el hambre pero puedo mantener mi concentración</option>
+            <option value="3">Mantengo claridad mental total. No noto nada el hambre</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Cuál es tu objetivo principal con el ayuno?</span></label>
+        <select id="objective" type="select" name="objective-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Perder algo de peso</option>
+            <option value="1">Perder peso de manera significativa</option>
+            <option value="2">Mantener la salud y sentirme bien</option>
+            <option value="3">Obtener beneficios metabólicos avanzados</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Qué flexibilidad necesitas en tu vida social?</span></label>
+        <select id="social" type="select" name="social-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Necesito máxima flexibilidad. Salgo muy a menudo a comer/cenar</option>
+            <option value="1">Prefiero bastante flexibilidad. Salgo cada semana a comer/cenar</option>
+            <option value="2">Prefiero algo de flexibilidad. Salgo muy poco a comer/cenar (1-2 veces al mes)</option>
+            <option value="3">No necesito flexibilidad porque puedo adaptarme bien a cualquier situación</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Cuál es tu nivel de actividad física?</span></label>
+        <select id="activity" type="select" name="activity-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Sedentario (sin ejercicio)</option>
+            <option value="1">Poco activo (ejercicio ocasional, 1-2 veces por semana)</option>
+            <option value="2">Moderadamente activo (ejercicio a menudo, 3-5 veces por semana)</option>
+            <option value="3">Muy activo (ejercicio diario)</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Tienes alguna condición médica que pueda afectar tu ayuno?</span></label>
+        <select id="medical" type="select" name="medical-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">Sí, necesito comer de manera regular por razones médicas</option>
+            <option value="1">Sí, pero puedo adaptarme</option>
+            <option value="3">No tengo condiciones que afecten mi ayuno</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Alguna vez has hecho ayuno de más de un día?</span></label>
+        <select id="longFasting" type="select" name="longFasting-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="0">No, ni de lejos</option>
+            <option value="1">Sí, muy pocas veces, pero ha sido insufrible</option>
+            <option value="2">Sí, alguna vez, y no ha sido tan duro como pensaba</option>
+            <option value="3">Sí, varias veces, y me siento bien haciéndolo</option>
+        </select>
+    </div>
+  </div>
+
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+          
+<p class="result" style="visibility: hidden;"><span id="show-result"></span></p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+(function() {
+
+      //Input de ayuno anteriormente
+      const FASTING_BEFORE_INPUT = document.querySelector('#fastingBefore');
+      //Input de horario de comidas
+      const MEAL_TIME_INPUT = document.querySelector('#mealTime');
+      //Input de sentimiento cuando pasas varias horas sin comer
+      const NO_MEAL_TIME_INPUT = document.querySelector('#noMealTime');
+      //Input de relación con la comida
+      const MEAL_RELATIONSHIP_INPUT = document.querySelector('#mealRelation');
+      //Input de concentración
+      const FOCUS_INPUT = document.querySelector('#focus');
+      //Input de objetivo
+      const OBJECTIVE_INPUT = document.querySelector('#objective');
+      //Input de flexibilidad
+      const SOCIAL_INPUT = document.querySelector('#social');
+      //Input de actividad física
+      const ACTIVITY_INPUT = document.querySelector('#activity');
+      //Input de condición médica
+      const MEDICAL_INPUT = document.querySelector('#medical');
+      //Input de ayuno de más de un día
+      const LONG_FASTING_INPUT = document.querySelector('#longFasting');
+
+
+      //Cajas con el resultado
+      const RESULT_BOX = document.querySelectorAll('.result');
+      //Resultado resaltado
+      const RESULT_TITLE = document.querySelector('#show-result');
+
+      //Botón de calcular
+      const CALCULATE_BTN = document.querySelector('#calculate-btn');
+      
+      //Formulario
+      const FORM = document.querySelector('.form-container');
+
+      //Regex para comprobar si los números cumplen con la condición de 2 decimales
+      const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de 1 decimal
+      const DECIMAL_REGEX = new RegExp(/^(\d+|\d+,\d{1}|\d+.\d{1})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de ser enteros
+      const INTEGERS_REGEX = new RegExp(/^\d+$/);
+
+      const SELECTS = document.querySelectorAll('select');
+      SELECTS.forEach(select => {
+        select.addEventListener('change', () => {
+          if (select.value !== "" && select.selectedIndex !== 0) {
+            select.setCustomValidity('');
+          }
+        });
+      });
+
+      FORM.addEventListener('submit', (e)=>{
+        e.preventDefault();
+
+        const selects = document.querySelectorAll('select');
+        let isValid = true;
+  
+        selects.forEach(select => {
+          if (select.value === "" || select.selectedIndex === 0) {
+            select.setCustomValidity('Por favor, selecciona una opción');
+            select.reportValidity();
+            isValid = false;
+          } else {
+            select.setCustomValidity('');
+          }
+        });
+
+        if (!isValid) {
+          return;
+        }
+
+        //Cambiar texto botón
+        CALCULATE_BTN.innerHTML = 'Calculando...';
+
+        //Ocultar resultado anterior
+        RESULT_BOX.forEach((box)=>{
+            box.style.visibility = 'hidden';
+        });
+
+        let fastingBefore = parseInt(FASTING_BEFORE_INPUT.value);
+        let mealTime = parseInt(MEAL_TIME_INPUT.value);
+        let noMealTime = parseInt(NO_MEAL_TIME_INPUT.value);
+        let mealRelationship = parseInt(MEAL_RELATIONSHIP_INPUT.value);
+        let focus = parseInt(FOCUS_INPUT.value);
+        let objective = parseInt(OBJECTIVE_INPUT.value);
+        let social = parseInt(SOCIAL_INPUT.value);
+        let activity = parseInt(ACTIVITY_INPUT.value);
+        let medical = parseInt(MEDICAL_INPUT.value);
+        let longFasting = parseInt(LONG_FASTING_INPUT.value);
+        
+        const FASTING_TYPE = new FastingType(fastingBefore, mealTime, noMealTime, mealRelationship, focus, objective, social, activity, medical, longFasting);
+        let result = FASTING_TYPE.fastingType;
+          
+        setTimeout(()=>{
+
+            //Scroll smooth hasta el resultado
+            RESULT_TITLE.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+            //Volver a poner el texto en el boton
+            CALCULATE_BTN.innerHTML = 'Calcular';
+
+            //Mostrar el resultado
+            RESULT_BOX.forEach((box)=>{
+                box.style.visibility = 'visible';
+            });
+            
+            RESULT_TITLE.innerHTML = result;
+            
+        }, 500)
+
+      })            
+})();
+
+
+class FastingType{
+
+  _fastingBefore;
+  _mealHours;
+  _feelingHungry;
+  _mealRelationship;
+  _hungryFocus;
+  _objective;
+  _flexibility;
+  _activity;
+  _medicalCondition;
+  _fastingMoreThanOnce;
+
+  constructor(
+    fastingBefore,
+    mealHours,
+    feelingHungry,
+    mealRelationship,
+    hungryFocus,
+    objective,
+    flexibility,
+    activity,
+    medicalCondition,
+    fastingMoreThanOnce
+  ){
+    this._fastingBefore = fastingBefore;
+    this._mealHours = mealHours;
+    this._feelingHungry = feelingHungry;
+    this._mealRelationship = mealRelationship;
+    this._hungryFocus = hungryFocus;
+    this._objective = objective;
+    this._flexibility = flexibility;
+    this._activity = activity;
+    this._medicalCondition = medicalCondition;
+    this._fastingMoreThanOnce = fastingMoreThanOnce;
+  }
+
+  get fastingType(){
+
+    let fastingType = "";
+
+    if(this._medicalCondition === 0){
+      fastingType = "No es recomendable que hagas ayuno. Consulta con tu médico."
+      return fastingType;
+    }
+
+    const POINTS = this._fastingBefore + this._mealHours + this._feelingHungry + this._mealRelationship + this._hungryFocus + this._objective + this._flexibility + this._activity + this._medicalCondition + this._fastingMoreThanOnce;
+
+    switch(true){
+      case (POINTS >= 0 && POINTS <= 5):
+        fastingType = "No es recomendable que hagas ayuno.";
+      break;
+      case (POINTS >= 6 && POINTS <= 10):
+        fastingType = "El ayuno que mejor puede encajar contigo es el <strong>ayuno 12/12.</strong>";
+      break;
+      case (POINTS >= 11 && POINTS <= 15):
+        fastingType = "El ayuno que mejor puede encajar contigo es el <strong>ayuno 14/10.</strong>";
+      break;
+      case (POINTS >= 16 && POINTS <= 20):
+        fastingType = "El ayuno que mejor puede encajar contigo es el <strong>ayuno 16/8.</strong>";
+      break;
+      case (POINTS >= 20 && POINTS <= 26):
+        fastingType = "El ayuno que mejor puede encajar contigo es el <strong>ayuno 20/4.</strong>";
+      break;
+      case (POINTS >= 27 && POINTS <= 28):
+        if(this._mealRelationship >= 2 && this._fastingMoreThanOnce >= 2){
+          fastingType = "El ayuno que mejor puede encajar contigo es el <strong>ayuno OMAD</strong>";
+        }else{
+          fastingType = "El ayuno que mejor puede encajar contigo es el <strong>ayuno 20/4.</strong>";
+        } 
+      break;
+      case (POINTS === 29):
+        if(this._flexibility >= 2 && this._fastingMoreThanOnce >= 2){
+          fastingType = "Podrías intentar el <strong>ayuno en días alternos.";
+        }else{
+          fastingType = "El ayuno que mejor puede encajar contigo es el <strong>ayuno OMAD.</strong>";
+        }
+      break;
+      case (POINTS >= 30):
+        if(this._feelingHungry >= 2 && this._hungryFocus >= 2 && this._fastingMoreThanOnce >= 2){
+          fastingType = "Podrías intentar el <strong>ayuno 5:2.</strong>";
+        }else{
+          fastingType = "Podrías intentar el <strong>ayuno en días alternos.</strong>"
+        }
+      break;
+    }
+
+    return fastingType;
+
+  }
+}
+</script>
