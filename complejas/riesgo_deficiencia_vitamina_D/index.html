@@ -1,0 +1,477 @@
+<form class="form-container">
+
+  <div class="flex">
+    <div>
+      <label><span>Pescado graso (salmón, atún, sardinas)</span><sup>porciones/semana</sup></label>
+      <input id="fattyFish" type="text" min="0" maxlength="3" name="fattyFish-input" placeholder="1 porción = 400 UI">
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>Yema de huevo</span><sup>porciones/semana</sup></label>
+      <input id="eggYolk" type="text" min="0" maxlength="3" name="eggYolk-input" placeholder="1 porción = 20 UI">
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>Hígado de res</span><sup>porciones/semana</sup></label>
+      <input id="beefLiver" type="text" min="0" maxlength="3" name="beefLiver-input" placeholder="1 porción = 50 UI">
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>Leche o lácteos fortificados</span><sup>ml/día</sup></label>
+      <input id="milk" type="text" min="0" maxlength="4" name="milk-input" placeholder="100 ml = 40 UI">
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>Bebidas vegetales fortificadas</span><sup>ml/día</sup></label>
+      <input id="plantMilk" type="text" min="0" maxlength="4" name="plantMilk-input" placeholder="100 ml = 40 UI">
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>Suplemento de vitamina D</span><sup>UI/día</sup></label>
+      <input id="supplement" type="text" min="0" maxlength="5" name="supplement-input" placeholder="Dosis diaria en UI">
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>Exposición solar diaria</span><sup>minutos</sup></label>
+      <input id="sunExposure" type="text" min="0" maxlength="3" name="sunExposure-input" placeholder="Minutos al día">
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>Zona geográfica (latitud)</span></label>
+      <select id="latitude" name="latitude-input" required>
+          <option disabled selected>Selecciona la zona</option>
+          <option value="tropical">Tropical (< 30°)</option>
+          <option value="subtropical">Templada (30° - 50°)</option>
+          <option value="polar">Polar (> 50°)</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>Tipo de piel</span></label>
+      <select id="skinType" name="skinType-input" required>
+          <option disabled selected>Selecciona tu tipo de piel</option>
+          <option value="very_bright">Muy clara</option>
+          <option value="bright">Clara</option>
+          <option value="medium">Media</option>
+          <option value="dark">Oscura</option>
+      </select>
+    </div>
+  </div>
+
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+          
+<p class="result" style="visibility: hidden; line-height: 1.2em;"><span id="show-result"></span></p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+(function() {
+
+      //Inputs
+      const FATTYFISH_INPUT = document.querySelector('#fattyFish');
+      const EGGYOLK_INPUT = document.querySelector('#eggYolk');
+      const BEEF_LIVER_INPUT = document.querySelector('#beefLiver');
+      const MILK_INPUT = document.querySelector('#milk');
+      const PLANT_MILK_INPUT = document.querySelector('#plantMilk');
+      const SUPPLEMENT_INPUT = document.querySelector('#supplement');
+      const SUN_EXPOSURE_INPUT = document.querySelector('#sunExposure');
+      const LATITUDE_INPUT = document.querySelector('#latitude');
+      const SKIN_TYPE_INPUT = document.querySelector('#skinType');
+
+      //Cajas con el resultado
+      const RESULT_BOX = document.querySelectorAll('.result');
+      //Resultado resaltado
+      const RESULT_TITLE = document.querySelector('#show-result');
+      //Resultado en número
+      const RESULT_NUMBER = document.querySelector('#show-result-number');
+
+      //Botón de calcular
+      const CALCULATE_BTN = document.querySelector('#calculate-btn');
+      
+      //Formulario
+      const FORM = document.querySelector('.form-container');
+
+      //Regex para comprobar si los números cumplen con la condición de 2 decimales
+      const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de ser enteros
+      const INTEGERS_REGEX = new RegExp(/^\d+$/);
+
+      const SELECTS = document.querySelectorAll('select');
+      SELECTS.forEach(select => {
+        select.addEventListener('change', () => {
+          if (select.value !== "" && select.selectedIndex !== 0) {
+            select.setCustomValidity('');
+          }
+        });
+      });
+
+      //Comprobar que ha introducido la cantidad de gramos
+      FATTYFISH_INPUT.addEventListener('input', ()=>{
+
+          //Comprobar si el numero es un entero
+          if(FATTYFISH_INPUT.value.length > 0){
+            if(!INTEGERS_REGEX.test(FATTYFISH_INPUT.value)){
+              FATTYFISH_INPUT.setCustomValidity('Introduce un número entero válido');
+              FATTYFISH_INPUT.reportValidity();
+              return
+            }
+          }else{
+            FATTYFISH_INPUT.setCustomValidity('');
+            return
+          }
+          
+          
+          const VALUE = parseInt(FATTYFISH_INPUT.value);
+          const MIN = parseInt(FATTYFISH_INPUT.getAttribute('min'));
+          const MAX = parseInt(FATTYFISH_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            FATTYFISH_INPUT.setCustomValidity(`La cantidad mínima son ${MIN} porciones`);
+            FATTYFISH_INPUT.reportValidity();
+          }else{
+            FATTYFISH_INPUT.setCustomValidity('');
+          }
+      })
+
+      EGGYOLK_INPUT.addEventListener('input', ()=>{
+          //Comprobar si el numero es un entero
+          if(EGGYOLK_INPUT.value.length > 0){
+              if(!INTEGERS_REGEX.test(EGGYOLK_INPUT.value)){
+                  EGGYOLK_INPUT.setCustomValidity('Introduce un número entero válido');
+                  EGGYOLK_INPUT.reportValidity();
+                  return
+              }
+          }else{
+              EGGYOLK_INPUT.setCustomValidity('');
+              return
+          }
+          
+          const VALUE = parseInt(EGGYOLK_INPUT.value);
+          const MIN = parseInt(EGGYOLK_INPUT.getAttribute('min'));
+          const MAX = parseInt(EGGYOLK_INPUT.getAttribute('max'));
+      
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+              EGGYOLK_INPUT.setCustomValidity(`La cantidad mínima son ${MIN} porciones`);
+              EGGYOLK_INPUT.reportValidity();
+          }else{
+              EGGYOLK_INPUT.setCustomValidity('');
+          }
+      })
+
+      BEEF_LIVER_INPUT.addEventListener('input', ()=>{
+          //Comprobar si el numero es un entero
+          if(BEEF_LIVER_INPUT.value.length > 0){
+              if(!INTEGERS_REGEX.test(BEEF_LIVER_INPUT.value)){
+                  BEEF_LIVER_INPUT.setCustomValidity('Introduce un número entero válido');
+                  BEEF_LIVER_INPUT.reportValidity();
+                  return
+              }
+          }else{
+              BEEF_LIVER_INPUT.setCustomValidity('');
+              return
+          }
+          
+          const VALUE = parseInt(BEEF_LIVER_INPUT.value);
+          const MIN = parseInt(BEEF_LIVER_INPUT.getAttribute('min'));
+          const MAX = parseInt(BEEF_LIVER_INPUT.getAttribute('max'));
+      
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+              BEEF_LIVER_INPUT.setCustomValidity(`La cantidad mínima son ${MIN} porciones`);
+              BEEF_LIVER_INPUT.reportValidity();
+          }else{
+              BEEF_LIVER_INPUT.setCustomValidity('');
+          }   
+      })
+
+      MILK_INPUT.addEventListener('input', ()=>{
+          //Comprobar si el numero es un entero
+          if(MILK_INPUT.value.length > 0){
+              if(!INTEGERS_REGEX.test(MILK_INPUT.value)){
+                  MILK_INPUT.setCustomValidity('Introduce un número entero válido');
+                  MILK_INPUT.reportValidity();
+                  return
+              }
+          }else{
+              MILK_INPUT.setCustomValidity('');
+              return
+          }
+          
+          const VALUE = parseInt(MILK_INPUT.value);
+          const MIN = parseInt(MILK_INPUT.getAttribute('min'));
+          const MAX = parseInt(MILK_INPUT.getAttribute('max'));
+      
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+              MILK_INPUT.setCustomValidity(`La cantidad mínima son ${MIN} ml`);
+              MILK_INPUT.reportValidity();
+          }else{
+              MILK_INPUT.setCustomValidity('');
+          }
+      })
+
+      PLANT_MILK_INPUT.addEventListener('input', ()=>{
+          //Comprobar si el numero es un entero
+          if(PLANT_MILK_INPUT.value.length > 0){
+              if(!INTEGERS_REGEX.test(PLANT_MILK_INPUT.value)){
+                  PLANT_MILK_INPUT.setCustomValidity('Introduce un número entero válido');
+                  PLANT_MILK_INPUT.reportValidity();
+                  return
+              }
+          }else{
+              PLANT_MILK_INPUT.setCustomValidity('');
+              return
+          }
+          
+          const VALUE = parseInt(PLANT_MILK_INPUT.value);
+          const MIN = parseInt(PLANT_MILK_INPUT.getAttribute('min'));
+          const MAX = parseInt(PLANT_MILK_INPUT.getAttribute('max'));
+      
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+              PLANT_MILK_INPUT.setCustomValidity(`La cantidad mínima son ${MIN} ml`);
+              PLANT_MILK_INPUT.reportValidity();
+          }else{
+              PLANT_MILK_INPUT.setCustomValidity('');
+          }
+      })
+
+      SUPPLEMENT_INPUT.addEventListener('input', ()=>{
+          //Comprobar si el numero es un entero
+          if(SUPPLEMENT_INPUT.value.length > 0){
+              if(!INTEGERS_REGEX.test(SUPPLEMENT_INPUT.value)){
+                  SUPPLEMENT_INPUT.setCustomValidity('Introduce un número entero válido');
+                  SUPPLEMENT_INPUT.reportValidity();
+                  return
+              }
+          }else{
+              SUPPLEMENT_INPUT.setCustomValidity('');
+              return
+          }
+          
+          const VALUE = parseInt(SUPPLEMENT_INPUT.value);
+          const MIN = parseInt(SUPPLEMENT_INPUT.getAttribute('min'));
+          const MAX = parseInt(SUPPLEMENT_INPUT.getAttribute('max'));
+      
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+              SUPPLEMENT_INPUT.setCustomValidity(`La cantidad mínima son ${MIN} UI`);
+              SUPPLEMENT_INPUT.reportValidity();
+          }else{
+              SUPPLEMENT_INPUT.setCustomValidity('');
+          }
+      })
+
+      SUN_EXPOSURE_INPUT.addEventListener('input', ()=>{
+          //Comprobar si el numero es un entero
+          if(SUN_EXPOSURE_INPUT.value.length > 0){
+              if(!INTEGERS_REGEX.test(SUN_EXPOSURE_INPUT.value)){
+                  SUN_EXPOSURE_INPUT.setCustomValidity('Introduce un número entero válido');
+                  SUN_EXPOSURE_INPUT.reportValidity();
+                  return
+              }
+          }else{
+              SUN_EXPOSURE_INPUT.setCustomValidity('');
+              return
+          }
+          
+          const VALUE = parseInt(SUN_EXPOSURE_INPUT.value);
+          const MIN = parseInt(SUN_EXPOSURE_INPUT.getAttribute('min'));
+          const MAX = parseInt(SUN_EXPOSURE_INPUT.getAttribute('max'));
+      
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+              SUN_EXPOSURE_INPUT.setCustomValidity(`La cantidad mínima son ${MIN} minutos`);
+              SUN_EXPOSURE_INPUT.reportValidity();
+          }else{
+              SUN_EXPOSURE_INPUT.setCustomValidity('');
+          }
+      })
+
+      FORM.addEventListener('submit', (e)=>{
+        e.preventDefault();
+
+        const selects = document.querySelectorAll('select');
+        let isValid = true;
+  
+        selects.forEach(select => {
+          if (select.value === "" || select.selectedIndex === 0) {
+            select.setCustomValidity('Por favor, selecciona una opción');
+            select.reportValidity();
+            isValid = false;
+          } else {
+            select.setCustomValidity('');
+          }
+        });
+
+        if (!isValid) {
+          return;
+        }
+
+
+        //Cambiar texto botón
+        CALCULATE_BTN.innerHTML = 'Calculando...';
+
+        //Ocultar resultado anterior
+        RESULT_BOX.forEach((box)=>{
+            box.style.visibility = 'hidden';
+        });
+
+        let fattyFish = FATTYFISH_INPUT.value ? parseInt(FATTYFISH_INPUT.value) : 0;
+        let eggYolk = EGGYOLK_INPUT.value ? parseInt(EGGYOLK_INPUT.value) : 0;
+        let beefLiver = BEEF_LIVER_INPUT.value ? parseInt(BEEF_LIVER_INPUT.value) : 0;
+        let milk = MILK_INPUT.value ? parseInt(MILK_INPUT.value) : 0;
+        let plantMilk = PLANT_MILK_INPUT.value ? parseInt(PLANT_MILK_INPUT.value) : 0;
+        let supplement = SUPPLEMENT_INPUT.value ? parseInt(SUPPLEMENT_INPUT.value) : 0;
+        let sunExposure = SUN_EXPOSURE_INPUT.value ? parseInt(SUN_EXPOSURE_INPUT.value) : 0;
+        let latitude = LATITUDE_INPUT.value;
+        let skinType = SKIN_TYPE_INPUT.value;
+        
+        const CALCULATOR = new VitamineDeficit(fattyFish, eggYolk, beefLiver, milk, plantMilk, supplement, sunExposure, latitude, skinType);
+        let totalUI = CALCULATOR.TotalUI;
+        let result = CALCULATOR.DeficitRisk;
+
+        setTimeout(()=>{
+
+            //Scroll smooth hasta el resultado
+            RESULT_TITLE.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+            //Volver a poner el texto en el boton
+            CALCULATE_BTN.innerHTML = 'Calcular';
+
+            //Mostrar el resultado
+            RESULT_BOX.forEach((box)=>{
+                box.style.visibility = 'visible';
+            });
+            
+            RESULT_TITLE.innerHTML = `Tu ingesta total estimada de vitamina D es de <strong>${totalUI} UI/día</strong>, lo que indica un <strong>${result} riesgo</strong> de deficiencia.`;
+            
+        }, 500)
+
+      })            
+})();
+
+class VitamineDeficit {
+
+  _fish;
+  _egg;
+  _meat;
+  _milk;
+  _vegetable;
+  _vitamin;
+  _solar;
+  _latitude;
+  _skin;
+
+  _fishUI;
+  _eggUI;
+  _meatUI;
+  _milkUI;
+  _totalAnimalUI;
+
+  _vegetableUI;
+  _totalVegetableUI;
+
+  _vitaminUI;
+  _totalSuplementUI;
+
+  _solarUI;
+  _totalSolarUI;
+
+  constructor(fish, egg, meat, milk, vegetable, vitamin, solar, latitude, skin) {
+      this._fish = fish;
+      this._egg = egg;
+      this._meat = meat;
+      this._milk = milk;
+      this._vegetable = vegetable;
+      this._vitamin = vitamin;
+      this._solar = solar;
+      this._latitude = latitude;
+      this._skin = skin;
+  }
+
+  calculateUI(){
+      this._fishUI = Math.round((this._fish * 400) / 7);
+      this._eggUI = Math.round((this._egg * 20) / 7);
+      this._meatUI = Math.round((this._meat * 50) / 7);
+      this._milkUI = Math.round((this._milk * 0.4));
+
+      this._totalAnimalUI = this._fishUI + this._eggUI + this._meatUI + this._milkUI;
+
+      this._vegetableUI = Math.round((this._vegetable * 0.4));
+      this._totalVegetableUI = this._vegetableUI;
+
+      this._vitaminUI = this._vitamin;
+      this._totalSuplementUI = this._vitaminUI;
+
+      if(this._latitude === 'tropical'){
+          if(this._skin === 'very_bright'){
+              this._solarUI = Math.round((this._solar * 20 * 1));
+          }else if(this._skin ==='bright'){
+              this._solarUI = Math.round((this._solar * 20 * 0.8));
+          }else if(this._skin ==='medium'){
+              this._solarUI = Math.round((this._solar * 20 * 0.6));
+          }else if(this._skin ==='dark'){
+              this._solarUI = Math.round((this._solar * 20 * 0.4));
+          }
+      }else if(this._latitude === 'subtropical'){
+          if(this._skin === 'very_bright'){
+              this._solarUI = Math.round((this._solar * 10 * 1));
+          }else if(this._skin ==='bright'){
+              this._solarUI = Math.round((this._solar * 10 * 0.8));
+          }else if(this._skin ==='medium'){
+              this._solarUI = Math.round((this._solar * 10 * 0.6));
+          }else if(this._skin ==='dark'){
+              this._solarUI = Math.round((this._solar * 10 * 0.4));
+          }
+      }else{
+          if(this._skin === 'very_bright'){
+              this._solarUI = Math.round((this._solar * 5 * 1));
+          }else if(this._skin ==='bright'){
+              this._solarUI = Math.round((this._solar * 5 * 0.8));
+          }else if(this._skin ==='medium'){
+              this._solarUI = Math.round((this._solar * 5 * 0.6));
+          }else if(this._skin ==='dark'){
+              this._solarUI = Math.round((this._solar * 5 * 0.4));
+          }
+      }
+
+      this._totalSolarUI = this._solarUI;
+  }
+
+  get TotalUI(){
+      this.calculateUI();
+      return this._totalAnimalUI + this._totalVegetableUI + this._totalSuplementUI + this._totalSolarUI;
+  }
+
+  get DeficitRisk(){
+      let total = this.TotalUI;
+      if(total < 400){
+          return 'alto';
+      }else if(total >= 400 && total < 599){
+          return 'medio';
+      }else{
+          return 'bajo';
+      }
+  }
+
+}
+
+</script>

@@ -115,11 +115,11 @@ class VitamineDeficit {
     get DeficitRisk(){
         let total = this.TotalUI;
         if(total < 400){
-            return 'high';
+            return 'alto';
         }else if(total >= 400 && total < 599){
-            return 'medium';
+            return 'medio';
         }else{
-            return 'low';
+            return 'bajo';
         }
     }
 
