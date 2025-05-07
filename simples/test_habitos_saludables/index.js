@@ -201,7 +201,7 @@ class HealthyHabits {
 
 	get TotalPoints(){
 		const points = this._IMC + this._Fat + this._water + this._fruits + this._sleep + this._seated + this._steps + this._exerciseTime + this._smoking + this._alcohol + this._stress;
-
+		console.log(points)
 		if(points >= 0 && points <= 9){
 			this._TotalPoints = points;
 			this._State = 'En general, tienes unos hábitos muy poco saludables.';
@@ -230,16 +230,16 @@ const CALCULATE = new HealthyHabits(
 	25,
 	170,
 	70,
-	20,
-	2,
-	2,
+	10,
+	4,
+	4,
 	4,
 	4,	
-	4000,
-	3,
-	2,
-	2,
-	2
+	4,
+	4,
+	4,
+	4,
+	4
 )
 console.log('gender', CALCULATE._gender)
 console.log('age',CALCULATE._age)
@@ -248,3 +248,5 @@ console.log('weight', CALCULATE._weight)
 console.log('fatPer',CALCULATE._fatPercentage)
 console.log('imc', CALCULATE.IMC)
 console.log('fatPoints',CALCULATE.Fat)
+console.log('totalPoints', CALCULATE.TotalPoints)
+console.log('points', CALCULATE._TotalPoints)

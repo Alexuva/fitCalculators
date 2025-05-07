@@ -296,7 +296,7 @@
                 box.style.visibility = 'visible';
             });
             
-            RESULT_TITLE.innerHTML = `El Índice de Saciedad para una porción de <strong>${portion} gramos de ${foodName}</strong> es aproximadamente <strong>${relative}</strong>, en comparación con el pan blanco.`;
+            RESULT_TITLE.innerHTML = `El Índice de Saciedad para una porción de <strong>${portion} gramos de ${foodName}</strong> es aproximadamente <strong>${relative}</strong> en comparación con el pan blanco.`;
             
         }, 500)
 
@@ -355,7 +355,7 @@ class SatietyIndex {
   }
 
   get RelativeSatietyIndex(){
-      return parseFloat((this._satietyIndex * (70 / this._totalCalories)).toFixed(2));
+      return parseFloat((this._satietyIndex * (70 / this._totalCalories)).toFixed(2)).toLocaleString('es-ES', { maximumFractionDigits: 1});
   }
 
 }

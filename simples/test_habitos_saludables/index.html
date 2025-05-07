@@ -1,7 +1,7 @@
 <form class="form-container">
   <div class="flex">
       <div>
-          <label><span>Tu Sexo</span></label>
+          <label><span>Tu sexo</span></label>
           <select id="gender" type="select" name="gender-input" required>
               <option disabled selected>Selecciona tu sexo</option>
               <option value="men">Hombre</option>
@@ -9,7 +9,7 @@
           </select>
       </div>
       <div>
-          <label><span>Tu Edad</span></label>
+          <label><span>Tu edad</span></label>
           <input id="age" type="text" min="16" max="99" maxlength="2" name="age-input" placeholder="Introduce tu edad" required>
       </div>
   </div>
@@ -31,14 +31,14 @@
   </div>
   <div class="flex">
     <div>
-        <label><span>¿Cuántos vasos de agua bebes al día?(aproximadamente)</span></label>
+        <label><span>¿Cuántos vasos de agua bebes al día? (aproximadamente)</span></label>
         <select id="water" type="select" name="water-input" required>
             <option disabled selected>Selecciona</option>
-            <option value="0">1-2 vasos (0.25L - 0.5L)</option>
-            <option value="1">3-4 vasos (0.75L - 1L)</option>
-            <option value="2">5-6 vasos (1.25L - 1.5L)</option>
-            <option value="3">7-8 vasos (1.75L - 2L)</option>
-            <option value="4">Más de 8 vasos (>2L)</option>
+            <option value="0">1-2 vasos (0,25-0.5 L)</option>
+            <option value="1">3-4 vasos (0,75-1 L)</option>
+            <option value="2">5-6 vasos (1,25-1.5 L)</option>
+            <option value="3">7-8 vasos (1,75-2 L)</option>
+            <option value="4">Más de 8 vasos (>2 L)</option>
         </select>
     </div>
   </div>
@@ -96,7 +96,7 @@
   </div>
   <div class="flex">
     <div>
-        <label><span>¿Cuánto tiempo dedicas a ejercicio moderado-intenso por semana?</span></label>
+        <label><span>¿Cuánto tiempo dedicas a ejercicio moderado-intenso <u>por semana</u>?</span></label>
         <select id="exercise" type="select" name="exercise-input" required>
             <option disabled selected>Selecciona</option>
             <option value="0">Nada</option>
@@ -122,7 +122,7 @@
   </div>
   <div class="flex">
     <div>
-      <label><span>¿Cuál es tu consumo semanal de alcohol?</span></label>
+      <label><span>¿Cuál es tu consumo <u>semanal</u> de alcohol?</span></label>
       <select id="alcohol" type="select" name="alcohol-input" required>
           <option disabled selected>Selecciona</option>
           <option value="0">Más de 14 copas</option>
@@ -384,7 +384,7 @@
         let alcohol = parseInt(ALCOHOL_INPUT.value);
         let stress = parseInt(STRESS_INPUT.value);
 
-        const CALCULATOR = new HealthyHabits(gender, age, weight, height, fat, water, fruit, sleep, seat, steps, exercise, smoke, alcohol, stress);
+        const CALCULATOR = new HealthyHabits(gender, age,height, weight, fat, water, fruit, sleep, seat, steps, exercise, smoke, alcohol, stress);
         CALCULATOR.IMC;
         CALCULATOR.Fat;
         let result = CALCULATOR.TotalPoints;
@@ -550,7 +550,7 @@ class HealthyHabits {
 
 	get TotalPoints(){
 		const points = this._IMC + this._Fat + this._water + this._fruits + this._sleep + this._seated + this._steps + this._exerciseTime + this._smoking + this._alcohol + this._stress;
-
+    console.log(points);
 		if(points >= 0 && points <= 9){
 			this._TotalPoints = points;
 			this._State = 'muy poco';

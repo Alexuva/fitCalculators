@@ -85,7 +85,7 @@
         let vitamine = parseInt(VITAMINE_INPUT.value);
 
         const CALCULATOR = new VitamineD3Conversion(vitamine);
-        const { mg, mgc } = CALCULATOR.conversion;
+        const { mg, mcg } = CALCULATOR.conversion;
 
         setTimeout(()=>{
 
@@ -100,7 +100,7 @@
                 box.style.visibility = 'visible';
             });
 
-            RESULT_TITLE.innerHTML = `${mg}mg o ${mgc}mgc`;
+            RESULT_TITLE.innerHTML = `${mg} o ${mcg}`;
 
         }, 500)
 
@@ -111,26 +111,31 @@
 class VitamineD3Conversion {
     _ui;
     _mg;
-    _mgc;
+    _mcg;
 
     constructor(ui){
         this._ui = ui;
     }
     
     get mgConversion(){
-        this._mg = (this._ui / 40_000).toFixed(6);
+        this._mg = parseFloat((this._ui / 40_000).toFixed(6)).toLocaleString('es-ES', {
+            minimumFractionDigits: 3,
+            maximumFractionDigits: 3
+        }) + ' mg';
         return this._mg;
     }
 
-    get mgcConversion(){
-        this._mgc = (this._ui / 40).toFixed(2);
-        return this._mgc;
+    get mcgConversion(){
+        this._mcg = parseFloat((this._ui / 40).toFixed(2)).toLocaleString('es-ES', {
+            maximumFractionDigits: 2
+        }) + ' mcg';
+        return this._mcg;
     }
 
     get conversion(){
         const mg = this.mgConversion;
-        const mgc = this.mgcConversion;
-        return { mg, mgc }
+        const mcg = this.mcgConversion;
+        return { mg, mcg }
     }
 
 }
