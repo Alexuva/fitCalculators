@@ -19,7 +19,7 @@ class FitoIndex {
   }
 
   calculate() {
-    this.total = (this.#richCalories / this.#totalCalories) * 100;
+    this.total = parseInt(((this.#richCalories / this.#totalCalories) * 100).toFixed());
     if(this.total >= 0 && this.total <= 9){
       this.classification = `Tu índice fitoquímico es del ${this.total}%, lo cual es considerado <b>crítico</b>. Muy bajo consumo de alimentos ricos en fitoquímicos; dieta basada en alimentos no saludables.`;
     }else if(this.total >= 10 && this.total <= 29){
