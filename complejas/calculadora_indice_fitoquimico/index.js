@@ -35,3 +35,45 @@ class FitoIndex {
     }
   }
 }
+
+// Ejemplo 1: Dieta crítica en fitoquímicos
+console.log("=== Ejemplo 1: Dieta crítica en fitoquímicos ===");
+const dietaCritica = new FitoIndex(2500, 150);
+console.log("Calorías totales: 2500 kcal/día");
+console.log("Calorías de alimentos ricos en fitoquímicos: 150 kcal/día");
+console.log(dietaCritica.classification);
+
+// Ejemplo 2: Dieta muy deficiente en fitoquímicos
+console.log("\n=== Ejemplo 2: Dieta muy deficiente en fitoquímicos ===");
+const dietaMuyDeficiente = new FitoIndex(2000, 400);
+console.log("Calorías totales: 2000 kcal/día");
+console.log("Calorías de alimentos ricos en fitoquímicos: 400 kcal/día");
+console.log(dietaMuyDeficiente.classification);
+
+// Ejemplo 3: Dieta deficiente en fitoquímicos
+console.log("\n=== Ejemplo 3: Dieta deficiente en fitoquímicos ===");
+const dietaDeficiente = new FitoIndex(2200, 880);
+console.log("Calorías totales: 2200 kcal/día");
+console.log("Calorías de alimentos ricos en fitoquímicos: 880 kcal/día");
+console.log(dietaDeficiente.classification);
+
+// Ejemplo 4: Dieta moderada en fitoquímicos
+console.log("\n=== Ejemplo 4: Dieta moderada en fitoquímicos ===");
+const dietaModerada = new FitoIndex(2400, 1440);
+console.log("Calorías totales: 2400 kcal/día");
+console.log("Calorías de alimentos ricos en fitoquímicos: 1440 kcal/día");
+console.log(dietaModerada.classification);
+
+// Ejemplo 5: Dieta buena en fitoquímicos
+console.log("\n=== Ejemplo 5: Dieta buena en fitoquímicos ===");
+const dietaBuena = new FitoIndex(2300, 1840);
+console.log("Calorías totales: 2300 kcal/día");
+console.log("Calorías de alimentos ricos en fitoquímicos: 1840 kcal/día");
+console.log(dietaBuena.classification);
+
+// Ejemplo 6: Dieta excelente en fitoquímicos
+console.log("\n=== Ejemplo 6: Dieta excelente en fitoquímicos ===");
+const dietaExcelente = new FitoIndex(2000, 1900);
+console.log("Calorías totales: 2000 kcal/día");
+console.log("Calorías de alimentos ricos en fitoquímicos: 1900 kcal/día");
+console.log(dietaExcelente.classification);
