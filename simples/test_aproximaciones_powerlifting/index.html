@@ -1,0 +1,536 @@
+<form class="form-container">
+
+  <div class="flex">
+    <div>
+      <label><span>Ejercicio</span></label>
+      <select id="exercise" name="exercise-input" required>
+          <option disabled selected>Selecciona el ejercicio</option>
+          <option value="Sentadilla">Sentadilla</option>
+          <option value="Press banca">Press banca</option>
+          <option value="Peso muerto">Peso muerto</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>1RM Actual en el ejercicio</span><sup>Kg</sup></label>
+      <input id="rm" type="text" min="1" maxlength="5" name="rm-input" placeholder="Introduce tu 1RM en el ejercicio indicado">
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>Peso objetivo de la primera serie efectiva</span><sup>kg</sup></label>
+      <input id="po" type="text" min="0" maxlength="5" name="po-input" placeholder="Introduce el peso en kg" required>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>Número de repeticiones de la primera serie efectiva</span></label>
+      <input id="nr" type="text" min="1" maxlength="4" name="nr-input" placeholder="Introduce el número de repeticiones" required>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>RPE programado de la primera serie efectiva</span></label>
+      <input id="rpe" type="text" min="1" maxlength="2" name="rpe-input" placeholder="Siendo RPE=1 “mínimo esfuerzo” y RPE=10 “esfuerzo máximo”." required>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Cómo te sientes o cómo esperas sentirte ese día?</span></label>
+      <select id="feeling" name="feeling-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="a">Pletórico, a tope</option>
+          <option value="b">Con buenas sensaciones, con energía</option>
+          <option value="c">Algo regular y cansado, mejorable</option>
+          <option value="d">Muy cansado, con malas sensaciones</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>RPE de la primera serie de aproximación</span></label>
+      <input id="rpe1" type="text" min="1" maxlength="2" name="rpe1-input" placeholder="Siendo RPE=1 “mínimo esfuerzo” y RPE=10 “esfuerzo máximo”." required>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>RPE de la segunda serie de aproximación</span></label>
+      <input id="rpe2" type="text" min="1" maxlength="2" name="rpe2-input" placeholder="Siendo RPE=1 “mínimo esfuerzo” y RPE=10 “esfuerzo máximo”." required>
+    </div>
+  </div>
+  
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+
+<p class="result" style="visibility: hidden;">Tus series de aproximación son:</p>
+        
+<table class="table" id="result-table" style="display: none">
+  <thead class="thead-light">
+      <tr>
+          <th scope="col">Series de aproximación</th>
+          <th scope="col">Peso (kg)</th>
+          <th scope="col">N.º repeticiones</th>
+      </tr>
+  </thead>
+  
+  <tbody class="text-center">
+      <tr id="first">
+          <td class="result-type">1ª</td>
+          <td class="results series"></td>
+          <td class="results reps"></td>
+      </tr>
+      <tr id="second">
+          <td class="result-type">2ª</td>
+          <td class="results series"></td>
+          <td class="results reps"></td>
+      </tr>
+      <tr id="third">
+          <td class="result-type">3ª</td>
+          <td class="results series"></td>
+          <td class="results reps"></td>
+      </tr>
+  </tbody>
+</table>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+(function() {
+
+      //Inputs
+      const EXERCISE_INPUT = document.querySelector('#exercise');
+      const RM_INPUT = document.querySelector('#rm');
+      const PO_INPUT = document.querySelector('#po');
+      const NR_INPUT = document.querySelector('#nr');
+      const RPE_INPUT = document.querySelector('#rpe');
+      const FEELING_INPUT = document.querySelector('#feeling');
+      const RPE1_INPUT = document.querySelector('#rpe1');
+      const RPE2_INPUT = document.querySelector('#rpe2');
+
+      //Cajas con el resultado
+      const RESULT_BOX = document.querySelector('.result');
+
+      //Tabla
+      const RESULT_TABLE = document.querySelector('#result-table');
+
+      //Botón de calcular
+      const CALCULATE_BTN = document.querySelector('#calculate-btn');
+      
+      //Formulario
+      const FORM = document.querySelector('.form-container');
+
+      //Regex para comprobar si los números cumplen con la condición de 2 decimales
+      const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+      const DECIMAL_REGEX = new RegExp(/^(\d+|\d+,\d{1}|\d+.\d{1})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de ser enteros
+      const INTEGERS_REGEX = new RegExp(/^\d+$/);
+
+      const SELECTS = document.querySelectorAll('select');
+      SELECTS.forEach(select => {
+        select.addEventListener('change', () => {
+          if (select.value !== "" && select.selectedIndex !== 0) {
+            select.setCustomValidity('');
+          }
+        });
+      });
+
+      //Comprobar que ha introducido el 1RM
+      RM_INPUT.addEventListener('input', ()=>{
+          //Comprobar si el numero tiene como máximo 1 decimal
+          if(RM_INPUT.value.length > 0){
+            if(!DECIMAL_REGEX.test(RM_INPUT.value)){
+              RM_INPUT.setCustomValidity('Introduce un peso válido');
+              RM_INPUT.reportValidity();
+              return
+            }
+          }else{
+            RM_INPUT.setCustomValidity('');
+            return
+          }
+          
+          
+          const VALUE = parseInt(RM_INPUT.value);
+          const MIN = parseInt(RM_INPUT.getAttribute('min'));
+          const MAX = parseInt(RM_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            RM_INPUT.setCustomValidity(`El mínimo son ${MIN}kg y el máximo son ${MAX}kg`);
+            RM_INPUT.reportValidity();
+          }else{
+            RM_INPUT.setCustomValidity('');
+          }
+      })
+
+      //Comprobar que ha introducido el peso objetivo
+      PO_INPUT.addEventListener('input', ()=>{
+          //Comprobar si el numero tiene como máximo 1 decimal
+          if(PO_INPUT.value.length > 0){
+            if(!DECIMAL_REGEX.test(PO_INPUT.value)){
+              PO_INPUT.setCustomValidity('Introduce un peso válido');
+              PO_INPUT.reportValidity();
+              return
+            }
+          }else{
+            PO_INPUT.setCustomValidity('');
+            return
+          }
+          
+          
+          const VALUE = parseInt(PO_INPUT.value);
+          const MIN = parseInt(PO_INPUT.getAttribute('min'));
+          const MAX = parseInt(PO_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            PO_INPUT.setCustomValidity(`El mínimo son ${MIN}kg y el máximo son ${MAX}kg`);
+            PO_INPUT.reportValidity();
+          }else{
+            PO_INPUT.setCustomValidity('');
+          }
+      })
+
+      NR_INPUT.addEventListener('input', ()=>{
+          //Comprobar si el numero es un entero
+          if(NR_INPUT.value.length > 0){
+              if(!INTEGERS_REGEX.test(NR_INPUT.value)){
+                NR_INPUT.setCustomValidity('Introduce un número de repeticiones válido');
+                NR_INPUT.reportValidity();
+                return
+              }
+          }else{
+            NR_INPUT.setCustomValidity('');
+            return
+          }
+          
+          const VALUE = parseInt(NR_INPUT.value);
+          const MIN = parseInt(NR_INPUT.getAttribute('min'));
+          const MAX = parseInt(NR_INPUT.getAttribute('max'));
+      
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            NR_INPUT.setCustomValidity(`Inserta un número de repeticiones entre ${MIN} y ${MAX}`);
+            NR_INPUT.reportValidity();
+          }else{
+            NR_INPUT.setCustomValidity('');
+          }   
+      })
+
+      RPE_INPUT.addEventListener('input', ()=>{
+          //Comprobar si el numero es un entero
+          if(RPE_INPUT.value.length > 0){
+              if(!INTEGERS_REGEX.test(RPE_INPUT.value)){
+                RPE_INPUT.setCustomValidity('Introduce un RPE válido');
+                RPE_INPUT.reportValidity();
+                return
+              }
+          }else{
+            RPE_INPUT.setCustomValidity('');
+            return
+          }
+          
+          const VALUE = parseInt(RPE_INPUT.value);
+          const MIN = parseInt(RPE_INPUT.getAttribute('min'));
+          const MAX = parseInt(RPE_INPUT.getAttribute('max'));
+      
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            RPE_INPUT.setCustomValidity(`Inserta un RPE entre ${MIN} y ${MAX}`);
+            RPE_INPUT.reportValidity();
+          }else{
+            RPE_INPUT.setCustomValidity('');
+          }   
+      })
+
+      RPE1_INPUT.addEventListener('input', ()=>{
+          //Comprobar si el numero es un entero
+          if(RPE1_INPUT.value.length > 0){
+              if(!INTEGERS_REGEX.test(RPE1_INPUT.value)){
+                RPE1_INPUT.setCustomValidity('Introduce un RPE válido');
+                RPE1_INPUT.reportValidity();
+                return
+              }
+          }else{
+            RPE1_INPUT.setCustomValidity('');
+            return
+          }
+          
+          const VALUE = parseInt(RPE1_INPUT.value);
+          const MIN = parseInt(RPE1_INPUT.getAttribute('min'));
+          const MAX = parseInt(RPE1_INPUT.getAttribute('max'));
+      
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            RPE1_INPUT.setCustomValidity(`Inserta un RPE entre ${MIN} y ${MAX}`);
+            RPE1_INPUT.reportValidity();
+          }else{
+            RPE1_INPUT.setCustomValidity('');
+          }   
+      })
+
+      RPE2_INPUT.addEventListener('input', ()=>{
+          //Comprobar si el numero es un entero
+          if(RPE2_INPUT.value.length > 0){
+              if(!INTEGERS_REGEX.test(RPE2_INPUT.value)){
+                RPE2_INPUT.setCustomValidity('Introduce un RPE válido');
+                RPE2_INPUT.reportValidity();
+                return
+              }
+          }else{
+            RPE2_INPUT.setCustomValidity('');
+            return
+          }
+          
+          const VALUE = parseInt(RPE2_INPUT.value);
+          const MIN = parseInt(RPE2_INPUT.getAttribute('min'));
+          const MAX = parseInt(RPE2_INPUT.getAttribute('max'));
+      
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            RPE2_INPUT.setCustomValidity(`Inserta un RPE entre ${MIN} y ${MAX}`);
+            RPE2_INPUT.reportValidity();
+          }else{
+            RPE2_INPUT.setCustomValidity('');
+          }   
+      })
+
+      FORM.addEventListener('submit', (e)=>{
+        e.preventDefault();
+
+        const selects = document.querySelectorAll('select');
+        let isValid = true;
+  
+        selects.forEach(select => {
+          if (select.value === "" || select.selectedIndex === 0) {
+            select.setCustomValidity('Por favor, selecciona una opción');
+            select.reportValidity();
+            isValid = false;
+          } else {
+            select.setCustomValidity('');
+          }
+        });
+
+        if (!isValid) {
+          return;
+        }
+
+
+        //Cambiar texto botón
+        CALCULATE_BTN.innerHTML = 'Calculando...';
+
+        //Ocultar resultado anterior
+        RESULT_TABLE.style.display = 'none';
+        RESULT_BOX.style.visibility = 'hidden';
+
+        let exercise = EXERCISE_INPUT.value;
+        let rm = parseFloat(RM_INPUT.value.replace(',','.'));
+        let po = parseFloat(PO_INPUT.value.replace(',','.'));
+        let nr = parseInt(NR_INPUT.value);
+        let rpe = parseInt(RPE_INPUT.value);
+        let feeling = FEELING_INPUT.value;
+        let rpe1 = parseInt(RPE1_INPUT.value);
+        let rpe2 = parseInt(RPE2_INPUT.value);
+        
+        const CALCULATOR = new Powerlifting(exercise, rm, po, nr, rpe, feeling, rpe1, rpe2);
+        let aprox = CALCULATOR.Approximations;
+        let repDivs = RESULT_TABLE.querySelectorAll('.reps');
+        repDivs.forEach(div => {
+            div.innerHTML = aprox.reps;
+        });
+        RESULT_TABLE.querySelector('#first .series').innerHTML = aprox.S1;
+        RESULT_TABLE.querySelector('#second .series').innerHTML = aprox.S2;
+        RESULT_TABLE.querySelector('#third .series').innerHTML = aprox.S3;
+
+        setTimeout(()=>{
+
+            //Scroll smooth hasta el resultado
+            RESULT_TABLE.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+            //Volver a poner el texto en el boton
+            CALCULATE_BTN.innerHTML = 'Calcular';
+
+            //Mostrar el resultado
+            RESULT_TABLE.style.display = 'table';
+            RESULT_BOX.style.visibility = 'visible';
+            
+        }, 500)
+
+      })            
+})();
+
+class Powerlifting {
+	_exercise;
+	_rm; //1RM 
+	_objectiveWeight; //Peso Objetivo 
+	_reps; //Numero de repeticiones de la primera serie efectiva
+	_rpe;
+	_feeling; //A,B,C,D
+	_rpe1; //Primera serie de aproximacion
+	_rpe2; //Segunda serie de aproximacion
+
+	_totalNR;
+	_totalRPE;
+	_totalS1;
+	_totalS2;
+	_totalS3;
+
+	constructor(exercise, rm, objectiveWeight, reps, rpe, feeling, rpe1, rpe2) {
+		this._exercise = exercise;
+		this._rm = rm;
+		this._objectiveWeight = objectiveWeight;
+		this._reps = reps;
+		this._rpe = rpe;
+		this._feeling = feeling;
+		this._rpe1 = rpe1;
+		this._rpe2 = rpe2;
+	}
+
+	calculateNR(){
+		if(this._reps > 6){
+			this._totalNR = 5;
+			return this._totalNR;
+		}else if(this._reps <= 6){
+			this._totalNR = Math.round(0.67 * this._reps);
+			return this._totalNR;
+		}
+	}
+
+	calculateRPE(){
+		let maxRep = this.calculateNR();
+
+		if(this._rpe > 8){
+			this._totalRPE = Math.min(maxRep, Math.round(0.50 * this._reps));
+			return this._totalRPE;
+		}else if(this._rpe <= 8){
+			this._totalRPE = Math.min(maxRep, Math.round(0.67 * this._reps));
+			return this._totalRPE;
+		}
+	}
+
+	firstApproximation(){
+
+		let total = this._objectiveWeight / this._rm;
+
+		if(total <= 0.8){
+			if(this._reps <= 6){
+				if(this._feeling === 'a'){
+					this._totalS1 = parseFloat((0.72 * this._objectiveWeight).toFixed(1))
+					return this._totalS1;		
+				}else if(this._feeling === 'b'){
+					this._totalS1 = parseFloat((0.68 * this._objectiveWeight).toFixed(1))
+					return this._totalS1;
+				}else if(this._feeling === 'c'){
+					this._totalS1 = parseFloat((0.63 * this._objectiveWeight).toFixed(1))
+					return this._totalS1;
+				}else if(this._feeling === 'd'){
+					this._totalS1 = parseFloat((0.6 * this._objectiveWeight).toFixed(1))
+					return this._totalS1;
+				}
+			}else if(this._reps > 6){
+				if(this._feeling === 'a'){
+					this._totalS1 = parseFloat((0.7 * this._objectiveWeight).toFixed(1))
+					return this._totalS1;
+				}else if(this._feeling === 'b'){
+					this._totalS1 = parseFloat((0.65 * this._objectiveWeight).toFixed(1))
+					return this._totalS1;
+				}else if(this._feeling === 'c'){
+					this._totalS1 = parseFloat((0.6 * this._objectiveWeight).toFixed(1))
+					return this._totalS1;
+				}else if(this._feeling === 'd'){
+					this._totalS1 = parseFloat((0.55 * this._objectiveWeight).toFixed(1))
+					return this._totalS1;
+				}
+			}
+		}else if(total > 0.8){
+			if(this._reps <= 6){
+				if(this._feeling === 'a'){
+					this._totalS1 = parseFloat((0.75 * this._objectiveWeight).toFixed(1))
+					return this._totalS1;		
+				}else if(this._feeling === 'b'){
+					this._totalS1 = parseFloat((0.72 * this._objectiveWeight).toFixed(1))
+					return this._totalS1;
+				}else if(this._feeling === 'c'){
+					this._totalS1 = parseFloat((0.68 * this._objectiveWeight).toFixed(1))
+					return this._totalS1;
+				}else if(this._feeling === 'd'){
+					this._totalS1 = parseFloat((0.65 * this._objectiveWeight).toFixed(1))
+					return this._totalS1;
+				}
+			}else if(this._reps > 6){
+				if(this._feeling === 'a'){
+					this._totalS1 = parseFloat((0.72 * this._objectiveWeight).toFixed(1))
+					return this._totalS1;
+				}else if(this._feeling === 'b'){
+					this._totalS1 = parseFloat((0.68 * this._objectiveWeight).toFixed(1))
+					return this._totalS1;
+				}else if(this._feeling === 'c'){
+					this._totalS1 = parseFloat((0.63 * this._objectiveWeight).toFixed(1))
+					return this._totalS1;
+				}else if(this._feeling === 'd'){
+					this._totalS1 = parseFloat((0.6 * this._objectiveWeight).toFixed(1))
+					return this._totalS1;
+				}
+			}
+		}
+	}
+
+	secondApproximation(){
+		if(this._rpe1 < 5){
+			this._totalS2 = parseFloat((this._totalS1 * (1.0 + (0.40 * (this._rpe1 / 10)))).toFixed(1))
+			return this._totalS2;
+		}else if(this._rpe1 >= 5 && this._rpe1 <= 8){
+			this._totalS2 = parseFloat((this._totalS1 * (1.0 + (0.25 * (this._rpe1 / 10)))).toFixed(1))
+			return this._totalS2;
+		}else{
+			this._totalS2 = parseFloat((this._totalS1 * (1.0 + (0.10 * (this._rpe1 / 10)))).toFixed(1))
+			return this._totalS2;
+		}
+	}
+
+	thirdApproximation(){
+		if(this._rpe2 < 5){
+			this._totalS3 = parseFloat((this._totalS2 * (1.0 + (0.40 * (this._rpe2 / 10)))).toFixed(1))
+		}else if(this._rpe2 >= 5 && this._rpe2 <= 8){
+			this._totalS3 = parseFloat((this._totalS2 * (1.0 + (0.25 * (this._rpe2 / 10)))).toFixed(1))
+		}else{
+			this._totalS3 = parseFloat((this._totalS2 * (1.0 + (0.10 * (this._rpe2 / 10)))).toFixed(1))
+		}
+
+		let minS3 = parseFloat((0.83 * this._objectiveWeight).toFixed(1));
+		let maxS3 = parseFloat((0.95 * this._objectiveWeight).toFixed(1));
+
+		if(this._totalS3 < minS3) {
+			this._totalS3 = minS3;
+		} else if(this._totalS3 > maxS3) {
+			this._totalS3 = maxS3;
+		}
+
+		return this._totalS3;
+	}
+
+	get Approximations(){
+
+		this.calculateRPE();
+
+		let results = {
+			S1: this.firstApproximation(),
+			S2: this.secondApproximation(),
+			S3: this.thirdApproximation(),
+			reps: this._totalRPE
+		}
+
+		return results;
+
+	}
+
+}
+
+</script>
