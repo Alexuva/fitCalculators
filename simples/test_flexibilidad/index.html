@@ -1,0 +1,360 @@
+<form class="form-container">
+  <div class="flex">
+      <div>
+          <label><span>Tu sexo</span></label>
+          <select id="gender" type="select" name="gender-input" required>
+              <option disabled selected>Selecciona tu sexo</option>
+              <option value="h">Hombre</option>
+              <option value="m">Mujer</option>
+          </select>
+      </div>
+      <div>
+          <label><span>Tu edad</span></label>
+          <input id="age" type="text" min="15" max="99" maxlength="2" name="age-input" placeholder="Introduce tu edad" required>
+      </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Qué quieres evaluar?</span></label>
+      <select id="exercise" type="select" name="exercise-input" required>
+        <option disabled selected>Selecciona</option>
+        <option value="a">Flexibilidad de hombro</option>
+        <option value="b">Flexibilidad de espalda baja e isquiosurales</option>
+    </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div id="handsBlock" style="display: none;">
+        <label><span>Distancia entre las manos</span><sup>cm</sup></label>
+        <input id="hands" type="text" min="1" max="99" maxlength="2" name="hands-input" placeholder="Introduce la distancia entre manos">
+        <small>Importante: Si los dedos de las manos no llegan a juntarse, pon un símbolo “menos” delante del número (número negativo). Ejemplo: “-3” hace referencia a que los dedos no se juntan y hay una distancia de 3 cm entre ellos</small>
+    </div>
+    <div id="distanceBlock" style="display: none;">
+      <label><span>Distancia alcanzada en el test</span><sup>cm</sup></label>
+      <input id="distance" type="text" min="1" max="99" maxlength="2" name="distance-input" placeholder="Introduce la distancia alcanzada en el test">
+  </div>
+  </div>
+
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+          
+<p class="result" style="visibility: hidden;"></p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+(function() {
+
+      //Input de género
+      const GENDER_INPUT = document.querySelector('#gender');
+      //Input de edad
+      const AGE_INPUT = document.querySelector('#age');
+      //Select de ejercicio
+      const EXERCISE_INPUT = document.querySelector('#exercise');
+      //Bloque manos
+      const HANDS_BLOCK = document.querySelector('#handsBlock');
+      //Input distancia de manos
+      const HANDS_INPUT = document.querySelector('#hands'); 
+      //Bloque distancia alcanzada
+      const DISTANCE_BLOCK = document.querySelector('#distanceBlock');
+      //Input distancia alcanzada
+      const DISTANCE_INPUT = document.querySelector('#distance'); 
+
+      //Cajas con el resultado
+      const RESULT_BOX = document.querySelector('.result');
+
+      //Botón de calcular
+      const CALCULATE_BTN = document.querySelector('#calculate-btn');
+      
+      //Formulario
+      const FORM = document.querySelector('.form-container');
+
+      //Regex para comprobar si los números cumplen con la condición de 2 decimales
+      const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de 1 decimal
+      const DECIMAL_REGEX = new RegExp(/^(\d+|\d+,\d{1}|\d+.\d{1})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de ser enteros
+      const INTEGERS_REGEX = new RegExp(/^\d+$/);
+      const NEGATIVE_INTEGERS_REGEX = new RegExp(/^-?\d+$/);
+
+      //Comprobar que ha introducido valor en los select
+      const SELECTS = document.querySelectorAll('select');
+        SELECTS.forEach(select => {
+          select.addEventListener('change', () => {
+            if (select.value !== "" && select.selectedIndex !== 0) {
+              select.setCustomValidity('');
+            }
+            if(select.value === 'a'){
+              HANDS_BLOCK.style.display = 'block';
+              HANDS_INPUT.required = true;
+              DISTANCE_BLOCK.style.display = 'none';
+              DISTANCE_INPUT.required = false;
+            }else if(select.value === 'b'){
+              HANDS_BLOCK.style.display = 'none';
+              HANDS_INPUT.required = false;
+              DISTANCE_BLOCK.style.display = 'block';
+              DISTANCE_INPUT.required = true;
+            }
+          });
+        });
+  
+      //Comprobar que ha introducido edad
+      AGE_INPUT.addEventListener('input', ()=>{
+
+          //Comprobar si el numero es un entero
+          if(!INTEGERS_REGEX.test(AGE_INPUT.value)){
+              AGE_INPUT.setCustomValidity('Introduce una edad válida');
+              AGE_INPUT.reportValidity();
+              return
+          }
+          
+          const VALUE = parseInt(AGE_INPUT.value);
+          const MIN = parseInt(AGE_INPUT.getAttribute('min'));
+          const MAX = parseInt(AGE_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+              AGE_INPUT.setCustomValidity(`La edad mínima son ${MIN}`);
+              AGE_INPUT.reportValidity();
+          }else{
+              AGE_INPUT.setCustomValidity('');
+          }
+      })
+
+      //Comprobar que ha introducido la distancia para las manos
+      HANDS_INPUT.addEventListener('input', ()=>{
+
+        if(HANDS_INPUT.required === true){
+          //Comprobar si el numero tiene 2 decimales como mucho
+          if(!NEGATIVE_INTEGERS_REGEX.test(HANDS_INPUT.value)){
+            HANDS_INPUT.setCustomValidity('Introduce una distancia válida en centímetros');
+            HANDS_INPUT.reportValidity();
+            return
+          }
+
+          //Resetear borde y validación del input
+          HANDS_INPUT.setCustomValidity('');
+
+          const VALUE = parseFloat(HANDS_INPUT.value);
+          const MIN = parseFloat(HANDS_INPUT.getAttribute('min'));
+          const MAX = parseFloat(HANDS_INPUT.getAttribute('max'));
+
+          if(VALUE > MAX || isNaN(VALUE)){
+            HANDS_INPUT.setCustomValidity(`Introduce una distancia válida`);
+            HANDS_INPUT.reportValidity();
+          }else{
+            HANDS_INPUT.setCustomValidity('');
+          }
+        }else{
+          HANDS_INPUT.setCustomValidity('');
+        }
+
+      })
+
+      //Comprobar que ha introducido distancia alcanzada
+      DISTANCE_INPUT.addEventListener('input', ()=>{
+
+        if(DISTANCE_INPUT.required === true){
+          //Comprobar si el numero es un entero
+          if(!INTEGERS_REGEX.test(DISTANCE_INPUT.value)){
+            DISTANCE_INPUT.setCustomValidity('Introduce una distancia válida');
+            DISTANCE_INPUT.reportValidity();
+            return
+          }
+          
+          const VALUE = parseInt(DISTANCE_INPUT.value);
+          const MIN = parseInt(DISTANCE_INPUT.getAttribute('min'));
+          const MAX = parseInt(DISTANCE_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            DISTANCE_INPUT.setCustomValidity(`La distancia mínima son ${MIN}cm y la máxima ${MAX}cm`);
+            DISTANCE_INPUT.reportValidity();
+          }else{
+            DISTANCE_INPUT.setCustomValidity('');
+          }
+        }else{
+          DISTANCE_INPUT.setCustomValidity('');
+        }
+
+      })
+
+      FORM.addEventListener('submit', (e)=>{
+        e.preventDefault();
+
+        const selects = document.querySelectorAll('select');
+        let isValid = true;
+  
+        selects.forEach(select => {
+          if (select.value === "" || select.selectedIndex === 0) {
+            select.setCustomValidity('Por favor, selecciona una opción');
+            select.reportValidity();
+            isValid = false;
+          } else {
+            select.setCustomValidity('');
+          }
+        });
+
+        if (!isValid) {
+          return;
+        }
+
+        //Cambiar texto botón
+        CALCULATE_BTN.innerHTML = 'Calculando...';
+
+        //Ocultar resultado anterior
+        RESULT_BOX.style.visibility = 'hidden';
+
+        let gender = GENDER_INPUT.value;
+        let age = parseInt(AGE_INPUT.value);
+        let exercise = EXERCISE_INPUT.value;
+        let hands = HANDS_INPUT.value ? parseInt(HANDS_INPUT.value) : null;
+        let distance = DISTANCE_INPUT.value ? parseInt(DISTANCE_INPUT.value) : null;
+
+        const CALCULATOR = new Flexibility(gender, age, exercise, hands, distance);
+        let result = hands ? CALCULATOR.shoulder() : CALCULATOR.back();
+          
+        setTimeout(()=>{
+
+            //Scroll smooth hasta el resultado
+            RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+            //Volver a poner el texto en el boton
+            CALCULATE_BTN.innerHTML = 'Calcular';
+
+            //Mostrar el resultado
+            RESULT_BOX.style.visibility = 'visible';
+            
+            if(hands){
+              RESULT_BOX.innerHTML = `Tu flexibilidad de hombro es <strong>${result}</strong>`
+            }else{
+              RESULT_BOX.innerHTML = `Tu flexibilidad de espalda baja e isquios es <strong>${result}</strong>`;
+            }
+            HANDS_INPUT.value = null;
+            DISTANCE_INPUT.value = null;
+        }, 500)
+
+      })            
+})();
+
+class Flexibility {
+  _sex;
+  _age;
+  _exerciseType;
+  _distance;
+  _distanceReached;
+  _flexibility;
+
+  constructor(sex, age, exerciseType, distance, distanceReached) {
+    this._sex = sex;
+    this._age = age;
+    this._exerciseType = exerciseType;
+    this._distance = distance;
+    this._distanceReached = distanceReached;
+  }
+
+  shoulder(){
+
+    if(!this._distance) return;
+
+    const flexibilityRanges = {
+      h: { // hombres
+        '15-19': { veryLow: -4, low: [-4, -2], normal: [-1, 1], good: [2, 3], excellent: 3 },
+        '20-29': { veryLow: -5, low: [-5, -3], normal: [-2, 0], good: [1, 2], excellent: 2 },
+        '30-39': { veryLow: -6, low: [-6, -4], normal: [-3, -1], good: [0, 1], excellent: 1 },
+        '40-49': { veryLow: -7, low: [-7, -5], normal: [-4, -2], good: [-1, 0], excellent: 0 },
+        '50-59': { veryLow: -8, low: [-8, -6], normal: [-5, -3], good: [-2, -1], excellent: -1 },
+        '60-70': { veryLow: -9, low: [-9, -7], normal: [-6, -4], good: [-3, -2], excellent: -2 },
+        '>70': { veryLow: -10, low: [-10, -8], normal: [-7, -5], good: [-4, -3], excellent: -3 }
+      },
+      m: { // mujeres
+        '15-19': { veryLow: -3, low: [-3, -1], normal: [0, 2], good: [3, 4], excellent: 4 },
+        '20-29': { veryLow: -4, low: [-4, -2], normal: [-1, 1], good: [2, 3], excellent: 3 },
+        '30-39': { veryLow: -5, low: [-5, -3], normal: [-2, 0], good: [1, 2], excellent: 2 },
+        '40-49': { veryLow: -6, low: [-6, -4], normal: [-3, -1], good: [0, 1], excellent: 1 },
+        '50-59': { veryLow: -7, low: [-7, -5], normal: [-4, -2], good: [-1, 0], excellent: 0 },
+        '60-70': { veryLow: -8, low: [-8, -6], normal: [-5, -3], good: [-2, -1], excellent: -1 },
+        '>70': { veryLow: -9, low: [-9, -7], normal: [-6, -4], good: [-3, -2], excellent: -2 }
+      }
+    };
+
+    // Determinar el rango de edad
+    let ageRange;
+    if (this._age >= 15 && this._age <= 19) ageRange = '15-19';
+    else if (this._age >= 20 && this._age <= 29) ageRange = '20-29';
+    else if (this._age >= 30 && this._age <= 39) ageRange = '30-39';
+    else if (this._age >= 40 && this._age <= 49) ageRange = '40-49';
+    else if (this._age >= 50 && this._age <= 59) ageRange = '50-59';
+    else if (this._age >= 60 && this._age <= 70) ageRange = '60-70';
+    else if (this._age > 70) ageRange = '>70';
+
+    const ranges = flexibilityRanges[this._sex][ageRange];
+    const distance = this._distance;
+
+    if (distance <= ranges.veryLow) return "muy baja";
+    if (distance >= ranges.low[0] && distance <= ranges.low[1]) return "baja";
+    if (distance >= ranges.normal[0] && distance <= ranges.normal[1]) return "normal";
+    if (distance >= ranges.good[0] && distance <= ranges.good[1]) return "buena";
+    if (distance > ranges.excellent) return "excelente";
+  }
+
+  back(){
+
+    if(!this._distanceReached) return;
+
+    const flexibilityRanges = {
+      h: { // hombres
+        '15-19': { veryLow: 27, low: [27, 31], normal: [32, 35], good: [36, 41], excellent: 41 },
+        '20-29': { veryLow: 25, low: [25, 29], normal: [30, 33], good: [34, 39], excellent: 39 },
+        '30-39': { veryLow: 23, low: [23, 27], normal: [28, 32], good: [33, 37], excellent: 37 },
+        '40-49': { veryLow: 18, low: [18, 23], normal: [24, 28], good: [29, 34], excellent: 34 },
+        '50-59': { veryLow: 16, low: [16, 23], normal: [24, 27], good: [28, 34], excellent: 34 },
+        '60-70': { veryLow: 15, low: [15, 19], normal: [20, 24], good: [25, 32], excellent: 32 },
+        '>70': { veryLow: 13, low: [13, 17], normal: [18, 22], good: [23, 30], excellent: 30 }
+      },
+      m: { // mujeres
+        '15-19': { veryLow: 29, low: [29, 33], normal: [34, 37], good: [38, 42], excellent: 42 },
+        '20-29': { veryLow: 28, low: [28, 32], normal: [33, 36], good: [37, 40], excellent: 40 },
+        '30-39': { veryLow: 27, low: [27, 31], normal: [32, 34], good: [35, 40], excellent: 40 },
+        '40-49': { veryLow: 25, low: [25, 29], normal: [30, 33], good: [34, 38], excellent: 38 },
+        '50-59': { veryLow: 25, low: [25, 29], normal: [30, 32], good: [33, 38], excellent: 37 },
+        '60-70': { veryLow: 23, low: [23, 26], normal: [27, 30], good: [31, 34], excellent: 34 },
+        '>70': { veryLow: 20, low: [21, 24], normal: [25, 28], good: [29, 32], excellent: 32 }
+      }
+    };
+
+    // Determinar el rango de edad
+    let ageRange;
+    if (this._age >= 15 && this._age <= 19) ageRange = '15-19';
+    else if (this._age >= 20 && this._age <= 29) ageRange = '20-29';
+    else if (this._age >= 30 && this._age <= 39) ageRange = '30-39';
+    else if (this._age >= 40 && this._age <= 49) ageRange = '40-49';
+    else if (this._age >= 50 && this._age <= 59) ageRange = '50-59';
+    else if (this._age >= 60 && this._age <= 70) ageRange = '60-70';
+    else if (this._age > 70) ageRange = '>70';
+
+    const ranges = flexibilityRanges[this._sex][ageRange];
+    const distance = this._distanceReached;
+
+    if (distance < ranges.veryLow) return "muy baja";
+    if (distance >= ranges.low[0] && distance <= ranges.low[1]) return "baja";
+    if (distance >= ranges.normal[0] && distance <= ranges.normal[1]) return "normal";
+    if (distance >= ranges.good[0] && distance <= ranges.good[1]) return "buena";
+    if (distance > ranges.excellent) return "excelente";
+  }
+
+}
+
+</script>
