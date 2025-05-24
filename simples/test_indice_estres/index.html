@@ -1,0 +1,237 @@
+<form class="form-container">
+  <div class="flex">
+    <div>
+      <label><span>Ejercicio</span></label>
+      <select id="exercise" name="exercise-input" required>
+          <option disabled selected>Selecciona el ejercicio</option>
+          <optgroup label="Multiarticulares con peso libre">
+            <option value="map">Press de banca</option>
+            <option value="map">Dominadas</option>
+            <option value="map">Remo con barra</option>
+            <option value="map">Press militar</option>
+            <option value="map">Sentadilla libre</option>
+            <option value="map">Sentadilla búlgara</option>
+            <option value="map">Peso muerto convencional</option>
+            <option value="map">Peso muerto rumano</option>
+            <option value="map">Peso muerto SLDL</option>
+            <option value="map">Hip thrust</option>
+          </optgroup>
+          <optgroup label="Multiarticulares en poleas o máquina">
+            <option value="mam">Jalón al pecho</option>
+            <option value="mam">Remo Gironda</option>
+            <option value="mam">Remo en máquina T con pecho apoyado</option>
+            <option value="mam">Sentadilla jaca</option>
+            <option value="mam">Sentadilla pendular</option>
+            <option value="mam">Prensa inclinada</option>
+            <option value="mam">Hip thrust en máquina</option>
+          </optgroup>
+          <optgroup label="Monoarticulares con peso libre">
+            <option value="mop">Aperturas con mancuernas</option>
+            <option value="mop">Elevaciones laterales con mancuernas</option>
+            <option value="mop">Curl de bíceps con barra</option>
+            <option value="mop">Press francés con barra</option>
+            <option value="mop">Extensiones de tríceps por detrás de la cabeza con mancuerna</option>
+          </optgroup>
+          <optgroup label="Monoarticulares en poleas o máquina">
+            <option value="mom">Aperturas en máquina</option>
+            <option value="mom">Pullover en polea</option>
+            <option value="mom">Pájaros en máquina</option>
+            <option value="mom">Extensiones de cuádriceps</option>
+            <option value="mom">Curl femoral sentado</option>
+            <option value="mom">Curl femoral tumbado</option>
+            <option value="mom">Curl de bíceps predicador en máquina</option>
+            <option value="mom">Curl de bíceps Bayesian</option>
+            <option value="mom">Extensiones de tríceps desde polea alta</option>
+            <option value="mom">Extensiones de tríceps por detrás de la cabeza en polea</option>
+            <option value="mom">Crunch abdominal en máquina</option>
+            <option value="mom">Press Pallof</option>
+          </optgroup>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>RIR de la serie que quieras evaluar</span></label>
+      <input id="rir" type="text" min="0" maxlength="1" name="rir-input" placeholder="RIR=5 significa “5 repeticiones hasta el fallo (poco esfuerzo)”; RIR=0 significa “fallo muscular (esfuerzo máximo)”.">
+    </div>
+  </div>
+  
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+
+<p class="result" style="visibility: hidden;">Índice de estrés de la serie: <span><strong id="show-result-number"></strong></span></p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+  (function() {
+  
+        //Inputs
+        const EXERCISE_INPUT = document.querySelector('#exercise');
+        const RIR_INPUT = document.querySelector('#rir');
+  
+        //Cajas con el resultado
+        const RESULT_BOX = document.querySelector('.result');
+  
+        //Tabla
+        const RESULT_NUMBER = document.querySelector('#show-result-number');
+  
+        //Botón de calcular
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+        
+        //Formulario
+        const FORM = document.querySelector('.form-container');
+  
+        //Regex para comprobar si los números cumplen con la condición de 2 decimales
+        const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+        const DECIMAL_REGEX = new RegExp(/^(\d+|\d+,\d{1}|\d+.\d{1})$/);
+  
+        //Regex para comprobar si los números cumplen con la condición de ser enteros
+        const INTEGERS_REGEX = new RegExp(/^\d+$/);
+  
+        const SELECTS = document.querySelectorAll('select');
+        SELECTS.forEach(select => {
+          select.addEventListener('change', () => {
+            if (select.value !== "" && select.selectedIndex !== 0) {
+              select.setCustomValidity('');
+            }
+          });
+        });
+  
+        //Comprobar que ha introducido el RIR
+        RIR_INPUT.addEventListener('input', ()=>{
+            //Comprobar si el numero es un entero
+            if(RIR_INPUT.value.length > 0){
+              if(!INTEGERS_REGEX.test(RIR_INPUT.value)){
+                RIR_INPUT.setCustomValidity('Introduce un peso válido');
+                RIR_INPUT.reportValidity();
+                return
+              }
+            }else{
+              RIR_INPUT.setCustomValidity('');
+              return
+            }
+            
+            
+            const VALUE = parseInt(RIR_INPUT.value);
+            const MIN = parseInt(RIR_INPUT.getAttribute('min'));
+            const MAX = parseInt(RIR_INPUT.getAttribute('max'));
+  
+            if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+              RIR_INPUT.setCustomValidity(`El mínimo son ${MIN}RIR y el máximo son ${MAX}RIR`);
+              RIR_INPUT.reportValidity();
+            }else{
+              RIR_INPUT.setCustomValidity('');
+            }
+        })
+  
+        FORM.addEventListener('submit', (e)=>{
+          e.preventDefault();
+  
+          const selects = document.querySelectorAll('select');
+          let isValid = true;
+    
+          selects.forEach(select => {
+            if (select.value === "" || select.selectedIndex === 0) {
+              select.setCustomValidity('Por favor, selecciona una opción');
+              select.reportValidity();
+              isValid = false;
+            } else {
+              select.setCustomValidity('');
+            }
+          });
+  
+          if (!isValid) {
+            return;
+          }
+  
+  
+          //Cambiar texto botón
+          CALCULATE_BTN.innerHTML = 'Calculando...';
+  
+          //Ocultar resultado anterior
+          RESULT_BOX.style.visibility = 'hidden';
+  
+          let exercise = EXERCISE_INPUT.value;
+          let rir = parseInt(RIR_INPUT.value);
+          
+          const CALCULATOR = new StressIndex(exercise, rir);
+          let result = CALCULATOR._stressIndex;
+
+          RESULT_NUMBER.innerHTML = result;
+
+          setTimeout(()=>{
+  
+              //Scroll smooth hasta el resultado
+              RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+  
+              //Volver a poner el texto en el boton
+              CALCULATE_BTN.innerHTML = 'Calcular';
+  
+              //Mostrar el resultado
+              RESULT_BOX.style.visibility = 'visible';
+              
+          }, 500)
+  
+        })            
+  })();
+
+  class StressIndex {
+    _exerciseType;
+    _rir;
+
+    _stressIndex;
+    constructor(exerciseType, rir) {
+      this._exerciseType = exerciseType;
+      this._rir = rir;
+      this._stressIndex = this.calculateStressIndex().toLocaleString('es-ES', {maximumFractionDigits: 2});
+    }
+
+    calculateStressIndex() {
+      
+      if(this._exerciseType === 'mam'){
+        if(this._rir === 5) return 0.3;
+        if(this._rir === 4) return 0.5;
+        if(this._rir === 3) return 0.7;
+        if(this._rir === 2) return 0.9;
+        if(this._rir === 1) return 1.1;
+        if(this._rir === 0) return 1.3;
+      }else if(this._exerciseType ==='map'){
+        if(this._rir === 5) return 0.4;
+        if(this._rir === 4) return 0.6;
+        if(this._rir === 3) return 0.8;
+        if(this._rir === 2) return 1;
+        if(this._rir === 1) return 1.2;
+        if(this._rir === 0) return 1.4;
+      }else if(this._exerciseType ==='mom'){
+        if(this._rir === 5) return 0.2;
+        if(this._rir === 4) return 0.4;
+        if(this._rir === 3) return 0.6;
+        if(this._rir === 2) return 0.8; 
+        if(this._rir === 1) return 1;
+        if(this._rir === 0) return 1.2;
+      }else if(this._exerciseType ==='mop'){
+        if(this._rir === 5) return 0.3;
+        if(this._rir === 4) return 0.5;
+        if(this._rir === 3) return 0.7;
+        if(this._rir === 2) return 0.9;
+        if(this._rir === 1) return 1.1;
+        if(this._rir === 0) return 1.3;
+      }
+
+    }
+
+}
+</script>
