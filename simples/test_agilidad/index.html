@@ -1,0 +1,417 @@
+<form class="form-container">
+  <div class="flex">
+      <div>
+          <label><span>Tu sexo</span></label>
+          <select id="gender" type="select" name="gender-input" required>
+              <option disabled selected>Selecciona tu sexo</option>
+              <option value="h">Hombre</option>
+              <option value="m">Mujer</option>
+          </select>
+      </div>
+      <div>
+          <label><span>Tu edad</span></label>
+          <input id="age" type="text" min="15" max="99" maxlength="2" name="age-input" placeholder="Introduce tu edad" required>
+      </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>Elige el test realizado:</span></label>
+      <select id="exercise" type="select" name="exercise-input" required>
+        <option disabled selected>Selecciona</option>
+        <option value="a">Test de Illinois</option>
+        <option value="b">T-Test</option>
+    </select>
+    </div>
+  </div>
+  <div id='optionalInputs'>
+    <p>Tiempo realizado</p>
+    <div class="flex">
+      <div>
+        <label><span>Segundos</span></label>
+        <input id="seconds" type="text" min="0" max="59" maxlength="2" name="seconds" placeholder="Segundos" required>
+      </div>
+      <div>
+        <label><span>Centésimas</span></label>
+        <input id="cent" type="text" min="0" max="59" maxlength="2" name="cent-input" placeholder="Centésimas" required>
+      </div>
+    </div> 
+  </div>
+
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+          
+<p class="result" style="visibility: hidden;"></p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+(function() {
+
+      //Input de género
+      const GENDER_INPUT = document.querySelector('#gender');
+      //Input de edad
+      const AGE_INPUT = document.querySelector('#age');
+      //Select de ejercicio
+      const EXERCISE_INPUT = document.querySelector('#exercise');
+      //Input del tiempo
+      const SEC_INPUT = document.querySelector('#seconds');
+      //Input de minutos
+      const CENT_INPUT = document.querySelector('#cent');
+
+
+      //Cajas con el resultado
+      const RESULT_BOX = document.querySelector('.result');
+
+      //Botón de calcular
+      const CALCULATE_BTN = document.querySelector('#calculate-btn');
+      
+      //Formulario
+      const FORM = document.querySelector('.form-container');
+
+      //Regex para comprobar si los números cumplen con la condición de 2 decimales
+      const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de 1 decimal
+      const DECIMAL_REGEX = new RegExp(/^(\d+|\d+,\d{1}|\d+.\d{1})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de ser enteros
+      const INTEGERS_REGEX = new RegExp(/^\d+$/);
+      const NEGATIVE_INTEGERS_REGEX = new RegExp(/^-?\d+$/);
+
+      const optionalInputs = document.querySelector('#optionalInputs');
+        const optionalInputsTitle = optionalInputs.querySelector('p');
+        let windowWidth = window.innerWidth;
+
+        if(windowWidth > 365 && windowWidth < 683){
+            optionalInputsTitle.style.bottom = '86%';
+        }else if(windowWidth < 365){
+            optionalInputsTitle.style.bottom = '89.5%';
+        }else{
+            optionalInputsTitle.style.bottom = '87.5%';
+        }
+        
+        window.addEventListener('resize', (e)=>{
+            windowWidth = window.innerWidth;
+            if(windowWidth > 365 && windowWidth < 683){
+                optionalInputsTitle.style.bottom = '86%';
+            }else if(windowWidth < 365){
+                optionalInputsTitle.style.bottom = '89.5%';
+            }else{
+                optionalInputsTitle.style.bottom = '87.5%';
+            }
+        })
+
+      //Comprobar que ha introducido valor en los select
+      const SELECTS = document.querySelectorAll('select');
+        SELECTS.forEach(select => {
+          select.addEventListener('change', () => {
+            if (select.value !== "" && select.selectedIndex !== 0) {
+              select.setCustomValidity('');
+            }
+          });
+        });
+  
+      //Comprobar que ha introducido edad
+      AGE_INPUT.addEventListener('input', ()=>{
+
+          //Comprobar si el numero es un entero
+          if(!INTEGERS_REGEX.test(AGE_INPUT.value)){
+              AGE_INPUT.setCustomValidity('Introduce una edad válida');
+              AGE_INPUT.reportValidity();
+              return
+          }
+          
+          const VALUE = parseInt(AGE_INPUT.value);
+          const MIN = parseInt(AGE_INPUT.getAttribute('min'));
+          const MAX = parseInt(AGE_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+              AGE_INPUT.setCustomValidity(`La edad mínima son ${MIN}`);
+              AGE_INPUT.reportValidity();
+          }else{
+              AGE_INPUT.setCustomValidity('');
+          }
+      })
+
+      SEC_INPUT.addEventListener('input', ()=>{
+
+        if(SEC_INPUT.required === true){
+          //Comprobar si el numero tiene 2 decimales como mucho
+          if(!INTEGERS_REGEX.test(SEC_INPUT.value)){
+            SEC_INPUT.setCustomValidity('Introduce un número válido');
+            SEC_INPUT.reportValidity();
+            return
+          }
+
+          //Resetear borde y validación del input
+          SEC_INPUT.setCustomValidity('');
+
+          const VALUE = parseFloat(SEC_INPUT.value);
+          const MIN = parseFloat(SEC_INPUT.getAttribute('min'));
+          const MAX = parseFloat(SEC_INPUT.getAttribute('max'));
+
+          if(VALUE > MAX || isNaN(VALUE)){
+            SEC_INPUT.setCustomValidity(`Introduce un número válido`);
+            SEC_INPUT.reportValidity();
+          }else{
+            SEC_INPUT.setCustomValidity('');
+          }
+        }else{
+          SEC_INPUT.setCustomValidity('');
+        }
+
+      })
+
+      CENT_INPUT.addEventListener('input', ()=>{
+
+        if(CENT_INPUT.required === true){
+          //Comprobar si el numero tiene 2 decimales como mucho
+          if(!INTEGERS_REGEX.test(CENT_INPUT.value)){
+            CENT_INPUT.setCustomValidity('Introduce un número válido');
+            CENT_INPUT.reportValidity();
+            return
+          }
+
+          //Resetear borde y validación del input
+          CENT_INPUT.setCustomValidity('');
+
+          const VALUE = parseFloat(CENT_INPUT.value);
+          const MIN = parseFloat(CENT_INPUT.getAttribute('min'));
+          const MAX = parseFloat(CENT_INPUT.getAttribute('max'));
+
+          if(VALUE > MAX || isNaN(VALUE)){
+            CENT_INPUT.setCustomValidity(`Introduce un número válido`);
+            CENT_INPUT.reportValidity();
+          }else{
+            CENT_INPUT.setCustomValidity('');
+          }
+        }else{
+          CENT_INPUT.setCustomValidity('');
+        }
+
+      })
+
+      FORM.addEventListener('submit', (e)=>{
+        e.preventDefault();
+
+        const selects = document.querySelectorAll('select');
+        let isValid = true;
+  
+        selects.forEach(select => {
+          if (select.value === "" || select.selectedIndex === 0) {
+            select.setCustomValidity('Por favor, selecciona una opción');
+            select.reportValidity();
+            isValid = false;
+          } else {
+            select.setCustomValidity('');
+          }
+        });
+
+        if (!isValid) {
+          return;
+        }
+
+        //Cambiar texto botón
+        CALCULATE_BTN.innerHTML = 'Calculando...';
+
+        //Ocultar resultado anterior
+        RESULT_BOX.style.visibility = 'hidden';
+
+        let gender = GENDER_INPUT.value;
+        let age = parseInt(AGE_INPUT.value);
+        let cent = parseInt(CENT_INPUT.value);
+        let seconds = parseInt(SEC_INPUT.value);
+        let exercise = EXERCISE_INPUT.value;
+        let time = seconds + cent/100;
+        let result = '';
+
+        const CALCULATOR = new Agility(gender, age, exercise, time);
+        if(exercise === 'a'){
+          result = CALCULATOR._illinois;
+        }else{
+          result = CALCULATOR._tTest;
+        }
+          
+        setTimeout(()=>{
+
+            //Scroll smooth hasta el resultado
+            RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+            //Volver a poner el texto en el boton
+            CALCULATE_BTN.innerHTML = 'Calcular';
+
+            //Mostrar el resultado
+            RESULT_BOX.style.visibility = 'visible';
+            
+            RESULT_BOX.innerHTML = `Tu nivel de agilidad es <strong>${result}</strong>`
+          
+        }, 500)
+
+      })            
+})();
+
+class Agility {
+  _sex;
+  _age;
+  _exerciseType;
+  _time;
+
+  _illinois;
+  _tTest;
+
+  constructor(sex, age, exerciseType, time) {
+    this._sex = sex;
+    this._age = age;
+    this._exerciseType = exerciseType;
+    this._time = time;
+    this._illinois = this.illinois();
+    this._tTest = this.tTest();
+  }
+
+  illinois() {
+    const illinoisRanges = {
+      h: { // hombres
+        '15-19': {
+          veryLow: 19.30,
+          low: [18.11, 19.30],
+          normal: [16.11, 18.10],
+          good: [15.20, 16.10],
+          excellent: 15.20
+        },
+        '20-59': {
+          veryLow: 19.50,
+          low: [18.31, 19.50],
+          normal: [16.31, 18.30],
+          good: [15.40, 16.30],
+          excellent: 15.40
+        },
+        '>60': {
+          veryLow: 32.20,
+          low: [31.01, 32.20],
+          normal: [29.01, 31.00],
+          good: [28.00, 29.00],
+          excellent: 28.00
+        }
+      },
+      m: { // mujeres
+        '15-19': {
+          veryLow: 22.50,
+          low: [21.31, 22.50],
+          normal: [17.51, 21.30],
+          good: [16.50, 17.50],
+          excellent: 16.50
+        },
+        '20-59': {
+          veryLow: 23.00,
+          low: [21.81, 23.00],
+          normal: [18.01, 21.80],
+          good: [17.00, 18.00],
+          excellent: 17.00
+        },
+        '>60': {
+          veryLow: 36.20,
+          low: [35.01, 36.20],
+          normal: [33.01, 35.00],
+          good: [32.00, 33.00],
+          excellent: 32.00
+        }
+      }
+    };
+
+    // Determinar el rango de edad
+    let ageRange;
+    if (this._age >= 15 && this._age <= 19) ageRange = '15-19';
+    else if (this._age >= 20 && this._age <= 59) ageRange = '20-59';
+    else if (this._age >= 60) ageRange = '>60';
+
+    const ranges = illinoisRanges[this._sex][ageRange];
+    const time = this._time;
+
+    if (time > ranges.veryLow) return "bajo";
+    if (time >= ranges.low[0] && time <= ranges.low[1]) return "regular";
+    if (time >= ranges.normal[0] && time <= ranges.normal[1]) return "normal";
+    if (time >= ranges.good[0] && time <= ranges.good[1]) return "buena";
+    if (time < ranges.excellent) return "excelente";
+  }
+
+  tTest() {
+    const tTestRanges = {
+      h: { // hombres
+        '15-19': {
+          veryLow: 12.20,
+          low: [11.21, 12.20],
+          normal: [10.11, 11.20],
+          good: [9.20, 10.10],
+          excellent: 9.20
+        },
+        '20-59': {
+          veryLow: 12.40,
+          low: [11.41, 12.40],
+          normal: [10.31, 11.40],
+          good: [9.40, 10.30],
+          excellent: 9.40
+        },
+        '>60': {
+          veryLow: 24.30,
+          low: [23.31, 24.30],
+          normal: [22.21, 23.30],
+          good: [21.30, 22.20],
+          excellent: 21.30
+        }
+      },
+      m: { // mujeres
+        '15-19': {
+          veryLow: 13.20,
+          low: [12.21, 13.20],
+          normal: [11.11, 12.20],
+          good: [10.20, 11.10],
+          excellent: 10.20
+        },
+        '20-59': {
+          veryLow: 13.40,
+          low: [12.41, 13.40],
+          normal: [11.31, 12.40],
+          good: [10.40, 11.30],
+          excellent: 10.40
+        },
+        '>60': {
+          veryLow: 25.30,
+          low: [24.31, 25.30],
+          normal: [23.21, 24.30],
+          good: [22.30, 23.20],
+          excellent: 22.30
+        }
+      }
+    };
+
+    // Determinar el rango de edad
+    let ageRange;
+    if (this._age >= 15 && this._age <= 19) ageRange = '15-19';
+    else if (this._age >= 20 && this._age <= 59) ageRange = '20-59';
+    else if (this._age >= 60) ageRange = '>60';
+
+    const ranges = tTestRanges[this._sex][ageRange];
+    const time = this._time;
+
+    if (time > ranges.veryLow) return "bajo";
+    if (time >= ranges.low[0] && time <= ranges.low[1]) return "regular";
+    if (time >= ranges.normal[0] && time <= ranges.normal[1]) return "normal";
+    if (time >= ranges.good[0] && time <= ranges.good[1]) return "buena";
+    if (time < ranges.excellent) return "excelente";
+  }
+
+}
+
+</script>
