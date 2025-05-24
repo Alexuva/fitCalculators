@@ -1,0 +1,273 @@
+<form class="form-container">
+  <div class="flex">
+      <div>
+          <label><span>Tu sexo</span></label>
+          <select id="gender" type="select" name="gender-input" required>
+              <option disabled selected>Selecciona tu sexo</option>
+              <option value="h">Hombre</option>
+              <option value="m">Mujer</option>
+          </select>
+      </div>
+      <div>
+          <label><span>Tu edad</span></label>
+          <input id="age" type="text" min="16" max="99" maxlength="2" name="age-input" placeholder="Introduce tu edad" required>
+      </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Cuál es tu frecuencia cardiaca en reposo?</span><sup>latidos/min</sup></label>
+      <input id="heart" type="text" min="0" max="300" maxlength="3" name="heart-input" placeholder="Introduce tus latidos por minuto en reposo" required>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Haces ejercicio habitualmente?</span></label>
+        <select id="exercise" type="select" name="exercise-input" required>
+            <option disabled selected>Selecciona</option>
+            <option value="a">No mucho (1 vez a la semana)</option>
+            <option value="b">Algo (2-3 veces a la semana)</option>
+            <option value="c">Sí (≥4 veces a la semana)</option>
+        </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>¿Qué nivel de entrenamiento de resistencia cardiovascular consideras que tienes?</span></label>
+        <select id="level" type="select" name="level-input" required>
+          <option disabled selected>Selecciona</option>
+          <option value="a">Principiante (ejercicio cardiovascular &lt;3 veces por semana o &gt;1 año practicándolo)</option>
+          <option value="b">Intermedio (ejercicio cardiovascular 3-4 veces por semana y/o 1-2 años practicándolo)</option>
+          <option value="c">Avanzado (ejercicio cardiovascular ≥4 veces por semana y ≥2 años practicándolo)</option>
+      </select>
+    </div>
+  </div>
+
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+          
+<p class="result" style="visibility: hidden;">Tu zona de máxima quema de grasa se da entre:<br><span><span id="show-result"></span></span> latidos/minuto.</p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+(function() {
+
+      //Input de género
+      const GENDER_INPUT = document.querySelector('#gender');
+      //Input de edad
+      const AGE_INPUT = document.querySelector('#age');
+      //Input de frecuencia cardiaca en reposo
+      const HEART_INPUT = document.querySelector('#heart');
+      //Select de ejercicio
+      const EXERCISE_INPUT = document.querySelector('#exercise');
+      //Select de nivel de entrenamiento
+      const LEVEL_INPUT = document.querySelector('#level');  
+
+      //Cajas con el resultado
+      const RESULT_BOX = document.querySelectorAll('.result');
+      //Resultado resaltado
+      const RESULT_TITLE = document.querySelector('#show-result');
+
+      //Botón de calcular
+      const CALCULATE_BTN = document.querySelector('#calculate-btn');
+      
+      //Formulario
+      const FORM = document.querySelector('.form-container');
+
+      //Regex para comprobar si los números cumplen con la condición de 2 decimales
+      const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de 1 decimal
+      const DECIMAL_REGEX = new RegExp(/^(\d+|\d+,\d{1}|\d+.\d{1})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de ser enteros
+      const INTEGERS_REGEX = new RegExp(/^\d+$/);
+
+      //Comprobar que ha introducido valor en los select
+      const SELECTS = document.querySelectorAll('select');
+        SELECTS.forEach(select => {
+          select.addEventListener('change', () => {
+            if (select.value !== "" && select.selectedIndex !== 0) {
+              select.setCustomValidity('');
+            }
+          });
+        });
+  
+      //Comprobar que ha introducido edad
+      AGE_INPUT.addEventListener('input', ()=>{
+
+          //Comprobar si el numero es un entero
+          if(!INTEGERS_REGEX.test(AGE_INPUT.value)){
+              AGE_INPUT.setCustomValidity('Introduce una edad válida');
+              AGE_INPUT.reportValidity();
+              return
+          }
+          
+          const VALUE = parseInt(AGE_INPUT.value);
+          const MIN = parseInt(AGE_INPUT.getAttribute('min'));
+          const MAX = parseInt(AGE_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+              AGE_INPUT.setCustomValidity(`La edad mínima son ${MIN}`);
+              AGE_INPUT.reportValidity();
+          }else{
+              AGE_INPUT.setCustomValidity('');
+          }
+      })
+
+      //Comprobar que ha introducido el peso
+      HEART_INPUT.addEventListener('input', ()=>{
+
+        //Comprobar si el numero tiene 2 decimales como mucho
+        if(!INTEGERS_REGEX.test(HEART_INPUT.value)){
+          HEART_INPUT.setCustomValidity('Introduce una frecuencia cardíaca válida');
+          HEART_INPUT.reportValidity();
+          return
+        }
+
+        //Resetear borde y validación del input
+        HEART_INPUT.setCustomValidity('');
+
+        const VALUE = parseFloat(HEART_INPUT.value);
+        const MIN = parseFloat(HEART_INPUT.getAttribute('min'));
+        const MAX = parseFloat(HEART_INPUT.getAttribute('max'));
+
+        if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+          HEART_INPUT.setCustomValidity(`Introduce una frecuencia cardíaca válida, entre ${MIN} latidos y ${MAX} latidos`);
+          HEART_INPUT.reportValidity();
+        }else{
+          HEART_INPUT.setCustomValidity('');
+        }
+      })
+
+      FORM.addEventListener('submit', (e)=>{
+        e.preventDefault();
+
+        const selects = document.querySelectorAll('select');
+        let isValid = true;
+  
+        selects.forEach(select => {
+          if (select.value === "" || select.selectedIndex === 0) {
+            select.setCustomValidity('Por favor, selecciona una opción');
+            select.reportValidity();
+            isValid = false;
+          } else {
+            select.setCustomValidity('');
+          }
+        });
+
+        if (!isValid) {
+          return;
+        }
+
+        //Cambiar texto botón
+        CALCULATE_BTN.innerHTML = 'Calculando...';
+
+        //Ocultar resultado anterior
+        RESULT_BOX.forEach((box)=>{
+            box.style.visibility = 'hidden';
+        });
+
+        let gender = GENDER_INPUT.value;
+        let age = parseInt(AGE_INPUT.value);
+        let heart = parseInt(HEART_INPUT.value);
+        let exercise = EXERCISE_INPUT.value;
+        let level = LEVEL_INPUT.value;
+
+        const CALCULATOR = new FatBurnZone(gender, age, heart, exercise, level);
+        let result = CALCULATOR.fatBurnZone(); //Calculamos la zona de quema de gras
+          
+        setTimeout(()=>{
+
+            //Scroll smooth hasta el resultado
+            RESULT_TITLE.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+            //Volver a poner el texto en el boton
+            CALCULATE_BTN.innerHTML = 'Calcular';
+
+            //Mostrar el resultado
+            RESULT_BOX.forEach((box)=>{
+                box.style.visibility = 'visible';
+            });
+            
+            RESULT_TITLE.innerHTML = `<strong>${result.min}</strong> y <strong>${result.max}</strong>`;
+            
+        }, 500)
+
+      })            
+})();
+
+class FatBurnZone {
+  _sex;
+  _age;
+  _heartRate;
+  _exerciseFrequency;
+  _level;
+  _fcMax;
+
+  constructor(sex, age, heartRate, exerciseFrequency, level) {
+    this._sex = sex;
+    this._age = age;
+    this._heartRate = heartRate;
+    this._exerciseFrequency = exerciseFrequency;
+    this._level = level;
+    this.fcMax(); //Calculamos la frecuencia cardiaca máxima
+  }
+
+  fcMax(){
+    if(this._sex === 'h'){ //Si es hombre
+      if(this._age <= 18){
+        return this._fcMax = 220 - this._age;
+      }else{
+        if(this._exerciseFrequency === 'c'){
+          return this._fcMax = 208 - (0.7 * this._age);
+        }else{
+          return this._fcMax = 220 - this._age;
+        }
+      }
+    }else{ //Si es mujer
+      if(this._age <= 18){
+        return this._fcMax = 220 - this._age;
+      }else{
+        if(this._exerciseFrequency === 'c'){
+          return this._fcMax = 201 - (0.63 * this._age);
+        }else{
+          return this._fcMax = 220 - this._age;
+        }
+      }
+    }
+  }
+
+  fatBurnZone(){
+    
+    if(this._level === 'a'){
+      let min = parseInt((((this._fcMax - this._heartRate) * 0.6) + this._heartRate).toFixed());
+      let max = parseInt((((this._fcMax - this._heartRate) * 0.65) + this._heartRate).toFixed());
+      return { min, max };
+    }else if(this._level === 'b'){
+      let min = parseInt((((this._fcMax - this._heartRate) * 0.65) + this._heartRate).toFixed());
+      let max = parseInt((((this._fcMax - this._heartRate) * 0.7) + this._heartRate).toFixed());
+      return { min, max };
+    }else{
+      let min = parseInt((((this._fcMax - this._heartRate) * 0.7) + this._heartRate).toFixed());
+      let max = parseInt((((this._fcMax - this._heartRate) * 0.75) + this._heartRate).toFixed());
+      return { min, max };
+    }
+
+  }
+
+}
+
+</script>
