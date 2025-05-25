@@ -1,0 +1,319 @@
+<form class="form-container">
+  <div class="flex">
+    <div>
+      <label><span>Elige ejercicio:</span></label>
+      <select id="exercise" type="select" name="exercise-input" required>
+        <option disabled selected>Selecciona</option>
+        <option disabled selected>Selecciona un ejercicio</option>
+        <option value="1.0">Press de banca</option>
+        <option value="1.2">Aperturas con mancuernas</option>
+        <option value="1.1">Aperturas en máquina</option>
+        <option value="1.0">Dominadas</option>
+        <option value="1.2">Jalón al pecho</option>
+        <option value="1.2">Remo con barra</option>
+        <option value="1.2">Remo Gironda</option>
+        <option value="1.2">Remo en máquina T con pecho apoyado</option>
+        <option value="1.3">Pullover en polea</option>
+        <option value="1.0">Press militar</option>
+        <option value="1.3">Elevaciones laterales</option>
+        <option value="1.0">Pájaros en máquina</option>
+        <option value="1.0">Sentadilla libre</option>
+        <option value="1.3">Sentadilla jaca</option>
+        <option value="1.4">Sentadilla pendular</option>
+        <option value="1.2">Sentadilla búlgara</option>
+        <option value="1.2">Prensa inclinada</option>
+        <option value="1.2">Extensiones de cuádriceps</option>
+        <option value="1.0">Peso muerto convencional</option>
+        <option value="1.2">Peso muerto rumano</option>
+        <option value="1.2">Peso muerto SLDL</option>
+        <option value="1.4">Curl femoral sentado</option>
+        <option value="1.2">Curl femoral tumbado</option>
+        <option value="1.2">Hip thrust</option>
+        <option value="1.0">Curl de bíceps con barra</option>
+        <option value="1.2">Curl de bíceps predicador en máquina</option>
+        <option value="1.3">Curl de bíceps Bayesian</option>
+        <option value="1.0">Extensiones de tríceps desde polea alta</option>
+        <option value="1.3">Extensiones de tríceps por detrás de la cabeza</option>
+        <option value="1.0">Press francés con barra</option>
+        <option value="1.0">Crunch abdominal</option>
+        <option value="0.8">Press Pallof</option>
+    </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+        <label><span>Tu peso</span><sup>kg</sup></label>
+        <input id="weight" type="text" min="20" max="250" maxlength="6" name="weight-input" placeholder="Introduce tu peso en kg." required>
+    </div>
+  </div>
+
+  <div class="flex">
+    <div>
+      <label><span>Número de repeticiones</span></label>
+      <input id="nr" type="text" min="1" maxlength="4" name="nr-input" placeholder="Introduce el número de repeticiones" required>
+    </div>
+  </div>
+
+  <div class="flex">
+    <div>
+      <label><span>RPE programado de la primera serie efectiva</span></label>
+      <input id="rpe" type="text" min="1" maxlength="2" max="10" name="rpe-input" placeholder="Siendo RPE=1 “mínimo esfuerzo” y RPE=10 “esfuerzo máximo”." required>
+    </div>
+  </div>
+
+  <div class="flex">
+    <div>
+      <label><span>1RM estimado en el ejercicio</span><sup>Kg</sup></label>
+      <input id="rm" type="text" min="1" maxlength="5" name="rm-input" placeholder="Introduce tu 1RM en el ejercicio indicado">
+    </div>
+  </div>
+
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+          
+<p class="result" style="visibility: hidden;"></p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+(function() {
+
+      //Select de ejercicio
+      const EXERCISE_INPUT = document.querySelector('#exercise');
+      const WEIGHT_INPUT = document.querySelector('#weight');
+      const NR_INPUT = document.querySelector('#nr');
+      const RPE_INPUT = document.querySelector('#rpe');
+      const RM_INPUT = document.querySelector('#rm');
+
+      //Cajas con el resultado
+      const RESULT_BOX = document.querySelector('.result');
+
+      //Botón de calcular
+      const CALCULATE_BTN = document.querySelector('#calculate-btn');
+      
+      //Formulario
+      const FORM = document.querySelector('.form-container');
+
+      //Regex para comprobar si los números cumplen con la condición de 2 decimales
+      const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de 1 decimal
+      const DECIMAL_REGEX = new RegExp(/^(\d+|\d+,\d{1}|\d+.\d{1})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de ser enteros
+      const INTEGERS_REGEX = new RegExp(/^\d+$/);
+      const NEGATIVE_INTEGERS_REGEX = new RegExp(/^-?\d+$/);
+
+      //Comprobar que ha introducido valor en los select
+      const SELECTS = document.querySelectorAll('select');
+        SELECTS.forEach(select => {
+          select.addEventListener('change', () => {
+            if (select.value !== "" && select.selectedIndex !== 0) {
+              select.setCustomValidity('');
+            }
+          });
+        });
+  
+      //Comprobar que ha introducido edad
+      WEIGHT_INPUT.addEventListener('input', ()=>{
+
+          //Comprobar si el numero es un entero
+          if(!DECIMAL_REGEX.test(WEIGHT_INPUT.value)){
+            WEIGHT_INPUT.setCustomValidity('Introduce una peso válido');
+            WEIGHT_INPUT.reportValidity();
+            return
+          }
+          
+          const VALUE = parseInt(WEIGHT_INPUT.value);
+          const MIN = parseInt(WEIGHT_INPUT.getAttribute('min'));
+          const MAX = parseInt(WEIGHT_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            WEIGHT_INPUT.setCustomValidity(`El peso mínimo es ${MIN}kg y el máximo ${MAX}kg`);
+            WEIGHT_INPUT.reportValidity();
+          }else{
+            WEIGHT_INPUT.setCustomValidity('');
+          }
+      })
+
+      //Comprobar que ha introducido la distancia para las manos
+      RM_INPUT.addEventListener('input', ()=>{
+
+          //Comprobar si el numero tiene 2 decimales como mucho
+          if(!INTEGERS_REGEX.test(RM_INPUT.value)){
+            RM_INPUT.setCustomValidity('Introduce un número válido');
+            RM_INPUT.reportValidity();
+            return
+          }
+
+          //Resetear borde y validación del input
+          RM_INPUT.setCustomValidity('');
+
+          const VALUE = parseFloat(RM_INPUT.value);
+          const MIN = parseFloat(RM_INPUT.getAttribute('min'));
+          const MAX = parseFloat(RM_INPUT.getAttribute('max'));
+
+          if(VALUE > MAX || isNaN(VALUE)){
+            RM_INPUT.setCustomValidity(`Introduce un número válido entre ${MIN} y ${MAX}`);
+            RM_INPUT.reportValidity();
+          }else{
+            RM_INPUT.setCustomValidity('');
+          }
+
+      })
+
+      //Comprobar que ha introducido la distancia para las manos
+      RPE_INPUT.addEventListener('input', ()=>{
+
+        //Comprobar si el numero tiene 2 decimales como mucho
+        if(!INTEGERS_REGEX.test(RPE_INPUT.value)){
+          RPE_INPUT.setCustomValidity('Introduce un número válido');
+          RPE_INPUT.reportValidity();
+          return
+        }
+
+        //Resetear borde y validación del input
+        RPE_INPUT.setCustomValidity('');
+
+        const VALUE = parseFloat(RPE_INPUT.value);
+        const MIN = parseFloat(RPE_INPUT.getAttribute('min'));
+        const MAX = parseFloat(RPE_INPUT.getAttribute('max'));
+
+        if(VALUE > MAX || isNaN(VALUE)){
+          RPE_INPUT.setCustomValidity(`Introduce un número válido entre ${MIN} y ${MAX}`);
+          RPE_INPUT.reportValidity();
+        }else{
+          RPE_INPUT.setCustomValidity('');
+        }
+
+      })
+
+      //Comprobar que ha introducido edad
+      RM_INPUT.addEventListener('input', ()=>{
+
+        //Comprobar si el numero es un entero
+        if(!DECIMAL_REGEX.test(RM_INPUT.value)){
+          RM_INPUT.setCustomValidity('Introduce una peso válido');
+          RM_INPUT.reportValidity();
+          return
+        }
+
+        const VALUE = parseInt(RM_INPUT.value);
+        const MIN = parseInt(RM_INPUT.getAttribute('min'));
+        const MAX = parseInt(RM_INPUT.getAttribute('max'));
+
+        if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+          RM_INPUT.setCustomValidity(`El peso mínimo es ${MIN}kg y el máximo ${MAX}kg`);
+          RM_INPUT.reportValidity();
+        }else{
+          RM_INPUT.setCustomValidity('');
+        }
+      })
+
+      FORM.addEventListener('submit', (e)=>{
+        e.preventDefault();
+
+        const selects = document.querySelectorAll('select');
+        let isValid = true;
+  
+        selects.forEach(select => {
+          if (select.value === "" || select.selectedIndex === 0) {
+            select.setCustomValidity('Por favor, selecciona una opción');
+            select.reportValidity();
+            isValid = false;
+          } else {
+            select.setCustomValidity('');
+          }
+        });
+
+        if (!isValid) {
+          return;
+        }
+
+        //Cambiar texto botón
+        CALCULATE_BTN.innerHTML = 'Calculando...';
+
+        //Ocultar resultado anterior
+        RESULT_BOX.style.visibility = 'hidden';
+
+        let exercise = parseFloat(EXERCISE_INPUT.value);
+        let weight = parseFloat(WEIGHT_INPUT.value);
+        let reps = parseInt(NR_INPUT.value);
+        let rpe = parseInt(RPE_INPUT.value);
+        let rm = parseFloat(RM_INPUT.value);
+        const CALCULATOR = new FatigueRatio(exercise, weight, reps, rpe, rm);
+        let result = CALCULATOR.calculate();
+          
+        setTimeout(()=>{
+
+            //Scroll smooth hasta el resultado
+            RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+            //Volver a poner el texto en el boton
+            CALCULATE_BTN.innerHTML = 'Calcular';
+
+            //Mostrar el resultado
+            RESULT_BOX.style.visibility = 'visible';
+            
+            RESULT_BOX.innerHTML = `<strong>${result.message}</strong>`
+            
+        }, 500)
+
+      })            
+})();
+
+class FatigueRatio {
+
+  _exercise;
+  _weight;
+  _reps;
+  _rpe;
+  _rm;
+
+  constructor(exercise, weight, reps, rpe, rm) {
+    this._exercise = exercise;
+    this._weight = weight;
+    this._reps = reps;
+    this._rpe = rpe;
+    this._rm = rm;
+  }
+
+  calculate() {
+    let rmFactor = this._weight / this._rm;
+    let upRatio = this._weight * this._reps * this._exercise * rmFactor;
+    let downRatio = 0.1 * this._reps * this._rpe * this._weight;
+    let totalRatio = parseFloat((upRatio / downRatio).toFixed(2));
+
+    if(totalRatio < 1) {
+      return {
+        totalRatio: totalRatio,
+        message: 'Ratio bajo: alta fatiga en relación al estímulo.'
+      }
+    }else if(totalRatio >= 1 && totalRatio <= 2) {
+      return {
+        totalRatio: totalRatio,
+        message: 'Ratio óptimo: buen equilibrio entre estímulo y fatiga.'
+      }
+    }else {
+      return {
+        totalRatio: totalRatio,
+        message: 'Ratio demasiado alto: podrías darle algo más de caña 😉'
+      }
+    }
+  }
+
+}
+
+</script>

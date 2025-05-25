@@ -1,0 +1,667 @@
+<form class="form-container">
+  <div class="flex">
+    <div>
+      <label><span>¿Qué quieres calcular?</span></label>
+      <select id="exercise" type="select" name="exercise-input" required>
+        <option disabled selected>Selecciona</option>
+        <option value="a">Tiempo total en completar la maratón a un determinado ritmo</option>
+        <option value="b">Ritmo de carrera para completar la maratón en un determinado tiempo</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex exerciseA" style="display: none;">
+    <div>
+      <label><span>¿A qué velocidad o ritmo quieres correr?</span></label>
+      <select id="rythmSelect" type="select" name="rythmSelect-input">
+        <option disabled selected>Selecciona</option>
+        <option value="a">Velocidad (km/h)</option>
+        <option value="b">Ritmo (min/km)</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex rythmA" style="display: none;">
+    <div>
+      <label><span>¿A qué velocidad quieres correr?</span><sup>km/h</sup></label>
+      <input id="velocity" type="text" min="1" maxlength="2" max="30" name="velocity-input" placeholder="Introduce la velocidad a la que correrás la maratón">
+    </div>
+  </div>
+  <div id='optionalInputs' class="rythmB" style="display: none;">
+    <p>¿A qué ritmo quieres correr?</p>
+    <div class="flex">
+      <div>
+        <label><span>Minutos</span></label>
+        <input id="min" type="text" min="0" max="60" maxlength="2" name="min-input" placeholder="Minutos">
+      </div>
+      <div>
+        <label><span>Segundos</span></label>
+        <input id="seconds" type="text" min="0" max="59" maxlength="2" name="seconds-input" placeholder="Segundos">
+      </div>
+    </div> 
+  </div>
+
+  <div id='optionalInputs' class="exerciseB" style="display: none;">
+    <p>¿En cuánto tiempo quieres completar la maratón?</p>
+    <div class="flex">
+      <div>
+        <label><span>Horas</span></label>
+        <input id="hours" type="text" min="0" max="12" maxlength="2" name="hours-input" placeholder="Horas">
+      </div>
+      <div>
+        <label><span>Minutos</span></label>
+        <input id="minutes" type="text" min="0" max="59" maxlength="2" name="min-input" placeholder="Minutos">
+      </div>
+    </div> 
+  </div>
+
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+          
+<p class="result" style="visibility: hidden;"></p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+(function() {
+
+      //Input de género
+      const EXERCISE_INPUT = document.querySelector('#exercise');
+      const RYTHM_INPUT = document.querySelector('#rythmSelect');
+      const RYTHM_INPUT_A = document.querySelector('.rythmA');
+      const RYTHM_INPUT_B = document.querySelector('.rythmB');
+      const EXERCISE_INPUT_A = document.querySelector('.exerciseA');
+      const EXERCISE_INPUT_B = document.querySelector('.exerciseB');
+
+      const VELOCITY = document.querySelector('#velocity');
+      const MIN_INPUT = document.querySelector('#min');
+      const SECONDS = document.querySelector('#seconds');
+      const HOURS = document.querySelector('#hours');
+      const MINUTES = document.querySelector('#minutes');
+
+      //Cajas con el resultado
+      const RESULT_BOX = document.querySelector('.result');
+
+      //Botón de calcular
+      const CALCULATE_BTN = document.querySelector('#calculate-btn');
+      
+      //Formulario
+      const FORM = document.querySelector('.form-container');
+
+      //Regex para comprobar si los números cumplen con la condición de 2 decimales
+      const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de 1 decimal
+      const DECIMAL_REGEX = new RegExp(/^(\d+|\d+,\d{1}|\d+.\d{1})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de ser enteros
+      const INTEGERS_REGEX = new RegExp(/^\d+$/);
+      const NEGATIVE_INTEGERS_REGEX = new RegExp(/^-?\d+$/);
+
+      const optionalInputs = document.querySelector('#optionalInputs');
+      const optionalInputsTitle = optionalInputs.querySelector('p');
+
+      const optionalInputs2 = document.querySelector('#optionalInputs.exerciseB');
+      const optionalInputsTitle2 = optionalInputs2.querySelector('p');
+
+      let windowWidth = window.innerWidth;
+
+      if(windowWidth > 365 && windowWidth < 683){
+          optionalInputsTitle.style.bottom = '80%';
+          optionalInputsTitle2.style.bottom = '82%';
+      }else if(windowWidth < 365){
+          optionalInputsTitle.style.bottom = '80%';
+          optionalInputsTitle2.style.bottom = '80%';
+      }else{
+          optionalInputsTitle.style.bottom = '80%';
+          optionalInputsTitle2.style.bottom = '80%';
+      }
+        
+      window.addEventListener('resize', (e)=>{
+          windowWidth = window.innerWidth;
+          if(windowWidth > 365 && windowWidth < 683){
+              optionalInputsTitle.style.bottom = '82%';
+              optionalInputsTitle2.style.bottom = '82%';
+          }else if(windowWidth < 365){
+              optionalInputsTitle.style.bottom = '80%';
+              optionalInputsTitle2.style.bottom = '80%';
+          }else{
+              optionalInputsTitle.style.bottom = '80%';
+              optionalInputsTitle2.style.bottom = '80%';
+          }
+      })
+
+      //Comprobar que ha introducido valor en los select
+      const SELECTS = document.querySelectorAll('select');
+      SELECTS.forEach(select => {
+        if(select.required){
+          select.addEventListener('change', () => {
+            if (select.value !== "" && select.selectedIndex !== 0) {
+              select.setCustomValidity('');
+            }
+          });
+        }else{
+          select.setCustomValidity('');
+        }
+        
+      });
+
+      EXERCISE_INPUT.addEventListener('change', ()=>{
+        if(EXERCISE_INPUT.value === 'a'){
+          EXERCISE_INPUT_A.style.display = 'flex';
+          RYTHM_INPUT.required = true;
+
+          EXERCISE_INPUT_B.style.display = 'none';
+          HOURS.value = '';
+          HOURS.required = false;
+          MINUTES.value = '';
+          MINUTES.required = false;
+        
+        }else if(EXERCISE_INPUT.value === 'b'){
+          EXERCISE_INPUT_A.style.display = 'none';
+          RYTHM_INPUT.required = false;
+
+          RYTHM_INPUT_A.style.display = 'none';
+          VELOCITY.value = '';
+          VELOCITY.required = false;
+
+          RYTHM_INPUT_B.style.display = 'none';
+          MIN_INPUT.value = '';
+          MIN_INPUT.required = false;
+          SECONDS.value = '';
+          SECONDS.required = false;
+
+          EXERCISE_INPUT_B.style.display = 'flex';
+          HOURS.required = true;
+          MINUTES.required = true;
+        }
+      })
+
+      RYTHM_INPUT.addEventListener('change', ()=>{
+        if(RYTHM_INPUT.value === 'a'){
+          RYTHM_INPUT_A.style.display = 'flex';
+          VELOCITY.required = true;
+          
+          RYTHM_INPUT_B.style.display = 'none';
+          MIN_INPUT.value = '';
+          MIN_INPUT.required = false;
+          SECONDS.value = '';
+          SECONDS.required = false;
+        }else if(RYTHM_INPUT.value === 'b'){
+          RYTHM_INPUT_A.style.display = 'none';
+          VELOCITY.value = '';
+          VELOCITY.required = false;
+
+          RYTHM_INPUT_B.style.display = 'flex';
+          MIN_INPUT.required = true;
+          SECONDS.required = true;
+        }
+      })
+  
+      //Comprobar que ha introducido edad
+      VELOCITY.addEventListener('input', ()=>{
+
+        if(VELOCITY.required === true){
+          if(!DECIMAL_REGEX.test(VELOCITY.value)){
+            VELOCITY.setCustomValidity('Introduce una velocidad válida');
+            VELOCITY.reportValidity();
+            return
+          }
+        
+          const VALUE = parseInt(VELOCITY.value);
+          const MIN = parseInt(VELOCITY.getAttribute('min'));
+          const MAX = parseInt(VELOCITY.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            VELOCITY.setCustomValidity(`La velocidad mínima es ${MIN} km/h y la máxima ${MAX} km/h`);
+            VELOCITY.reportValidity();
+          }else{
+            VELOCITY.setCustomValidity('');
+          }
+        }else{
+          VELOCITY.setCustomValidity('');
+        }
+      })
+
+      MIN_INPUT.addEventListener('input', ()=>{
+
+        if(MIN_INPUT.required === true){
+          if(!INTEGERS_REGEX.test(MIN_INPUT.value)){
+            MIN_INPUT.setCustomValidity('Introduce un número válido');
+            MIN_INPUT.reportValidity();
+            return
+          }
+
+          const VALUE = parseInt(MIN_INPUT.value);
+          const MIN = parseInt(MIN_INPUT.getAttribute('min'));
+          const MAX = parseInt(MIN_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            MIN_INPUT.setCustomValidity(`Introduce un número válido`);
+            MIN_INPUT.reportValidity();
+          }else{
+            MIN_INPUT.setCustomValidity('');
+          }
+        }else{
+          MIN_INPUT.setCustomValidity('');
+        } 
+      })
+
+      SECONDS.addEventListener('input', ()=>{
+
+        if(SECONDS.required === true){
+          if(!INTEGERS_REGEX.test(SECONDS.value)){
+            SECONDS.setCustomValidity('Introduce un número válido');
+            SECONDS.reportValidity();
+            return
+          }
+
+          const VALUE = parseInt(SECONDS.value);
+          const MIN = parseInt(SECONDS.getAttribute('min'));
+          const MAX = parseInt(SECONDS.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            SECONDS.setCustomValidity(`Introduce un número válido`);
+            SECONDS.reportValidity();
+          }else{
+            SECONDS.setCustomValidity('');
+          }
+        }else{
+          SECONDS.setCustomValidity('');
+        } 
+      })
+
+      HOURS.addEventListener('input', ()=>{
+        if(HOURS.required === true){
+          if(!INTEGERS_REGEX.test(HOURS.value)){
+            HOURS.setCustomValidity('Introduce un número válido');
+            HOURS.reportValidity();
+            return
+          }
+
+          const VALUE = parseInt(HOURS.value);
+          const MIN = parseInt(HOURS.getAttribute('min'));
+          const MAX = parseInt(HOURS.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            HOURS.setCustomValidity(`Introduce un número válido`);
+            HOURS.reportValidity();
+          }else{
+            HOURS.setCustomValidity('');
+          }
+        }else{
+          HOURS.setCustomValidity('');
+        } 
+      })
+
+      MINUTES.addEventListener('input', ()=>{
+        if(MINUTES.required === true){
+          if(!INTEGERS_REGEX.test(MINUTES.value)){
+            MINUTES.setCustomValidity('Introduce un número válido');
+            MINUTES.reportValidity();
+            return
+          }
+
+          const VALUE = parseInt(MINUTES.value);
+          const MIN = parseInt(MINUTES.getAttribute('min'));
+          const MAX = parseInt(MINUTES.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            MINUTES.setCustomValidity(`Introduce un número válido`);
+            MINUTES.reportValidity();
+          }else{
+            MINUTES.setCustomValidity('');
+          }
+        }else{
+          MINUTES.setCustomValidity('');
+        } 
+      })
+
+      FORM.addEventListener('submit', (e)=>{
+        e.preventDefault();
+
+        const selects = document.querySelectorAll('select');
+        let isValid = true;
+  
+        selects.forEach(select => {
+          if(select.required){
+            if (select.value === "" || select.selectedIndex === 0) {
+              select.setCustomValidity('Por favor, selecciona una opción');
+              select.reportValidity();
+              isValid = false;
+            } else {
+              select.setCustomValidity('');
+            }
+          }else{
+            select.setCustomValidity('');
+          }
+          
+        });
+
+        if (!isValid) {
+          return;
+        }
+
+        //Cambiar texto botón
+        CALCULATE_BTN.innerHTML = 'Calculando...';
+
+        //Ocultar resultado anterior
+        RESULT_BOX.style.visibility = 'hidden';
+
+        //Obtener valores de los inputs
+        let exerciseSelect = EXERCISE_INPUT.value;
+        let rythmSelect = RYTHM_INPUT.value;
+        let min = MIN_INPUT.value? parseInt(MIN_INPUT.value) : null;
+        let seconds = SECONDS.value? parseInt(SECONDS.value) : null;
+        let velocity = VELOCITY.value ? parseFloat(VELOCITY.value) : min + (seconds / 60);
+        let hours = HOURS.value? parseInt(HOURS.value) : null;
+        let minutes = MINUTES.value? parseInt(MINUTES.value) : null;
+        
+        const CALCULATOR = exerciseSelect === 'a' ? new RythmTime(exerciseSelect, velocity, rythmSelect, null) : new RythmTime(exerciseSelect, velocity, rythmSelect,  `${hours}:${minutes}`);
+        let result = CALCULATOR.calculate();
+          
+        setTimeout(()=>{
+
+            //Scroll smooth hasta el resultado
+            RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+            //Volver a poner el texto en el boton
+            CALCULATE_BTN.innerHTML = 'Calcular';
+
+            //Mostrar el resultado
+            RESULT_BOX.style.visibility = 'visible';
+            if(exerciseSelect === 'a'){
+              if(rythmSelect === 'a'){
+                RESULT_BOX.innerHTML = `<ul style="list-style: none; margin: 0px"><li>Tiempo total de maratón: <strong>${result.marathon}</strong></li><li>Tiempo de paso 5km: <strong>${result.step5km}</strong></li><li>Tiempo de paso 10km: <strong>${result.step10km}</strong></li><li>Tiempo de paso 30km: <strong>${result.step30km}</strong></li><li>Tiempo de paso media maratón: <strong>${result.halfMarathon}</strong></li><li>Ritmo equivalente: <strong>${result.rythm}</strong></li></ul>`;
+              }else{
+                RESULT_BOX.innerHTML = `<ul style="list-style: none; margin: 0px"><li>Tiempo total de maratón: <strong>${result.marathon}</strong></li><li>Tiempo de paso 5km: <strong>${result.step5km}</strong></li><li>Tiempo de paso 10km: <strong>${result.step10km}</strong></li><li>Tiempo de paso 30km: <strong>${result.step30km}</strong></li><li>Tiempo de paso media maratón: <strong>${result.halfMarathon}</strong></li><li>Velocidad equivalente: <strong>${result.speed}</strong></li></ul>`;
+              }
+            }else{
+              RESULT_BOX.innerHTML = `<ul style="list-style: none; margin: 0px"><li>Tiempo total de maratón: <strong>${hours}:${minutes === 0 ? '00' : minutes}</strong></li><li>Tiempo de paso 5km: <strong>${result.step5km}</strong></li><li>Tiempo de paso 10km: <strong>${result.step10km}</strong></li><li>Tiempo de paso 30km: <strong>${result.step30km}</strong></li><li>Tiempo de paso media maratón: <strong>${result.halfMarathon}</strong></li><li>Ritmo necesario: <strong>${result.rythm}</strong></li><li>Velocidad equivalente: <strong>${result.speed}</strong></li></ul>`;
+            }
+            
+            exerciseSelect = null;
+            rythmSelect = null;
+            velocity = null;
+            min = null;
+            seconds = null;
+            hours = null;
+            minutes = null;
+            rythmTime = null;
+            marathonTime = null;
+
+        }, 500)
+
+      })            
+})();
+
+class RythmTime {
+
+  _type;
+  _speed;
+  _measure;
+  _time;
+
+  constructor(type, speed, measure, time) {
+    this._type = type;
+    this._speed = speed;
+    this._measure = measure;
+    this._time = time;
+  }
+
+  calculate(){
+    if(this._type === 'a'){
+      if(this._measure === 'a'){
+
+        //Tiempo total maratón
+        const totalMarathon = 42.195 / this._speed;
+        const hours = Math.floor(totalMarathon);
+        const decimalHours = totalMarathon - hours;
+        const minutes = Math.floor(decimalHours * 60);
+        const decimalMinutes = (decimalHours * 60) - minutes;
+        const seconds = Math.round(decimalMinutes * 60);
+        // Formatear el resultado
+        const formattedHours = hours.toString().padStart(2, '0');
+        const formattedMinutes = minutes.toString().padStart(2, '0');
+        const formattedSeconds = seconds.toString().padStart(2, '0');
+        const marathonResult = `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+
+        //Tiempo de paso 5KM
+        const step5km = 5 / this._speed;
+        const hours5km = Math.floor(step5km);
+        const decimalHours5km = step5km - hours5km;
+        const minutes5km = Math.floor(decimalHours5km * 60);
+        const decimalMinutes5km = (decimalHours5km * 60) - minutes5km;
+        const seconds5km = Math.round(decimalMinutes5km * 60);
+        // Formatear el resultado
+        const formattedHours5km = hours5km.toString().padStart(2, '0');
+        const formattedMinutes5km = minutes5km.toString().padStart(2, '0');
+        const formattedSeconds5km = seconds5km.toString().padStart(2, '0');
+        const step5kmResult = `${formattedHours5km}:${formattedMinutes5km}:${formattedSeconds5km}`;
+
+        //Tiempo de paso 10KM
+        const step10km = 10 / this._speed;
+        const hours10km = Math.floor(step10km);
+        const decimalHours10km = step10km - hours10km;
+        const minutes10km = Math.floor(decimalHours10km * 60);  
+        const decimalMinutes10km = (decimalHours10km * 60) - minutes10km; 
+        const seconds10km = Math.round(decimalMinutes10km * 60);
+        // Formatear el resultado
+        const formattedHours10km = hours10km.toString().padStart(2, '0');
+        const formattedMinutes10km = minutes10km.toString().padStart(2, '0');
+        const formattedSeconds10km = seconds10km.toString().padStart(2, '0');
+        const step10kmResult = `${formattedHours10km}:${formattedMinutes10km}:${formattedSeconds10km}`;
+
+        //Tiempo de paso media maratón
+        const halfMarathon = 21.098 / this._speed;
+        const hoursHalfMarathon = Math.floor(halfMarathon);
+        const decimalHoursHalfMarathon = halfMarathon - hoursHalfMarathon;
+        const minutesHalfMarathon = Math.floor(decimalHoursHalfMarathon * 60);
+        const decimalMinutesHalfMarathon = (decimalHoursHalfMarathon * 60) - minutesHalfMarathon;
+        const secondsHalfMarathon = Math.round(decimalMinutesHalfMarathon * 60);
+        // Formatear el resultado
+        const formattedHoursHalfMarathon = hoursHalfMarathon.toString().padStart(2, '0');
+        const formattedMinutesHalfMarathon = minutesHalfMarathon.toString().padStart(2, '0');
+        const formattedSecondsHalfMarathon = secondsHalfMarathon.toString().padStart(2, '0');
+        const halfMarathonResult = `${formattedHoursHalfMarathon}:${formattedMinutesHalfMarathon}:${formattedSecondsHalfMarathon}`;
+
+        //Tiempo de paso 30KM
+        const step30km = 30 / this._speed;
+        const hours30km = Math.floor(step30km);
+        const decimalHours30km = step30km - hours30km;
+        const minutes30km = Math.floor(decimalHours30km * 60);
+        const decimalMinutes30km = (decimalHours30km * 60) - minutes30km;
+        const seconds30km = Math.round(decimalMinutes30km * 60);
+        // Formatear el resultado
+        const formattedHours30km = hours30km.toString().padStart(2, '0');
+        const formattedMinutes30km = minutes30km.toString().padStart(2, '0');
+        const formattedSeconds30km = seconds30km.toString().padStart(2, '0');
+        const step30kmResult = `${formattedHours30km}:${formattedMinutes30km}:${formattedSeconds30km}`;
+
+        //Ritmo equivalente
+        const rythm = 60 / this._speed;
+        const rythMinutes = Math.floor(rythm);
+        const rythmDecimalMinutes = rythm - rythMinutes;
+        const rythmSeconds = Math.round(rythmDecimalMinutes * 60);
+        
+        // Formatear el resultado
+        const rythmFormattedMinutes = rythMinutes.toString().padStart(2, '0');
+        const rythmFormattedSeconds = rythmSeconds.toString().padStart(2, '0');
+        const rythmResult = `${rythmFormattedMinutes}:${rythmFormattedSeconds} min/km`;
+
+        return {
+          marathon: marathonResult,
+          step5km: step5kmResult,
+          step10km: step10kmResult,
+          halfMarathon: halfMarathonResult,
+          step30km: step30kmResult,
+          rythm: rythmResult
+        }
+
+      }else{
+
+        //Tiempo total maratón
+        const totalMarathon = this._speed * 42.195 / 60;
+        const hours = Math.floor(totalMarathon);
+        const decimalHours = totalMarathon - hours;
+        const minutes = Math.floor(decimalHours * 60);
+        const decimalMinutes = (decimalHours * 60) - minutes;
+        const seconds = Math.round(decimalMinutes * 60);
+        // Formatear el resultado
+        const formattedHours = hours.toString().padStart(2, '0');
+        const formattedMinutes = minutes.toString().padStart(2, '0');
+        const formattedSeconds = seconds.toString().padStart(2, '0');
+        const marathonResult = `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+
+        //Tiempo de paso 5KM
+        const step5km = this._speed * 5;
+        const minutes5km = Math.floor(step5km);
+        const decimalMinutes5km = step5km - minutes5km;
+        const seconds5km = Math.round(decimalMinutes5km * 60);
+        // Formatear el resultado
+        const formattedMinutes5km = minutes5km.toString().padStart(2, '0');
+        const formattedSeconds5km = seconds5km.toString().padStart(2, '0');
+        const step5kmResult = `${formattedMinutes5km}:${formattedSeconds5km}`;
+
+        //Tiempo de paso 10KM
+        const step10km = this._speed * 10;
+        const minutes10km = Math.floor(step10km);
+        const decimalMinutes10km = step10km - minutes10km;
+        const seconds10km = Math.round(decimalMinutes10km * 60);
+        // Formatear el resultado
+        const formattedMinutes10km = minutes10km.toString().padStart(2, '0');
+        const formattedSeconds10km = seconds10km.toString().padStart(2, '0');
+        const step10kmResult = `${formattedMinutes10km}:${formattedSeconds10km}`;
+
+        //Tiempo total media maratón
+        const halfMarathon = this._speed * 21.098 / 60;
+        const halfMarathonhours = Math.floor(halfMarathon);
+        const halfMarathondecimalHours = halfMarathon - halfMarathonhours;
+        const halfMarathonminutes = Math.floor(halfMarathondecimalHours * 60);
+        const halfMarathondecimalMinutes = (halfMarathondecimalHours * 60) - halfMarathonminutes;
+        const halfMarathonseconds = Math.round(halfMarathondecimalMinutes * 60);
+        // Formatear el resultado
+        const halfMarathonformattedHours = halfMarathonhours.toString().padStart(2, '0');
+        const halfMarathonformattedMinutes = halfMarathonminutes.toString().padStart(2, '0');
+        const halfMarathonformattedSeconds = halfMarathonseconds.toString().padStart(2, '0');
+        const halfMarathonResult = `${halfMarathonformattedHours}:${halfMarathonformattedMinutes}:${halfMarathonformattedSeconds}`;
+
+        //Tiempo de paso 30KM
+        const step30km = this._speed * 30 / 60;
+        const hours30km = Math.floor(step30km);
+        const decimalHours30km = step30km - hours30km;
+        const minutes30km = Math.floor(decimalHours30km * 60);
+        const decimalMinutes30km = (decimalHours30km * 60) - minutes30km;
+        const seconds30km = Math.round(decimalMinutes30km * 60);
+        // Formatear el resultado
+        const formattedHours30km = hours30km.toString().padStart(2, '0');
+        const formattedMinutes30km = minutes30km.toString().padStart(2, '0');
+        const formattedSeconds30km = seconds30km.toString().padStart(2, '0');
+        const step30kmResult = `${formattedHours30km}:${formattedMinutes30km}:${formattedSeconds30km}`;
+
+        //Velocidad equivalente
+        const speedEquivalent = 60 / this._speed;
+        
+        // Formatear el resultado con un decimal
+        const speedResult = `${(speedEquivalent.toFixed(1)).toLocaleString('es', {minimumFractionDigits: 1, maximumFractionDigits: 1}).replaceAll('.', ',')} km/h`;
+
+
+        return {
+          marathon: marathonResult,
+          step5km: step5kmResult,
+          step10km: step10kmResult,
+          halfMarathon: halfMarathonResult,
+          step30km: step30kmResult,
+          speed: speedResult
+        }
+
+      }
+    }else{
+
+      const totalMarathonTime = this._time;
+      //Tiempo total maratón en minutos
+      const [hours, minutes] = this._time.split(':').map(Number);
+      const totalMinutes = (hours * 60) + minutes;
+      const rythmPerKm = totalMinutes / 42.195;
+      const rythmMinutes = Math.floor(rythmPerKm);
+      const rythmDecimalMinutes = rythmPerKm - rythmMinutes;
+      const rythmSeconds = Math.round(rythmDecimalMinutes * 60);
+      
+      // Formatear el resultado
+      const formattedMinutes = rythmMinutes.toString().padStart(2, '0');
+      const formattedSeconds = rythmSeconds.toString().padStart(2, '0');
+      const rythmResult = `${formattedMinutes}:${formattedSeconds} min/km`;
+
+      //Velocidad equivalente
+      const speedKmH = (42.195 / totalMinutes) * 60;
+      const speedResult = `${(speedKmH.toFixed(1)).toLocaleString('es', {minimumFractionDigits: 1, maximumFractionDigits: 1}).replaceAll('.', ',')} km/h`;
+
+      //Tiempo de paso 5KM
+      const step5km = (5 / speedKmH) * 60;
+      const minutes5km = Math.floor(step5km);
+      const decimalMinutes5km = step5km - minutes5km;
+      const seconds5km = Math.round(decimalMinutes5km * 60);
+      // Formatear el resultado
+      const formattedMinutes5km = minutes5km.toString().padStart(2, '0');
+      const formattedSeconds5km = seconds5km.toString().padStart(2, '0');
+      const step5kmResult = `${formattedMinutes5km}:${formattedSeconds5km}`;
+
+      //Tiempo de paso 10KM
+      const step10km = (10 / speedKmH) * 60;
+      const minutes10km = Math.floor(step10km);
+      const decimalMinutes10km = step10km - minutes10km;
+      const seconds10km = Math.round(decimalMinutes10km * 60);
+      // Formatear el resultado
+      const formattedMinutes10km = minutes10km.toString().padStart(2, '0');
+      const formattedSeconds10km = seconds10km.toString().padStart(2, '0');
+      const step10kmResult = `${formattedMinutes10km}:${formattedSeconds10km}`;
+
+      //Tiempo de paso media maratón
+      const halfMarathon = 21.098 / speedKmH;
+      const hoursHalfMarathon = Math.floor(halfMarathon);
+      const decimalHoursHalfMarathon = halfMarathon - hoursHalfMarathon;
+      const minutesHalfMarathon = Math.floor(decimalHoursHalfMarathon * 60);
+      const decimalMinutesHalfMarathon = (decimalHoursHalfMarathon * 60) - minutesHalfMarathon;
+      const secondsHalfMarathon = Math.round(decimalMinutesHalfMarathon * 60);
+      // Formatear el resultado
+      const formattedHoursHalfMarathon = hoursHalfMarathon.toString().padStart(2, '0');
+      const formattedMinutesHalfMarathon = minutesHalfMarathon.toString().padStart(2, '0');
+      const formattedSecondsHalfMarathon = secondsHalfMarathon.toString().padStart(2, '0');
+      const halfMarathonResult = `${formattedHoursHalfMarathon}:${formattedMinutesHalfMarathon}:${formattedSecondsHalfMarathon}`;
+
+      //Tiempo de paso 30KM
+      const step30km = 30 / speedKmH;
+      const hours30km = Math.floor(step30km);
+      const decimalHours30km = step30km - hours30km;
+      const minutes30km = Math.floor(decimalHours30km * 60);
+      const decimalMinutes30km = (decimalHours30km * 60) - minutes30km;
+      const seconds30km = Math.round(decimalMinutes30km * 60);
+      // Formatear el resultado
+      const formattedHours30km = hours30km.toString().padStart(2, '0');
+      const formattedMinutes30km = minutes30km.toString().padStart(2, '0');
+      const formattedSeconds30km = seconds30km.toString().padStart(2, '0');
+      const step30kmResult = `${formattedHours30km}:${formattedMinutes30km}:${formattedSeconds30km}`;
+
+      return {
+        totalMarathonTime: totalMarathonTime,
+        rythm: rythmResult,
+        speed: speedResult,
+        step5km: step5kmResult,
+        step10km: step10kmResult,
+        halfMarathon: halfMarathonResult,
+        step30km: step30kmResult
+      }
+    }
+  }
+}
+</script>
