@@ -1,0 +1,164 @@
+<form class="form-container">
+  <div class="flex">
+      <div>
+          <label><span>Calcio total</span><sup>mg/dL</sup></label>
+          <input id="calcium" type="text" min="0" max="400" maxlength="4" name="calcium-input" placeholder="Introduce los valores de calcio total" required>
+      </div>
+  </div>
+  <div class="flex">
+      <div>
+          <label><span>Albúmina</span><sup>g/dL</sup></label>
+          <input id="albumina" type="text" min="0" max="400" maxlength="4" name="albumina-input" placeholder="Introduce los valores de albumina" required>
+      </div>
+  </div>
+
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+          
+<p class="result" style="visibility: hidden;"></p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+(function() {
+
+      const CALCIUM_INPUT = document.querySelector('#calcium');
+      const ALBUMINA_INPUT = document.querySelector('#albumina');
+
+      //Cajas con el resultado
+      const RESULT_BOX = document.querySelector('.result');
+
+      //Botón de calcular
+      const CALCULATE_BTN = document.querySelector('#calculate-btn');
+      
+      //Formulario
+      const FORM = document.querySelector('.form-container');
+
+      //Regex para comprobar si los números cumplen con la condición de 2 decimales
+      const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+
+      //Regex para comprobar si los números cumplen con la condición de ser enteros
+      const INTEGERS_REGEX = new RegExp(/^\d+$/);
+
+      //Comprobar que ha introducido edad
+      CALCIUM_INPUT.addEventListener('input', ()=>{
+
+          //Comprobar si el numero es un entero
+          if(!DECIMALS_REGEX.test(CALCIUM_INPUT.value)){
+            CALCIUM_INPUT.setCustomValidity('Introduce un número válido');
+            CALCIUM_INPUT.reportValidity();
+            return
+          }
+          
+          const VALUE = parseInt(CALCIUM_INPUT.value);
+          const MIN = parseInt(CALCIUM_INPUT.getAttribute('min'));
+          const MAX = parseInt(CALCIUM_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            CALCIUM_INPUT.setCustomValidity(`Introduce un número válido`);
+            CALCIUM_INPUT.reportValidity();
+          }else{
+            CALCIUM_INPUT.setCustomValidity('');
+          }
+      })
+
+      //Comprobar que ha introducido el peso
+      ALBUMINA_INPUT.addEventListener('input', ()=>{
+
+          //Comprobar si el numero tiene 2 decimales como mucho
+          if(!DECIMALS_REGEX.test(ALBUMINA_INPUT.value)){
+            ALBUMINA_INPUT.setCustomValidity('Introduce un número válido');
+            ALBUMINA_INPUT.reportValidity();
+              return
+          }
+
+          //Resetear borde y validación del input
+          ALBUMINA_INPUT.setCustomValidity('');
+          
+          const VALUE = parseFloat(ALBUMINA_INPUT.value);
+          const MIN = parseFloat(ALBUMINA_INPUT.getAttribute('min'));
+          const MAX = parseFloat(ALBUMINA_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            ALBUMINA_INPUT.setCustomValidity(`Introduce un número válido`);
+            ALBUMINA_INPUT.reportValidity();
+          }else{
+            ALBUMINA_INPUT.setCustomValidity('');
+          }
+      })
+
+      FORM.addEventListener('submit', (e)=>{
+        e.preventDefault();
+
+        //Cambiar texto botón
+        CALCULATE_BTN.innerHTML = 'Calculando...';
+
+        //Ocultar resultado anterior
+        RESULT_BOX.style.visibility = 'hidden';
+
+        let calcium = parseFloat(CALCIUM_INPUT.value);
+        let albumin = parseFloat(ALBUMINA_INPUT.value);
+
+        const CALCULATOR = new CorrectedCalcium(calcium, albumin);
+        let result = CALCULATOR.range;
+
+        setTimeout(()=>{
+
+            //Scroll smooth hasta el resultado
+            RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+            //Volver a poner el texto en el boton
+            CALCULATE_BTN.innerHTML = 'Calcular';
+
+            //Mostrar el resultado
+            RESULT_BOX.style.visibility = 'visible';
+
+            RESULT_BOX.innerHTML = result;
+
+            
+        }, 500)
+
+      })            
+})();
+
+class CorrectedCalcium {
+  #calcium;
+  #albumin;
+
+  total;
+
+  constructor(calcium, albumin) {
+    this.#calcium = calcium;
+    this.#albumin = albumin;
+    this.total = this.calculate();
+  }
+
+  calculate() {
+    return parseFloat((this.#calcium + (0.8 * (4.0 - this.#albumin))).toFixed(2))
+  }
+
+  get range(){
+    if(this.total < 8.5){
+      return `El nivel de calcio corregido es de <strong>${this.total.toString().replaceAll('.', ',')} mg/dL</strong>, está fuera de los rangos razonables y se corresponde con Hipocalcemia`
+    }else if(this.total >= 8.5 && this.total <= 10.5){
+      return `El nivel de calcio corregido es de <strong>${this.total.toString().replaceAll('.', ',')} mg/dL</strong>, está dentro de los rangos razonables y se corresponde con un nivel normal`
+    }else{
+      return `El nivel de calcio corregido es de <strong>${this.total.toString().replaceAll('.', ',')} mg/dL</strong>, está fuera de los rangos razonables y se corresponde con Hipercalcemia`
+    }
+  }
+
+}
+
+</script>
