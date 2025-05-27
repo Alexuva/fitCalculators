@@ -1,0 +1,480 @@
+<form class="form-container">
+  <div class="flex">
+      <div>
+          <label><span>Tu sexo</span></label>
+          <select id="gender" type="select" name="gender-input" required>
+              <option disabled selected>Selecciona tu sexo</option>
+              <option value="h">Hombre</option>
+              <option value="m">Mujer</option>
+              <option value="e">Embarazo</option>
+              <option value="l">Lactancia</option>
+          </select>
+      </div>
+      <div>
+          <label><span>Tu edad</span></label>
+          <input id="age" type="text" min="18" max="99" maxlength="2" name="age-input" placeholder="Introduce tu edad" required>
+      </div>
+  </div>
+  <div class="flex">
+      <div>
+          <label><span>Tu peso</span><sup>kg</sup></label>
+          <input id="weight" type="text" min="20" max="250" maxlength="6" name="weight-input" placeholder="Introduce tu peso en kg." required>
+      </div>
+      <div>
+          <label><span>Altura</span><sup>cm</sup></label>
+          <input id="height" type="text" min="0" max="1000" maxlength="6" name="height" placeholder="Introduce tu altura en cm" required>
+      </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Cuál es tu nivel de actividad física diaria?</span></label>
+      <select id="activity" type="select" name="activity-input" required>
+        <option disabled selected>Selecciona tu nivel de actividad</option>
+        <option value="1">Sedentario</option>
+        <option value="1.55">Moderado</option>
+        <option value="1.75">Activo</option>
+      </select>
+    </div>
+  </div>
+  
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+    Calcular
+  </button>
+</form>
+
+<p class="result" style="visibility: hidden;"></p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+<script type="text/javascript">
+  (function() {
+  
+        //Inputs
+        const GENDER_INPUT = document.querySelector('#gender');
+        const AGE_INPUT = document.querySelector('#age');
+        const WEIGHT_INPUT = document.querySelector('#weight');
+        const HEIGHT_INPUT = document.querySelector('#height');
+        const ACTIVITY_INPUT = document.querySelector('#activity');
+
+        //Cajas con el resultado
+        const RESULT_BOX = document.querySelector('.result');
+        //Resultado resaltado
+        const RESULT_TITLE = document.querySelector('#show-result');
+  
+        //Botón de calcular
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+        
+        //Formulario
+        const FORM = document.querySelector('.form-container');
+  
+        //Regex para comprobar si los números cumplen con la condición de 2 decimales
+        const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+  
+        //Regex para comprobar si los números cumplen con la condición de 1 decimal
+        const DECIMAL_REGEX = new RegExp(/^(\d+|\d+,\d{1}|\d+.\d{1})$/);
+  
+        //Regex para comprobar si los números cumplen con la condición de ser enteros
+        const INTEGERS_REGEX = new RegExp(/^\d+$/);
+        
+        
+        //Comprobar que ha introducido edad
+        AGE_INPUT.addEventListener('input', ()=>{
+  
+            //Comprobar si el numero es un entero
+            if(!INTEGERS_REGEX.test(AGE_INPUT.value)){
+                AGE_INPUT.setCustomValidity('Introduce una edad válida');
+                AGE_INPUT.reportValidity();
+                return
+            }
+            
+            const VALUE = parseInt(AGE_INPUT.value);
+            const MIN = parseInt(AGE_INPUT.getAttribute('min'));
+            const MAX = parseInt(AGE_INPUT.getAttribute('max'));
+  
+            if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+                AGE_INPUT.setCustomValidity(`La edad mínima son ${MIN}`);
+                AGE_INPUT.reportValidity();
+            }else{
+                AGE_INPUT.setCustomValidity('');
+            }
+        })
+  
+        //Comprobar que ha introducido el peso
+        WEIGHT_INPUT.addEventListener('input', ()=>{
+  
+            //Comprobar si el numero tiene 2 decimales como mucho
+            if(!DECIMALS_REGEX.test(WEIGHT_INPUT.value)){
+                WEIGHT_INPUT.setCustomValidity('Introduce un peso válido');
+                WEIGHT_INPUT.reportValidity();
+                return
+            }
+  
+            //Resetear borde y validación del input
+            WEIGHT_INPUT.setCustomValidity('');
+            
+            const VALUE = parseFloat(WEIGHT_INPUT.value);
+            const MIN = parseFloat(WEIGHT_INPUT.getAttribute('min'));
+            const MAX = parseFloat(WEIGHT_INPUT.getAttribute('max'));
+  
+            if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+                WEIGHT_INPUT.setCustomValidity(`Introduce un peso válido entre ${MIN} kg y ${MAX} kg`);
+                WEIGHT_INPUT.reportValidity();
+            }else{
+                WEIGHT_INPUT.setCustomValidity('');
+            }
+        })
+  
+        //Comprobar que ha introducido el peso
+        HEIGHT_INPUT.addEventListener('input', ()=>{
+  
+          //Comprobar si el numero tiene 2 decimales como mucho
+          if(!INTEGERS_REGEX.test(HEIGHT_INPUT.value)){
+            HEIGHT_INPUT.setCustomValidity('Introduce una altura válida');
+            HEIGHT_INPUT.reportValidity();
+            return
+          }
+  
+          //Resetear borde y validación del input
+          HEIGHT_INPUT.setCustomValidity('');
+  
+          const VALUE = parseFloat(HEIGHT_INPUT.value);
+          const MIN = parseFloat(HEIGHT_INPUT.getAttribute('min'));
+          const MAX = parseFloat(HEIGHT_INPUT.getAttribute('max'));
+  
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            HEIGHT_INPUT.setCustomValidity(`Introduce una altura válida entre ${MIN} cm y ${MAX} cm`);
+            HEIGHT_INPUT.reportValidity();
+          }else{
+            HEIGHT_INPUT.setCustomValidity('');
+          }
+        })
+  
+        const SELECTS = document.querySelectorAll('select');
+        SELECTS.forEach(select => {
+          select.addEventListener('change', () => {
+            if (select.value !== "" && select.selectedIndex !== 0) {
+              select.setCustomValidity('');
+            }
+          });
+        });
+  
+        FORM.addEventListener('submit', (e)=>{
+          e.preventDefault();
+  
+          const selects = document.querySelectorAll('select');
+          let isValid = true;
+    
+          selects.forEach(select => {
+            if (select.value === "" || select.selectedIndex === 0) {
+              select.setCustomValidity('Por favor, selecciona una opción');
+              select.reportValidity();
+              isValid = false;
+            } else {
+              select.setCustomValidity('');
+            }
+          });
+
+          if (!isValid) {
+            return;
+          }
+  
+          //Cambiar texto botón
+          CALCULATE_BTN.innerHTML = 'Calculando...';
+  
+          //Ocultar resultado anterior
+          RESULT_BOX.style.visibility = 'hidden';
+  
+          //Obtener valores
+          const gender = GENDER_INPUT.value;
+          const age = parseInt(AGE_INPUT.value);
+          const height = parseInt(HEIGHT_INPUT.value);
+          const weight = parseFloat(WEIGHT_INPUT.value);
+          const activity = parseFloat(ACTIVITY_INPUT.value);
+  
+          const CALCULATOR = new DailyIntake(age, gender, weight, height, activity);
+          CALCULATOR.calculateEnergy();
+          CALCULATOR.calculateProteins();
+          CALCULATOR.calculateAlaAndLa();
+          CALCULATOR.calculateFiber();
+          CALCULATOR.calculateMagnesium();
+          CALCULATOR.calculateIron();
+          CALCULATOR.calculateZinc();
+          CALCULATOR.calculatePotassium();
+          
+          setTimeout(()=>{
+  
+              //Scroll smooth hasta el resultado
+              RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+  
+              //Volver a poner el texto en el boton
+              CALCULATE_BTN.innerHTML = 'Calcular';
+  
+              //Mostrar el resultado
+              RESULT_BOX.style.visibility = 'visible';
+
+              RESULT_BOX.innerHTML = `Tus requerimientos diarios son:
+              <ul style="list-style: none; padding-left: 0; margin: 0; margin-top: 1lh;">
+                <li style="display: flex; align-items: baseline; gap: 4px;">
+                  <span style="white-space: nowrap;">Energía</span>
+                  <span style="border-bottom: 1px dotted #000; flex: 1; margin-bottom: 3px;"></span>
+                  <strong>${CALCULATOR.energy.toFixed().toString().replaceAll('.',',')} kcal/día</strong>
+                </li>
+                <li style="display: flex; align-items: baseline; gap: 4px;">
+                  <span style="white-space: nowrap;">Proteínas</span>
+                  <span style="border-bottom: 1px dotted #000; flex: 1; margin-bottom: 3px;"></span>
+                  <strong>${CALCULATOR.proteins.toString().replaceAll('.',',')} g/día</strong>
+                </li>
+                <li style="display: flex; align-items: baseline; gap: 4px;">
+                  <span style="white-space: nowrap;">ALA (omega-3)</span>
+                  <span style="border-bottom: 1px dotted #000; flex: 1; margin-bottom: 3px;"></span>
+                  <strong>${CALCULATOR.ala.toString().replaceAll('.',',')} g/día</strong>
+                </li>
+                <li style="display: flex; align-items: baseline; gap: 4px;">
+                  <span style="white-space: nowrap;">LA (omega-6)</span>
+                  <span style="border-bottom: 1px dotted #000; flex: 1; margin-bottom: 3px;"></span>
+                  <strong>${CALCULATOR.la.toString().replaceAll('.',',')} g/día</strong>
+                </li>
+                <li style="display: flex; align-items: baseline; gap: 4px;">
+                  <span style="white-space: nowrap;">Carbohidratos</span>
+                  <span style="border-bottom: 1px dotted #000; flex: 1; margin-bottom: 3px;"></span>
+                  <strong>${CALCULATOR.carbs.toString().replaceAll('.',',')} g/día</strong>
+                </li>
+                <li style="display: flex; align-items: baseline; gap: 4px;">
+                  <span style="white-space: nowrap;">Fibra</span>
+                  <span style="border-bottom: 1px dotted #000; flex: 1; margin-bottom: 3px;"></span>
+                  <strong>${CALCULATOR.fiber.toString().replaceAll('.',',')} g/día</strong>
+                </li>
+                <li style="display: flex; align-items: baseline; gap: 4px;">
+                  <span style="white-space: nowrap;">Calcio</span>
+                  <span style="border-bottom: 1px dotted #000; flex: 1; margin-bottom: 3px;"></span>
+                  <strong>${CALCULATOR.calcium.toString().replaceAll('.',',')} mg/día</strong>
+                </li>
+                <li style="display: flex; align-items: baseline; gap: 4px;">
+                  <span style="white-space: nowrap;">Hierro</span>
+                  <span style="border-bottom: 1px dotted #000; flex: 1; margin-bottom: 3px;"></span>
+                  <strong>${CALCULATOR.iron.toString().replaceAll('.',',')} mg/día</strong>
+                </li>
+                <li style="display: flex; align-items: baseline; gap: 4px;">
+                  <span style="white-space: nowrap;">Magnesio</span>
+                  <span style="border-bottom: 1px dotted #000; flex: 1; margin-bottom: 3px;"></span>
+                  <strong>${CALCULATOR.magnesium.toString().replaceAll('.',',')} mg/día</strong>
+                </li>      
+              </ul>`
+                       
+          }, 500)
+  
+        })            
+  })();
+  
+  
+  class DailyIntake {
+    #age;
+    #sex;
+    #weight;
+    #height;
+    #activity;
+
+    energy;
+    proteins;
+    carbs = 130;
+    ala;
+    la;
+    fiber;
+    calcium = 1000;
+    magnesium;
+    iron;
+    zinc;
+    phosphorus = 700;
+    sodium = 1500;
+    potassium;
+
+    constructor(age, sex, weight, height, activity) {
+      this.#age = age;
+      this.#sex = sex;
+      this.#weight = weight;
+      this.#height = height;
+      this.#activity = activity;
+    }
+
+    calculateEnergy(){
+
+      if(this.#sex === 'h'){
+        this.energy = parseFloat(((662 - (9.53 * this.#age)) + (this.#activity * ((15.91 * this.#weight) + (539.6 * (this.#height / 100))))).toFixed(2));
+      }else{
+        this.energy = parseFloat(((354 - (6.91 * this.#age)) + (this.#activity * ((9.36 * this.#weight) + (726 * (this.#height / 100))))).toFixed(2));
+      }
+
+    }
+
+    get energy(){
+      return this.energy;
+    }
+
+    calculateProteins(){
+      this.proteins = this.#weight * 0.8;
+      if(this.#sex === 'e' || this.#sex === 'l'){
+        this.proteins += 25;
+      }
+    }
+
+    get proteins(){
+      return this.proteins;
+    }
+
+    calculateAlaAndLa(){
+      if(this.#sex === 'h'){
+        if(this.#age >= 18 && this.#age <= 50){
+          this.ala = 1.6;
+          this.la = 17;
+        }else{
+          this.ala = 1.6;
+          this.la = 14;
+        }
+      }else{
+        if(this.#sex === 'm'){
+          if(this.#age >= 18 && this.#age <= 50){
+            this.ala = 1.1;
+            this.la = 12;
+          }else{
+            this.ala = 1.1;
+            this.la = 11;
+          }
+        }else if(this.#sex === 'e'){
+          this.ala = 1.4;
+          this.la = 13;
+        }else if(this.#sex === 'l'){
+          this.ala = 1.3;
+          this.la = 13;
+        }
+      }
+    }
+
+    get ala(){
+      return this.ala;
+    }
+
+    get la(){
+      return this.la;
+    }
+
+    calculateFiber(){
+      if(this.#sex === 'h'){
+        if(this.#age >= 18 && this.#age <= 50){
+          this.fiber = 38;
+        }else{
+          this.fiber = 30;
+        }
+      }else{
+        if(this.#sex === 'm'){
+          if(this.#age >= 18 && this.#age <= 50){
+            this.fiber = 25;
+          }else{
+            this.fiber = 30;
+          }
+        }else if(this.#sex === 'e'){
+          this.fiber = 28;
+        }else if(this.#sex === 'l'){
+          this.fiber = 29;
+        }
+      }
+    }
+
+    get fiber(){
+      return this.fiber;
+    }
+
+    get calcium(){
+      return this.calcium;
+    }
+
+    calculateMagnesium(){
+      if(this.#sex === 'h'){
+        this.magnesium = 400;
+      }else{
+        if(this.#sex === 'm'){
+          this.magnesium = 310;
+        }else if(this.#sex === 'e'){
+          this.magnesium = 350;
+        }else if(this.#sex === 'l'){
+          this.magnesium = 310;
+        }
+      }
+    }
+
+    get magnesium(){
+      return this.magnesium;
+    }
+
+    calculateIron(){
+      if(this.#sex === 'h'){
+        this.iron = 8;
+      }else{
+        if(this.#sex ==='m'){
+          this.iron = 18;
+        }else if(this.#sex === 'e'){
+          this.iron = 27;
+        }else if(this.#sex === 'l'){
+          this.iron = 9;
+        }
+      }
+    }
+
+    get iron(){
+      return this.iron;
+    }
+
+    calculateZinc(){
+      if(this.#sex === 'h'){
+        this.zinc = 11;
+      }else{
+        if(this.#sex ==='m'){
+          this.zinc = 8;
+        }else if(this.#sex === 'e'){
+          this.zinc = 11;
+        }else if(this.#sex === 'l'){
+          this.zinc = 12;
+        } 
+      }
+    }
+
+    get zinc(){
+      return this.zinc;
+    }
+
+    get phosphorus(){
+      return this.phosphorus;
+    }
+
+    get sodium(){
+      return this.sodium;
+    }
+
+    calculatePotassium(){
+      if(this.#sex === 'h'){
+        this.potassium = 3400;
+      }else{
+        if(this.#sex ==='m'){
+          this.potassium = 2600;
+        }else if(this.#sex === 'e'){
+          this.potassium = 2900;
+        }else if(this.#sex === 'l'){
+          this.potassium = 2800;
+        } 
+      }
+    }
+
+    get potassium(){
+      return this.potassium;
+    }
+
+  }
+  </script>

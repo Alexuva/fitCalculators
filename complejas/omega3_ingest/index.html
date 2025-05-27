@@ -1,0 +1,543 @@
+<form class="form-container">
+  <div class="flex">
+      <div>
+          <label><span>Tu sexo</span></label>
+          <select id="gender" type="select" name="gender-input" required>
+              <option disabled selected>Selecciona tu sexo</option>
+              <option value="male">Hombre</option>
+              <option value="female">Mujer</option>
+              <option value="pregnancy">Embarazo</option>
+              <option value="lactation">Lactancia</option>
+          </select>
+      </div>
+      <div>
+          <label><span>Tu edad</span></label>
+          <input id="age" type="text" min="18" max="99" maxlength="2" name="age-input" placeholder="Introduce tu edad" required>
+      </div>
+  </div>
+  <div id='optionalInputs'>
+    <p>Fuentes alimenticias consumidas por semana</p>
+    <div class="flex">
+      <div>
+        <label><span>Semillas de lino</span><sup>cucharadas/semana</sup></label>
+        <input id="lino" type="text" min="0" max="60" maxlength="2" name="lino-input" placeholder="1 cucharada = 2,3 g ALA">
+      </div>
+    </div>
+    <div class="flex">
+      <div>
+        <label><span>Semillas de chía</span><sup>cucharadas/semana</sup></label>
+        <input id="chia" type="text" min="0" max="60" maxlength="2" name="chia-input" placeholder="1 cucharada = 1,7 g ALA">
+      </div>
+    </div>
+    <div class="flex">
+      <div>
+        <label><span>Nueces</span><sup>porciones/semana</sup></label>
+        <input id="nueces" type="text" min="0" max="60" maxlength="2" name="nueces-input" placeholder="1 porción = 1,6 g ALA">
+      </div>
+    </div>
+    <div class="flex">
+      <div>
+        <label><span>Aceite de canola</span><sup>cucharadas/semana</sup></label>
+        <input id="canola" type="text" min="0" max="60" maxlength="2" name="canola-input" placeholder="1 cucharada = 1,3 g ALA">
+      </div>
+    </div>
+    <div class="flex">
+      <div>
+        <label><span>Aceite de linaza</span><sup>cucharadas/semana</sup></label>
+        <input id="linaza" type="text" min="0" max="60" maxlength="2" name="linaza-input" placeholder="1 cucharada = 7,3 g ALA">
+      </div>
+    </div>
+    <div class="flex">
+      <div>
+        <label><span>Pescado graso(salmón, caballa, atún)</span><sup>porciones/semana</sup></label>
+        <input id="pescado" type="text" min="0" max="60" maxlength="2" name="pescado-input" placeholder="1 porción = 1000 mg EPA + DHA">
+      </div>
+    </div>
+    <div class="flex">
+      <div>
+        <label><span>Suplemento de omega-3</span><sup>mg/diarios</sup></label>
+        <input id="omega3" type="text" min="0" max="1000" maxlength="4" name="omega3-input" placeholder="Dosis diaria en mg">
+      </div>
+    </div>
+  </div>
+  
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+    Calcular
+  </button>
+</form>
+
+<p class="result" style="visibility: hidden;"></p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+  (function() {
+  
+        //Inputs
+        const GENDER_INPUT = document.querySelector('#gender');
+        const AGE_INPUT = document.querySelector('#age');
+        const LINO_INPUT = document.querySelector('#lino');
+        const CHIA_INPUT = document.querySelector('#chia');
+        const NUECES_INPUT = document.querySelector('#nueces');
+        const CANOLA_INPUT = document.querySelector('#canola');
+        const LINAZA_INPUT = document.querySelector('#linaza');
+        const PESCADO_INPUT = document.querySelector('#pescado');
+        const OMEGA3_INPUT = document.querySelector('#omega3');
+
+        //Cajas con el resultado
+        const RESULT_BOX = document.querySelector('.result');
+        //Resultado resaltado
+        const RESULT_TITLE = document.querySelector('#show-result');
+  
+        //Botón de calcular
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+        
+        //Formulario
+        const FORM = document.querySelector('.form-container');
+  
+        //Regex para comprobar si los números cumplen con la condición de 2 decimales
+        const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+  
+        //Regex para comprobar si los números cumplen con la condición de 1 decimal
+        const DECIMAL_REGEX = new RegExp(/^(\d+|\d+,\d{1}|\d+.\d{1})$/);
+  
+        //Regex para comprobar si los números cumplen con la condición de ser enteros
+        const INTEGERS_REGEX = new RegExp(/^\d+$/);
+
+        const optionalInputs = document.querySelector('#optionalInputs');
+        const optionalInputsTitle = optionalInputs.querySelector('p');
+
+        let windowWidth = window.innerWidth;
+
+        if(windowWidth > 365 && windowWidth < 683){
+            optionalInputsTitle.style.bottom = '96%';
+        }else if(windowWidth < 365){
+            optionalInputsTitle.style.bottom = '96%';
+        }else{
+            optionalInputsTitle.style.bottom = '96%';
+        }
+        
+        window.addEventListener('resize', (e)=>{
+            windowWidth = window.innerWidth;
+            if(windowWidth > 365 && windowWidth < 683){
+                optionalInputsTitle.style.bottom = '96%';
+            }else if(windowWidth < 365){
+                optionalInputsTitle.style.bottom = '96%';
+            }else{
+                optionalInputsTitle.style.bottom = '96%';
+            }
+        });
+        
+        //Comprobar que ha introducido edad
+        AGE_INPUT.addEventListener('input', ()=>{
+  
+            //Comprobar si el numero es un entero
+            if(!INTEGERS_REGEX.test(AGE_INPUT.value)){
+                AGE_INPUT.setCustomValidity('Introduce una edad válida');
+                AGE_INPUT.reportValidity();
+                return
+            }
+            
+            const VALUE = parseInt(AGE_INPUT.value);
+            const MIN = parseInt(AGE_INPUT.getAttribute('min'));
+            const MAX = parseInt(AGE_INPUT.getAttribute('max'));
+  
+            if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+                AGE_INPUT.setCustomValidity(`La edad mínima son ${MIN}`);
+                AGE_INPUT.reportValidity();
+            }else{
+                AGE_INPUT.setCustomValidity('');
+            }
+        })
+  
+        LINO_INPUT.addEventListener('input', ()=>{
+  
+          if(!INTEGERS_REGEX.test(LINO_INPUT.value)){
+            LINO_INPUT.setCustomValidity('Introduce un número válido');
+            LINO_INPUT.reportValidity();
+            return
+          }
+  
+          //Resetear borde y validación del input
+          LINO_INPUT.setCustomValidity('');
+          
+          const VALUE = parseFloat(LINO_INPUT.value);
+          const MIN = parseFloat(LINO_INPUT.getAttribute('min'));
+          const MAX = parseFloat(LINO_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            LINO_INPUT.setCustomValidity(`Introduce un número válido`);
+            LINO_INPUT.reportValidity();
+          }else{
+            LINO_INPUT.setCustomValidity('');
+          }
+
+        })
+
+        CHIA_INPUT.addEventListener('input', ()=>{
+  
+          if(!INTEGERS_REGEX.test(CHIA_INPUT.value)){
+            CHIA_INPUT.setCustomValidity('Introduce un número válido');
+            CHIA_INPUT.reportValidity();
+            return
+          }
+
+          //Resetear borde y validación del input
+          CHIA_INPUT.setCustomValidity('');
+          
+          const VALUE = parseFloat(CHIA_INPUT.value);
+          const MIN = parseFloat(CHIA_INPUT.getAttribute('min'));
+          const MAX = parseFloat(CHIA_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            CHIA_INPUT.setCustomValidity(`Introduce un número válido`);
+            CHIA_INPUT.reportValidity();
+          }else{
+            CHIA_INPUT.setCustomValidity('');
+          }
+
+        })
+
+        NUECES_INPUT.addEventListener('input', ()=>{
+  
+          if(!INTEGERS_REGEX.test(NUECES_INPUT.value)){
+            NUECES_INPUT.setCustomValidity('Introduce un número válido');
+            NUECES_INPUT.reportValidity();
+            return
+          }
+
+          //Resetear borde y validación del input
+          NUECES_INPUT.setCustomValidity('');
+          
+          const VALUE = parseFloat(NUECES_INPUT.value);
+          const MIN = parseFloat(NUECES_INPUT.getAttribute('min'));
+          const MAX = parseFloat(NUECES_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            NUECES_INPUT.setCustomValidity(`Introduce un número válido`);
+            NUECES_INPUT.reportValidity();
+          }else{
+            NUECES_INPUT.setCustomValidity('');
+          }
+
+        })
+
+        CANOLA_INPUT.addEventListener('input', ()=>{
+  
+          if(!INTEGERS_REGEX.test(CANOLA_INPUT.value)){
+            CANOLA_INPUT.setCustomValidity('Introduce un número válido');
+            CANOLA_INPUT.reportValidity();
+            return
+          }
+
+          //Resetear borde y validación del input
+          CANOLA_INPUT.setCustomValidity('');
+          
+          const VALUE = parseFloat(CANOLA_INPUT.value);
+          const MIN = parseFloat(CANOLA_INPUT.getAttribute('min'));
+          const MAX = parseFloat(CANOLA_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            CANOLA_INPUT.setCustomValidity(`Introduce un número válido`);
+            CANOLA_INPUT.reportValidity();
+          }else{
+            CANOLA_INPUT.setCustomValidity('');
+          }
+
+        })
+
+        LINAZA_INPUT.addEventListener('input', ()=>{
+  
+          if(!INTEGERS_REGEX.test(LINAZA_INPUT.value)){
+            LINAZA_INPUT.setCustomValidity('Introduce un número válido');
+            LINAZA_INPUT.reportValidity();
+            return
+          }
+
+          //Resetear borde y validación del input
+          LINAZA_INPUT.setCustomValidity('');
+          
+          const VALUE = parseFloat(LINAZA_INPUT.value);
+          const MIN = parseFloat(LINAZA_INPUT.getAttribute('min'));
+          const MAX = parseFloat(LINAZA_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            LINAZA_INPUT.setCustomValidity(`Introduce un número válido`);
+            LINAZA_INPUT.reportValidity();
+          }else{
+            LINAZA_INPUT.setCustomValidity('');
+          }
+
+        })
+
+        PESCADO_INPUT.addEventListener('input', ()=>{
+  
+          if(!INTEGERS_REGEX.test(PESCADO_INPUT.value)){
+            PESCADO_INPUT.setCustomValidity('Introduce un número válido');
+            PESCADO_INPUT.reportValidity();
+            return
+          }
+
+          //Resetear borde y validación del input
+          PESCADO_INPUT.setCustomValidity('');
+          
+          const VALUE = parseFloat(PESCADO_INPUT.value);
+          const MIN = parseFloat(PESCADO_INPUT.getAttribute('min'));
+          const MAX = parseFloat(PESCADO_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            PESCADO_INPUT.setCustomValidity(`Introduce un número válido`);
+            PESCADO_INPUT.reportValidity();
+          }else{
+            PESCADO_INPUT.setCustomValidity('');
+          }
+
+        })
+
+        OMEGA3_INPUT.addEventListener('input', ()=>{
+  
+          if(!INTEGERS_REGEX.test(OMEGA3_INPUT.value)){
+            OMEGA3_INPUT.setCustomValidity('Introduce un número válido');
+            OMEGA3_INPUT.reportValidity();
+            return
+          }
+
+          //Resetear borde y validación del input
+          OMEGA3_INPUT.setCustomValidity('');
+          
+          const VALUE = parseFloat(OMEGA3_INPUT.value);
+          const MIN = parseFloat(OMEGA3_INPUT.getAttribute('min'));
+          const MAX = parseFloat(OMEGA3_INPUT.getAttribute('max'));
+
+          if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+            OMEGA3_INPUT.setCustomValidity(`Introduce un número válido`);
+            OMEGA3_INPUT.reportValidity();
+          }else{
+            OMEGA3_INPUT.setCustomValidity('');
+          }
+
+        })
+
+        const SELECTS = document.querySelectorAll('select');
+        SELECTS.forEach(select => {
+          select.addEventListener('change', () => {
+            if (select.value !== "" && select.selectedIndex !== 0) {
+              select.setCustomValidity('');
+            }
+          });
+        });
+  
+        FORM.addEventListener('submit', (e)=>{
+          e.preventDefault();
+  
+          const selects = document.querySelectorAll('select');
+          let isValid = true;
+    
+          selects.forEach(select => {
+            if (select.value === "" || select.selectedIndex === 0) {
+              select.setCustomValidity('Por favor, selecciona una opción');
+              select.reportValidity();
+              isValid = false;
+            } else {
+              select.setCustomValidity('');
+            }
+          });
+
+          if (!isValid) {
+            return;
+          }
+  
+          //Cambiar texto botón
+          CALCULATE_BTN.innerHTML = 'Calculando...';
+  
+          //Ocultar resultado anterior
+          RESULT_BOX.style.visibility = 'hidden';
+  
+          //Obtener valores
+          const gender = GENDER_INPUT.value;
+          const age = parseInt(AGE_INPUT.value) ?? 0;
+          const lino = parseInt(LINO_INPUT.value) ?? 0;
+          const chia = parseInt(CHIA_INPUT.value) ?? 0;
+          const nueces = parseInt(NUECES_INPUT.value) ?? 0;
+          const canola = parseInt(CANOLA_INPUT.value) ?? 0;
+          const linaza = parseInt(LINAZA_INPUT.value) ?? 0;
+          const pescado = parseInt(PESCADO_INPUT.value) ?? 0;
+          const omega3 = parseInt(OMEGA3_INPUT.value) ?? 0;
+          let result;
+
+          if(gender === 'e'){
+            const CALCULATOR = new Omega3Ingest(age, gender, true, false, lino, chia, nueces, canola, linaza, pescado, omega3);
+            CALCULATOR.dailyConsumption();
+            result = CALCULATOR.Evaluation;
+          }else if(gender === 'l'){
+            const CALCULATOR = new Omega3Ingest(age, gender, false, true, lino, chia, nueces, canola, linaza, pescado, omega3);
+            CALCULATOR.dailyConsumption();
+            result = CALCULATOR.Evaluation;
+          }else{
+            const CALCULATOR = new Omega3Ingest(age, gender, false, false, lino, chia, nueces, canola, linaza, pescado, omega3);
+            CALCULATOR.dailyConsumption();
+            result = CALCULATOR.Evaluation;
+          }
+          
+          setTimeout(()=>{
+  
+              //Scroll smooth hasta el resultado
+              RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+  
+              //Volver a poner el texto en el boton
+              CALCULATE_BTN.innerHTML = 'Calcular';
+  
+              //Mostrar el resultado
+              RESULT_BOX.style.visibility = 'visible';
+
+              RESULT_BOX.innerHTML = `${result}`;
+                       
+          }, 500)
+  
+        })            
+  })();
+
+
+  class Omega3Ingest {
+
+    _age;
+    _gender;
+    _pregnancy;
+    _lactation;
+    _lino;
+    _chia;
+    _nuts;
+    _canola;
+    _linaza;
+    _fish;
+    _omega3;
+    _AlaDaily;
+    _EPADaily;
+
+    _evaluation;
+
+    _EPAStadistic = 250;
+    _ALAStadistic = {
+        "male" : [
+            {min: 1, max: 3, value: 0.7},
+            {min: 4, max: 8, value: 0.9},
+            {min: 9, max: 13, value: 1.2},
+            {min: 14, max: 18, value: 1.6},
+            {min: 19, max: 50, value: 1.6},
+            {min: 51, max: null, value: 1.6}
+        ],
+        "female":[
+            {min: 1, max: 3, value: 0.7},
+            {min: 4, max: 8, value: 0.9},
+            {min: 9, max: 13, value: 1},
+            {min: 14, max: 18, value: 1.1},
+            {min: 19, max: 50, value: 1.1},
+            {min: 51, max: null, value: 1.1}
+        ],
+        "pregnancy": [
+            {min: 14, max: 18, value: 1.4},
+            {min: 19, max: 50, value: 1.4}
+        ],
+        "lactation": [
+            {min: 14, max: 18, value: 1.3},
+            {min: 19, max: 50, value: 1.3}
+        ]
+    }
+
+    constructor(age, gender, pregnancy, lactation, lino, chia, nuts, canola, linaza, fish, omega3) {
+        this._age = age;
+        this._gender = gender;
+        this._pregnancy = pregnancy;
+        this._lactation = lactation;
+        this._lino = lino;
+        this._chia = chia;
+        this._nuts = nuts;
+        this._canola = canola;
+        this._linaza = linaza;
+        this._fish = fish;
+        this._omega3 = omega3;
+    }
+
+    dailyConsumption(){
+        this._lino = parseFloat(((this._lino * 2.3) / 7).toFixed(2));
+        this._chia = parseFloat(((this._chia * 1.7) / 7).toFixed(2));
+        this._nuts = parseFloat(((this._nuts * 1.6) / 7).toFixed(2));
+        this._canola = parseFloat(((this._canola * 1.3) / 7).toFixed(2));
+        this._linaza = parseFloat(((this._linaza * 7.3) / 7).toFixed(2));
+
+        this._AlaDaily = parseFloat((this._lino + this._chia + this._nuts + this._canola + this._linaza).toFixed(2));
+        
+        this._fish = parseFloat(((this._fish * 1000) / 7).toFixed(2));
+        this._omega3 = this._omega3;
+        
+        this._EPADaily = parseFloat((this._fish + this._omega3).toFixed(2));
+    }
+
+    get Evaluation(){
+        let Ala;
+
+        if(this._pregnancy){
+            Ala = this._ALAStadistic.pregnancy.find(age =>{
+                if(age.max === null){
+                    return this._age >= age.min;
+                }else{
+                    return this._age >= age.min && this._age <= age.max;
+                }
+            })
+        }else if(this._lactation){
+            Ala = this._ALAStadistic.lactation.find(age =>{
+                if(age.max === null){
+                    return this._age >= age.min;
+                }else{
+                    return this._age >= age.min && this._age <= age.max;
+                }
+            }) 
+        }else{
+            Ala = this._ALAStadistic[this._gender].find(age =>{
+                if(age.max === null){
+                    return this._age >= age.min;
+                }else{
+                    return this._age >= age.min && this._age <= age.max;
+                }
+            }) 
+        }
+        
+        if(this._EPADaily > 0){
+            if(this._EPADaily >= this._EPAStadistic){
+                return "Cumples con los requisitos diarios de EPA + DHA gracias al consumo de pescado y suplementos. No es necesario ajustar tu dieta."
+            }else{
+                if(this._AlaDaily > 0){
+                    if(this._AlaDaily >= Ala.value){
+                        return "Cumples con los requisitos diarios de ALA gracias al consumo de vegetales. No es necesario ajustar tu dieta."
+                    }else{
+                        return "No cumples con los requisitos diarios. Deberías ajustar tu dieta."
+                    }
+                }else{
+                    return "No cumples con los requisitos diarios. Deberías ajustar tu dieta."
+                }
+            }
+        }else{
+            if(this._AlaDaily > 0){
+                if(this._AlaDaily >= Ala.value){
+                    return "Cumples con los requisitos diarios de ALA gracias al consumo de vegetales. No es necesario ajustar tu dieta."
+                }else{
+                    return "No cumples con los requisitos diarios. Deberías ajustar tu dieta."
+                }
+            }else{
+                return "No cumples con los requisitos diarios. Deberías ajustar tu dieta."
+            }
+        }
+    }
+}
+</script>
+
