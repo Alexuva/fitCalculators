@@ -1,0 +1,269 @@
+<form class="form-container">
+  <div class="flex">
+    <div>
+      <label><span>¿Consumes alimentos ricos en fibra (frutas, verduras, legumbres, cereales integrales)?</span></label>
+      <select id="fiber" type="select" name="fiber-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="3">Todos los días</option>
+          <option value="2">Varias veces a la semana</option>
+          <option value="1">Raramente</option>
+          <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Consumes alimentos fermentados (yogur, kéfir, chucrut, kimchi, etc.)?</span></label>
+      <select id="fermented" type="select" name="fermented-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="3">Todos los días</option>
+          <option value="2">Varias veces a la semana</option>
+          <option value="1">Raramente</option>
+          <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Evitas alimentos ultraprocesados y altos en azúcar?</span></label>
+      <select id="processed" type="select" name="processed-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="3">Siempre</option>
+          <option value="2">A menudo</option>
+          <option value="1">A veces</option>
+          <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Consumes alimentos ricos en omega-3 (pescados grasos, nueces, linaza)?</span></label>
+      <select id="omega3" type="select" name="omega3-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="3">Todos los días</option>
+          <option value="2">Varias veces a la semana</option>
+          <option value="1">Raramente</option>
+          <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Cuántas horas duermes por noche?</span></label>
+      <select id="sleep" type="select" name="sleep-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="3">Más de 7 horas</option>
+          <option value="2">6-7 horas</option>
+          <option value="1">Menos de 6 horas</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Con qué frecuencia haces ejercicio físico moderado o intenso?</span></label>
+      <select id="exercise" type="select" name="exercise-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="3">4 o más veces por semana</option>
+          <option value="2">2-3 veces por semana</option>
+          <option value="1">1 vez por semana</option>
+          <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Te sientes estresado la mayor parte del tiempo?</span></label>
+      <select id="stress" type="select" name="stress-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="3">Nunca o rara vez</option>
+          <option value="2">A veces</option>
+          <option value="1">A menudo</option>
+          <option value="0">Siempre</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Has tomado antibióticos en los últimos 12 meses?</span></label>
+      <select id="antibiotics" type="select" name="antibiotics-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="3">No</option>
+          <option value="2">Sí, una vez</option>
+          <option value="0">Sí, varias veces</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Has tenido problemas gastrointestinales frecuentes (diarrea, estreñimiento, hinchazón)?</span></label>
+      <select id="digestive-issues" type="select" name="digestive-issues-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="3">Nunca</option>
+          <option value="2">Ocasionalmente</option>
+          <option value="1">Frecuentemente</option>
+          <option value="0">Siempre</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Consumes alcohol?</span></label>
+      <select id="alcohol" type="select" name="alcohol-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="3">Nunca</option>
+          <option value="2">Rara vez</option>
+          <option value="1">Frecuentemente</option>
+          <option value="0">Todos los días</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Fumas tabaco o utilizas productos similares?</span></label>
+      <select id="tobacco" type="select" name="tobacco-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="3">Nunca</option>
+          <option value="2">Rara vez</option>
+          <option value="1">Frecuentemente</option>
+          <option value="0">Todos los días</option>
+      </select>
+    </div>
+  </div>
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+          
+<p class="result" style="visibility: hidden;"></p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+  (function() {
+  
+        const fiber_input = document.querySelector('#fiber');
+        const fermented_input = document.querySelector('#fermented');
+        const processed_input = document.querySelector('#processed');
+        const omega3_input = document.querySelector('#omega3');
+        const sleep_input = document.querySelector('#sleep');
+        const exercise_input = document.querySelector('#exercise');
+        const stress_input = document.querySelector('#stress');
+        const antibiotics_input = document.querySelector('#antibiotics');
+        const digestiveIssues_input = document.querySelector('#digestive-issues');
+        const alcohol_input = document.querySelector('#alcohol');
+        const tobacco_input = document.querySelector('#tobacco');
+  
+        //Cajas con el resultado
+        const RESULT_BOX = document.querySelector('.result');
+  
+        //Botón de calcular
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+        
+        //Formulario
+        const FORM = document.querySelector('.form-container');
+  
+        //Regex para comprobar si los números cumplen con la condición de 2 decimales
+        const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+  
+        //Regex para comprobar si los números cumplen con la condición de ser enteros
+        const INTEGERS_REGEX = new RegExp(/^\d+$/);
+  
+        FORM.addEventListener('submit', (e)=>{
+          e.preventDefault();
+  
+          //Cambiar texto botón
+          CALCULATE_BTN.innerHTML = 'Calculando...';
+  
+          //Ocultar resultado anterior
+          RESULT_BOX.style.visibility = 'hidden';
+  
+          let fiber = parseInt(fiber_input.value);
+          let fermented = parseInt(fermented_input.value);
+          let processed = parseInt(processed_input.value);
+          let omega3 = parseInt(omega3_input.value);  
+          let sleep = parseInt(sleep_input.value);
+          let exercise = parseInt(exercise_input.value);
+          let stress = parseInt(stress_input.value);
+          let antibiotics = parseInt(antibiotics_input.value);
+          let digestiveIssues = parseInt(digestiveIssues_input.value);
+          let alcohol = parseInt(alcohol_input.value);
+          let tobacco = parseInt(tobacco_input.value);
+  
+          const CALCULATOR = new IntestinalHealthTest(fiber, fermented, processed, omega3, sleep, exercise, stress, antibiotics, digestiveIssues, alcohol, tobacco);
+          let result = CALCULATOR.state;
+  
+          setTimeout(()=>{
+  
+              //Scroll smooth hasta el resultado
+              RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+  
+              //Volver a poner el texto en el boton
+              CALCULATE_BTN.innerHTML = 'Calcular';
+  
+              //Mostrar el resultado
+              RESULT_BOX.style.visibility = 'visible';
+  
+              RESULT_BOX.innerHTML = result;
+  
+              
+          }, 500)
+  
+        })            
+  })();
+
+  class IntestinalHealthTest {
+    #fiber;
+    #fermented;
+    #processed;
+    #omega3;
+    #nightSleep;
+    #exercise;
+    #stress;
+    #antibiotics;
+    #gastrointestinalProblems;
+    #alcohol;
+    #smoking;
+
+    total;
+    state;
+
+    constructor(fiber, fermented, processed, omega3, nightSleep, exercise, stress, antibiotics, gastrointestinalProblems, alcohol, smoking) {
+      this.#fiber = fiber;
+      this.#fermented = fermented;
+      this.#processed = processed;
+      this.#omega3 = omega3;
+      this.#nightSleep = nightSleep;
+      this.#exercise = exercise;
+      this.#stress = stress;
+      this.#antibiotics = antibiotics;
+      this.#gastrointestinalProblems = gastrointestinalProblems;
+      this.#alcohol = alcohol;
+      this.#smoking = smoking;
+      this.calculate();
+    }
+
+    calculate() {
+      this.total = this.#fiber + this.#fermented + this.#processed + this.#omega3 + this.#nightSleep + this.#exercise + this.#stress + this.#antibiotics + this.#gastrointestinalProblems + this.#alcohol + this.#smoking;
+      if(this.total >= 27 && this.total <= 33){
+        this.state = "<strong>Excelente</strong></br> Tu microbiota está en muy buen estado. Continúa con tus hábitos saludables.";
+      }else if(this.total >= 20 && this.total <= 26){
+        this.state = "<strong>Bueno</strong></br> Tu salud intestinal es buena, pero hay margen de mejora. Revisa tu dieta y estilo de vida.";
+      }else if(this.total >= 13 && this.total <= 19){
+        this.state = "<strong>Regular</strong></br> Tu microbiota podría estar afectada. Incrementa el consumo de fibra y alimentos fermentados.";
+      }else if(this.total >= 0 && this.total <= 12){
+        this.state = "<strong>Deficiente</strong></br> Tu microbiota está comprometida. Consulta con un profesional para mejorar tu salud intestinal.";
+      }
+    }
+
+  }
+</script>

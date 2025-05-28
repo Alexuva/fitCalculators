@@ -1,0 +1,245 @@
+<form class="form-container">
+  <div class="flex">
+    <div>
+      <label><span>¿Con qué frecuencia consumes productos lácteos (leche, queso, yogur)?</span></label>
+      <select id="dairy" type="select" name="dairy-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="3">Todos los días</option>
+          <option value="2">Varias veces por semana</option>
+          <option value="1">Raramente</option>
+          <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="flex">
+    <div>
+      <label><span>¿Con qué frecuencia consumes gluten (pan, pasta, galletas)?</span></label>
+      <select id="gluten" type="select" name="gluten-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="3">Todos los días</option>
+          <option value="2">Varias veces por semana</option>
+          <option value="1">Raramente</option>
+          <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="flex">
+    <div>
+      <label><span>¿Con qué frecuencia consumes alimentos procesados o ultraprocesados (galletas, snacks, comida rápida)?</span></label>
+      <select id="processed" type="select" name="processed-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="3">Todos los días</option>
+          <option value="2">Varias veces por semana</option>
+          <option value="1">Raramente</option>
+          <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="flex">
+    <div>
+      <label><span>¿Consumes frutas o verduras que te generan molestias específicas?</span></label>
+      <select id="fruits-discomfort" type="select" name="fruits-discomfort-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="3">Sí, muchas veces</option>
+          <option value="2">A veces</option>
+          <option value="1">Rara vez</option>
+          <option value="0">No, nunca</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Experimentas hinchazón abdominal después de comer?</span></label>
+      <select id="bloating" type="select" name="bloating-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="0">Siempre</option>
+          <option value="1">Frecuentemente</option>
+          <option value="2">Raramente</option>
+          <option value="3">Nunca</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="flex">
+    <div>
+      <label><span>¿Tienes diarrea o estreñimiento recurrente?</span></label>
+      <select id="digestive-issues" type="select" name="digestive-issues-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="0">Sí, varias veces a la semana</option>
+          <option value="1">Sí, ocasionalmente</option>
+          <option value="2">Rara vez</option>
+          <option value="3">Nunca</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="flex">
+    <div>
+      <label><span>¿Presentas fatiga o cansancio extremo tras comer ciertos alimentos?</span></label>
+      <select id="fatigue" type="select" name="fatigue-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="3">Siempre</option>
+          <option value="2">Frecuentemente</option>
+          <option value="1">Raramente</option>
+          <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Experimentas síntomas cutáneos (como urticaria, erupciones o picazón) tras consumir ciertos alimentos?</span></label>
+      <select id="skin-symptoms" type="select" name="skin-symptoms-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="3">Siempre</option>
+          <option value="2">Frecuentemente</option>
+          <option value="1">Raramente</option>
+          <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Percibes una relación clara entre el consumo de ciertos alimentos y los síntomas que experimentas?</span></label>
+      <select id="food-symptoms-relation" type="select" name="food-symptoms-relation-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="3">Sí, estoy seguro/a</option>
+          <option value="2">Probablemente</option>
+          <option value="1">No estoy seguro/a</option>
+          <option value="0">No, ninguna relación</option>
+      </select>
+    </div>
+  </div>
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+          
+<p class="result" style="visibility: hidden;"></p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+  (function() {
+
+        const diary_input = document.querySelector('#dairy');
+        const gluten_input = document.querySelector('#gluten');
+        const processed_input = document.querySelector('#processed');
+        const fruits_discomfort_input = document.querySelector('#fruits-discomfort');
+        const bloating_input = document.querySelector('#bloating');
+        const digestive_issues_input = document.querySelector('#digestive-issues');
+        const fatigue_input = document.querySelector('#fatigue');
+        const skin_symptoms_input = document.querySelector('#skin-symptoms');
+        const food_symptoms_relation_input = document.querySelector('#food-symptoms-relation');
+        
+        //Cajas con el resultado
+        const RESULT_BOX = document.querySelector('.result');
+  
+        //Botón de calcular
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+        
+        //Formulario
+        const FORM = document.querySelector('.form-container');
+  
+        //Regex para comprobar si los números cumplen con la condición de 2 decimales
+        const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+  
+        //Regex para comprobar si los números cumplen con la condición de ser enteros
+        const INTEGERS_REGEX = new RegExp(/^\d+$/);
+  
+        FORM.addEventListener('submit', (e)=>{
+          e.preventDefault();
+  
+          //Cambiar texto botón
+          CALCULATE_BTN.innerHTML = 'Calculando...';
+  
+          //Ocultar resultado anterior
+          RESULT_BOX.style.visibility = 'hidden';
+  
+          let diary = parseInt(diary_input.value);
+          let gluten = parseInt(gluten_input.value);
+          let processed = parseInt(processed_input.value);
+          let fruits_discomfort = parseInt(fruits_discomfort_input.value);
+          let bloating = parseInt(bloating_input.value);
+          let digestive_issues = parseInt(digestive_issues_input.value);
+          let fatigue = parseInt(fatigue_input.value);
+          let skin_symptoms = parseInt(skin_symptoms_input.value);
+          let food_symptoms_relation = parseInt(food_symptoms_relation_input.value);
+
+          const CALCULATOR = new FoodIntoleranceTest(diary, gluten, processed, fruits_discomfort, bloating, digestive_issues, fatigue, skin_symptoms, food_symptoms_relation);
+          let result = CALCULATOR.state; 
+  
+          setTimeout(()=>{
+  
+              //Scroll smooth hasta el resultado
+              RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+  
+              //Volver a poner el texto en el boton
+              CALCULATE_BTN.innerHTML = 'Calcular';
+  
+              //Mostrar el resultado
+              RESULT_BOX.style.visibility = 'visible';
+  
+              RESULT_BOX.innerHTML = result;
+  
+              
+          }, 500)
+  
+        })            
+  })();
+
+  class FoodIntoleranceTest {
+
+    #lactose;
+    #gluten;
+    #ultraprocessed;
+    #fruits;
+    #abdominalPain;
+    #diarrhea;
+    #fatigue;
+    #symptoms;
+    #relationship;
+
+    total;
+    state;
+
+    constructor(lactose, gluten, ultraprocessed, fruits, abdominalPain, diarrhea, fatigue, symptoms, relationship) {
+      this.#lactose = lactose;
+      this.#gluten = gluten;
+      this.#ultraprocessed = ultraprocessed;
+      this.#fruits = fruits;
+      this.#abdominalPain = abdominalPain;
+      this.#diarrhea = diarrhea;
+      this.#fatigue = fatigue;
+      this.#symptoms = symptoms;
+      this.#relationship = relationship;
+      this.calculate();
+    }
+
+    calculate() {
+      this.total = this.#lactose + this.#gluten + this.#ultraprocessed + this.#fruits + this.#abdominalPain + this.#diarrhea + this.#fatigue + this.#symptoms + this.#relationship;
+      if(this.total >= 21 && this.total <= 21){
+        this.state = '<strong>Alta probabilidad de intolerancia</strong></br> Consulta a un especialista y considera pruebas específicas para detectar intolerancias.'
+      }else if(this.total >= 14 && this.total <= 20){
+        this.state = '<strong>Probabilidad moderada de intolerancia</strong></br> Lleva un diario de alimentos y síntomas para identificar posibles desencadenantes.'
+      }else if(this.total >= 7 && this.total <= 13){
+        this.state = '<strong>Baja probabilidad de intolerancia</strong></br> Revisa tus hábitos alimentarios y consulta si los síntomas persisten.'
+      }else if(this.total >= 0 && this.total <= 6){
+        this.state = '<strong>Probabilidad muy baja de intolerancia</strong></br> Tus síntomas no parecen estar relacionados con intolerancias alimentarias.'
+      }
+    }
+
+}
+</script>
