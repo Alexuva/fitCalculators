@@ -1,0 +1,234 @@
+<form class="form-container">
+  <div class="flex">
+    <div>
+      <label><span>¿Experimentas palpitaciones o taquicardia tras consumir cafeína?</span></label>
+      <select id="caffeine-palpitations" name="caffeine-palpitations-input" required>
+        <option disabled selected>Selecciona una opción</option>
+        <option value="3">Siempre</option>
+        <option value="2">Frecuentemente</option>
+        <option value="1">Raramente</option>
+        <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+  
+  <div class="flex">
+    <div>
+      <label><span>¿Sientes ansiedad o nerviosismo tras consumir cafeína?</span></label>
+      <select id="caffeine-anxiety" name="caffeine-anxiety-input" required>
+        <option disabled selected>Selecciona una opción</option>
+        <option value="3">Siempre</option>
+        <option value="2">Frecuentemente</option>
+        <option value="1">Raramente</option>
+        <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+  
+  <div class="flex">
+    <div>
+      <label><span>¿Tienes insomnio o dificultad para dormir después de consumir cafeína?</span></label>
+      <select id="caffeine-insomnia" name="caffeine-insomnia-input" required>
+        <option disabled selected>Selecciona una opción</option>
+        <option value="3">Siempre</option>
+        <option value="2">Frecuentemente</option>
+        <option value="1">Raramente</option>
+        <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+  
+  <div class="flex">
+    <div>
+      <label><span>¿Sufres molestias gastrointestinales (acidez, dolor estomacal) tras consumir cafeína?</span></label>
+      <select id="caffeine-gi-symptoms" name="caffeine-gi-symptoms-input" required>
+        <option disabled selected>Selecciona una opción</option>
+        <option value="3">Siempre</option>
+        <option value="2">Frecuentemente</option>
+        <option value="1">Raramente</option>
+        <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+  
+  <div class="flex">
+    <div>
+      <label><span>¿Cuántas tazas de café, té, bebidas energéticas o refrescos con cafeína consumes al día?</span></label>
+      <select id="caffeine-daily-intake" name="caffeine-daily-intake-input" required>
+        <option disabled selected>Selecciona una opción</option>
+        <option value="3">Más de 4 tazas o equivalentes</option>
+        <option value="2">Entre 2 y 4 tazas o equivalentes</option>
+        <option value="1">1 taza o equivalente</option>
+        <option value="0">Ninguna</option>
+      </select>
+    </div>
+  </div>
+  
+  <div class="flex">
+    <div>
+      <label><span>¿Consumes cafeína en la tarde o noche (después de las 4 p.m.)?</span></label>
+      <select id="caffeine-evening-intake" name="caffeine-evening-intake-input" required>
+        <option disabled selected>Selecciona una opción</option>
+        <option value="3">Siempre</option>
+        <option value="2">Frecuentemente</option>
+        <option value="1">Raramente</option>
+        <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="flex">
+    <div>
+      <label><span>¿Notas que eres más sensible a la cafeína que otras personas?</span></label>
+      <select id="caffeine-sensitivity" name="caffeine-sensitivity-input" required>
+        <option disabled selected>Selecciona una opción</option>
+        <option value="3">Sí, siempre</option>
+        <option value="2">A menudo</option>
+        <option value="1">Raramente</option>
+        <option value="0">No</option>
+      </select>
+    </div>
+  </div>
+  
+  <div class="flex">
+    <div>
+      <label><span>¿Tienes antecedentes familiares de sensibilidad o intolerancia a la cafeína?</span></label>
+      <select id="caffeine-family-history" name="caffeine-family-history-input" required>
+        <option disabled selected>Selecciona una opción</option>
+        <option value="3">Sí, varios familiares cercanos</option>
+        <option value="2">Sí, algún familiar cercano</option>
+        <option value="1">No estoy seguro/a</option>
+        <option value="0">No</option>
+      </select>
+    </div>
+  </div>
+  
+  
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+          
+<p class="result" style="visibility: hidden;"></p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+  (function() {
+
+        const caffeine_palpitations_input = document.querySelector('#caffeine-palpitations');
+        const caffeine_anxiety_input = document.querySelector('#caffeine-anxiety');
+        const caffeine_insomnia_input = document.querySelector('#caffeine-insomnia');
+        const caffeine_gi_symptoms_input = document.querySelector('#caffeine-gi-symptoms');
+        const caffeine_daily_intake_input = document.querySelector('#caffeine-daily-intake');
+        const caffeine_evening_intake_input = document.querySelector('#caffeine-evening-intake');
+        const caffeine_sensitivity_input = document.querySelector('#caffeine-sensitivity');
+        const caffeine_family_history_input = document.querySelector('#caffeine-family-history');
+
+        //Cajas con el resultado
+        const RESULT_BOX = document.querySelector('.result');
+  
+        //Botón de calcular
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+        
+        //Formulario
+        const FORM = document.querySelector('.form-container');
+  
+        //Regex para comprobar si los números cumplen con la condición de 2 decimales
+        const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+  
+        //Regex para comprobar si los números cumplen con la condición de ser enteros
+        const INTEGERS_REGEX = new RegExp(/^\d+$/);
+  
+        FORM.addEventListener('submit', (e)=>{
+          e.preventDefault();
+  
+          //Cambiar texto botón
+          CALCULATE_BTN.innerHTML = 'Calculando...';
+  
+          //Ocultar resultado anterior
+          RESULT_BOX.style.visibility = 'hidden';
+  
+          let caffeine_palpitations = parseInt(caffeine_palpitations_input.value);
+          let caffeine_anxiety = parseInt(caffeine_anxiety_input.value);
+          let caffeine_insomnia = parseInt(caffeine_insomnia_input.value);
+          let caffeine_gi_symptoms = parseInt(caffeine_gi_symptoms_input.value);
+          let caffeine_daily_intake = parseInt(caffeine_daily_intake_input.value);
+          let caffeine_evening_intake = parseInt(caffeine_evening_intake_input.value);
+          let caffeine_sensitivity = parseInt(caffeine_sensitivity_input.value);
+          let caffeine_family_history = parseInt(caffeine_family_history_input.value);
+
+          const CALCULATOR = new CaffeineIntoleranceTest(caffeine_palpitations, caffeine_anxiety, caffeine_insomnia, caffeine_gi_symptoms, caffeine_daily_intake, caffeine_evening_intake, caffeine_sensitivity, caffeine_family_history);
+
+          let result = CALCULATOR.state;
+  
+          setTimeout(()=>{
+  
+              //Scroll smooth hasta el resultado
+              RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+  
+              //Volver a poner el texto en el boton
+              CALCULATE_BTN.innerHTML = 'Calcular';
+  
+              //Mostrar el resultado
+              RESULT_BOX.style.visibility = 'visible';
+  
+              RESULT_BOX.innerHTML = result;
+  
+              
+          }, 500)
+  
+        })            
+  })();
+
+  class CaffeineIntoleranceTest {
+
+    #palpitations;
+    #ansiety;
+    #insomnia;
+    #gastrointestinal;
+    #cups;
+    #night;
+    #sensitivity;
+    #family;
+
+    total;
+    state;
+
+    constructor(palpitations, ansiety, insomnia, gastrointestinal, cups, night, sensitivity, family) {
+      this.#palpitations = palpitations;
+      this.#ansiety = ansiety;
+      this.#insomnia = insomnia;
+      this.#gastrointestinal = gastrointestinal;
+      this.#cups = cups;
+      this.#night = night;
+      this.#sensitivity = sensitivity;
+      this.#family = family;   
+      this.calculate();
+    }
+
+    calculate() {
+      this.total = this.#palpitations + this.#ansiety + this.#insomnia + this.#gastrointestinal + this.#cups + this.#night + this.#sensitivity + this.#family;
+      if(this.total >= 21 && this.total <= 21){
+        this.state = '<strong>Alta probabilidad de intolerancia</strong></br> Reduce significativamente o elimina el consumo de cafeína y consulta a un médico si los síntomas persisten.';
+      }else if(this.total >= 14 && this.total <= 20){
+        this.state = '<strong>Probabilidad moderada de intolerancia</strong></br> Limita el consumo de cafeína, especialmente en la tarde y noche, y observa si los síntomas mejoran.';
+      }else if(this.total >= 7 && this.total <= 13){
+        this.state = '<strong>Baja probabilidad</strong></br> Modera tu consumo de cafeína y revisa si los síntomas están relacionados con otros factores.'
+      }else if(this.total >= 0 && this.total <= 6){
+        this.state = '<strong>Muy baja probabilidad</strong></br> Es poco probable que tengas intolerancia a la cafeína. Consume con moderación según tu tolerancia personal.'
+      }
+    }
+
+  }
+</script>

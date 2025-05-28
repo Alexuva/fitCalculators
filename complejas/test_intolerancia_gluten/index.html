@@ -1,0 +1,246 @@
+<form class="form-container">
+  <div class="flex">
+    <div>
+      <label><span>¿Sientes hinchazón abdominal frecuente después de consumir alimentos con gluten (pan, pasta, galletas)?</span></label>
+      <select id="gluten-bloating" type="select" name="gluten-bloating-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="3">Siempre</option>
+          <option value="2">Frecuentemente</option>
+          <option value="1">Raramente</option>
+          <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Tienes diarrea o estreñimiento recurrente después de consumir alimentos con gluten?</span></label>
+      <select id="gluten-digestive" type="select" name="gluten-digestive-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="3">Siempre</option>
+          <option value="2">Frecuentemente</option>
+          <option value="1">Raramente</option>
+          <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Experimentas dolor o molestias abdominales tras consumir alimentos con gluten?</span></label>
+      <select id="processed" type="select" name="processed-input" required>
+          <option disabled selected>Selecciona una opción</option>
+          <option value="3">Siempre</option>
+          <option value="2">Frecuentemente</option>
+          <option value="1">Raramente</option>
+          <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <label><span>¿Experimentas fatiga o cansancio extremo tras consumir alimentos con gluten?</span></label>
+      <select id="fatigue" name="fatigue-input" required>
+        <option disabled selected>Selecciona una opción</option>
+        <option value="3">Siempre</option>
+        <option value="2">Frecuentemente</option>
+        <option value="1">Raramente</option>
+        <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+  
+  <div class="flex">
+    <div>
+      <label><span>¿Tienes síntomas cutáneos (erupciones, dermatitis herpetiforme, picazón) relacionados con el consumo de gluten?</span></label>
+      <select id="skin-symptoms" name="skin-symptoms-input" required>
+        <option disabled selected>Selecciona una opción</option>
+        <option value="3">Siempre</option>
+        <option value="2">Frecuentemente</option>
+        <option value="1">Raramente</option>
+        <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+  
+  <div class="flex">
+    <div>
+      <label><span>¿Experimentas dolor de cabeza, niebla mental o dificultad para concentrarte tras consumir gluten?</span></label>
+      <select id="mental-symptoms" name="mental-symptoms-input" required>
+        <option disabled selected>Selecciona una opción</option>
+        <option value="3">Siempre</option>
+        <option value="2">Frecuentemente</option>
+        <option value="1">Raramente</option>
+        <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+  
+  <div class="flex">
+    <div>
+      <label><span>¿Te han diagnosticado o tienes sospechas de enfermedad celíaca, sensibilidad al gluten o alergia al trigo?</span></label>
+      <select id="diagnosed" name="diagnosed-input" required>
+        <option disabled selected>Selecciona una opción</option>
+        <option value="3">Sí, confirmado por un médico</option>
+        <option value="2">Probable o sospecha sin diagnóstico</option>
+        <option value="1">No estoy seguro/a</option>
+        <option value="0">No</option>
+      </select>
+    </div>
+  </div>
+  
+  <div class="flex">
+    <div>
+      <label><span>¿Tienes antecedentes familiares de enfermedad celíaca o sensibilidad al gluten?</span></label>
+      <select id="family-history" name="family-history-input" required>
+        <option disabled selected>Selecciona una opción</option>
+        <option value="3">Sí, varios familiares cercanos</option>
+        <option value="2">Sí, algún familiar cercano</option>
+        <option value="1">No estoy seguro/a</option>
+        <option value="0">No</option>
+      </select>
+    </div>
+  </div>
+  
+  <div class="flex">
+    <div>
+      <label><span>¿Consumes alimentos con gluten (pan, pasta, galletas, cereales)?</span></label>
+      <select id="gluten-consumption" name="gluten-consumption-input" required>
+        <option disabled selected>Selecciona una opción</option>
+        <option value="3">Todos los días</option>
+        <option value="2">Varias veces a la semana</option>
+        <option value="1">Raramente</option>
+        <option value="0">Nunca</option>
+      </select>
+    </div>
+  </div>
+  
+  <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+      Calcular
+  </button>
+</form>
+          
+<p class="result" style="visibility: hidden;"></p>
+
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+
+<script type="text/javascript">
+  (function() {
+
+        const gluten_bloating_input = document.querySelector('#gluten-bloating');
+        const gluten_digestive_input = document.querySelector('#gluten-digestive');
+        const processed_input = document.querySelector('#processed');
+        const fatigue_input = document.querySelector('#fatigue');
+        const skin_symptoms_input = document.querySelector('#skin-symptoms');
+        const mental_symptoms_input = document.querySelector('#mental-symptoms');
+        const diagnosed_input = document.querySelector('#diagnosed');
+        const family_history_input = document.querySelector('#family-history');
+        const gluten_consumption_input = document.querySelector('#gluten-consumption');
+        
+        //Cajas con el resultado
+        const RESULT_BOX = document.querySelector('.result');
+  
+        //Botón de calcular
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+        
+        //Formulario
+        const FORM = document.querySelector('.form-container');
+  
+        //Regex para comprobar si los números cumplen con la condición de 2 decimales
+        const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+  
+        //Regex para comprobar si los números cumplen con la condición de ser enteros
+        const INTEGERS_REGEX = new RegExp(/^\d+$/);
+  
+        FORM.addEventListener('submit', (e)=>{
+          e.preventDefault();
+  
+          //Cambiar texto botón
+          CALCULATE_BTN.innerHTML = 'Calculando...';
+  
+          //Ocultar resultado anterior
+          RESULT_BOX.style.visibility = 'hidden';
+  
+          let gluten_bloating = parseInt(gluten_bloating_input.value);
+          let gluten_digestive = parseInt(gluten_digestive_input.value);
+          let processed = parseInt(processed_input.value);
+          let fatigue = parseInt(fatigue_input.value);
+          let skin_symptoms = parseInt(skin_symptoms_input.value);
+          let mental_symptoms = parseInt(mental_symptoms_input.value);
+          let diagnosed = parseInt(diagnosed_input.value);
+          let family_history = parseInt(family_history_input.value);
+          let gluten_consumption = parseInt(gluten_consumption_input.value);
+
+          const CALCULATOR = new GlutenIntoleranceTest(gluten_bloating, gluten_digestive, processed, fatigue, skin_symptoms, mental_symptoms, diagnosed, family_history, gluten_consumption);
+          let result = CALCULATOR.state;
+  
+          setTimeout(()=>{
+  
+              //Scroll smooth hasta el resultado
+              RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+  
+              //Volver a poner el texto en el boton
+              CALCULATE_BTN.innerHTML = 'Calcular';
+  
+              //Mostrar el resultado
+              RESULT_BOX.style.visibility = 'visible';
+  
+              RESULT_BOX.innerHTML = result;
+  
+              
+          }, 500)
+  
+        })            
+  })();
+
+  class GlutenIntoleranceTest {
+
+    #abdominal;
+    #diarrhea;
+    #hurt;
+    #fatigue;
+    #skin;
+    #headache;
+    #medical;
+    #family;
+    #consume;
+
+    total;
+    state;
+
+    constructor(abdominal, diarrhea, hurt, fatigue, skin, headache, medical, family, consume) {
+      this.#abdominal = abdominal;
+      this.#diarrhea = diarrhea;
+      this.#hurt = hurt;
+      this.#fatigue = fatigue;
+      this.#skin = skin;
+      this.#headache = headache;
+      this.#medical = medical;
+      this.#family = family;
+      this.#consume = consume;
+      this.calculate();
+    }
+
+    calculate() {
+      this.total = this.#abdominal + this.#diarrhea + this.#hurt + this.#fatigue + this.#skin + this.#headache + this.#medical + this.#family + this.#consume;
+      if(this.total >= 21 && this.total <= 21){
+        this.state = '<strong>Alta probabilidad de intolerancia</strong></br> Consulta con un médico o nutricionista para realizar pruebas diagnósticas (anticuerpos específicos, biopsia intestinal o dieta sin gluten supervisada)';
+      }else if(this.total >= 14 && this.total <= 20){
+        this.state = '<strong>Probabilidad moderada de intolerancia</strong></br> Lleva un diario de alimentos y síntomas, y consulta con un especialista para explorar la posible relación entre tus síntomas y el consumo de gluten.';
+      }else if(this.total >= 7 && this.total <= 13){
+        this.state = '<strong>Baja probabilidad</strong></br> Revisa tus hábitos alimentarios y consulta a un profesional si los síntomas persisten o empeoran.'
+      }else if(this.total >= 0 && this.total <= 6){
+        this.state = '<strong>Muy baja probabilidad</strong></br> Es poco probable que tengas intolerancia al gluten, pero mantén hábitos alimentarios saludables y consulta a un médico si los síntomas persisten.'
+      }
+    }
+
+  }
+</script>
