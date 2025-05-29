@@ -1,0 +1,492 @@
+<form class="form-container">
+    <div class="flex">
+      <div>
+          <label><span>Tu sexo</span></label>
+          <select id="gender" type="select" name="gender-input" required>
+              <option disabled selected>Selecciona tu sexo</option>
+              <option value="male">Hombre</option>
+              <option value="female">Mujer</option>
+              <option value="pregnancy">Embarazo</option>
+              <option value="lactation">Lactancia</option>
+          </select>
+      </div>
+      <div>
+          <label><span>Tu edad</span></label>
+          <input id="age" type="text" min="18" max="99" maxlength="2" name="age-input" placeholder="Introduce tu edad" required>
+      </div>
+    </div>
+    <div class="flex" id="food-selector">
+        <div>
+            <label><span>Consumo semanal de alimentos</span></label>
+            <select id="food" type="select" name="food-input">
+                <option value="" disabled selected>Selecciona un alimento</option>
+                <optgroup label="Frutos secos y semillas">
+                    <option value="almendras">Almendras</option>
+                    <option value="anacardos">Anacardos</option>
+                    <option value="nueces_brasil">Nueces de Brasil</option>
+                    <option value="semillas_girasol">Semillas de girasol</option>
+                    <option value="semillas_calabaza">Semillas de calabaza</option>
+                    <option value="semillas_lino">Semillas de lino</option>
+                    <option value="semillas_chia">Semillas de chía</option>
+                    <option value="nueces_comunes">Nueces comunes</option>
+                    <option value="avellanas">Avellanas</option>
+                    <option value="pecanas">Pecanas</option>
+                </optgroup>
+                <optgroup label="Legumbres">
+                    <option value="lentejas_cocidas">Lentejas cocidas</option>
+                    <option value="garbanzos_cocidos">Garbanzos cocidos</option>
+                    <option value="soja_cocida">Soja cocida</option>
+                    <option value="frijoles_negros">Frijoles negros cocidos</option>
+                    <option value="judias_pintas">Judías pintas cocidas</option>
+                    <option value="edamame">Edamame (vainas de soja cocidas)</option>
+                    <option value="guisantes_verdes">Guisantes verdes cocidos</option>
+                </optgroup>
+                <optgroup label="Cereales integrales y derivados">
+                    <option value="avena_cocida">Avena cocida</option>
+                    <option value="quinoa_cocida">Quinoa cocida</option>
+                    <option value="arroz_integral">Arroz integral cocido</option>
+                    <option value="pan_integral">Pan integral</option>
+                    <option value="mijo_cocido">Mijo cocido</option>
+                    <option value="trigo_integral">Trigo integral</option>
+                    <option value="centeno_integral">Centeno integral</option>
+                    <option value="amaranto_cocido">Amaranto cocido</option>
+                    <option value="cebada_cocida">Cebada cocida</option>
+                </optgroup>
+                <optgroup label="Vegetales">
+                    <option value="espinacas_cocidas">Espinacas cocidas</option>
+                    <option value="kale_cocida">Kale (col rizada) cocida</option>
+                    <option value="acelga_cocida">Acelga cocida</option>
+                    <option value="brocoli_cocido">Brócoli cocido</option>
+                    <option value="grelos_cocidos">Grelos cocidos</option>
+                    <option value="alcachofas_cocidas">Alcachofas cocidas</option>
+                </optgroup>
+                <optgroup label="Tubérculos y raíces">
+                    <option value="patatas_piel">Patatas cocidas con piel</option>
+                    <option value="boniato_cocido">Boniato cocido</option>
+                    <option value="zanahorias_cocidas">Zanahorias cocidas</option>
+                </optgroup>
+                <optgroup label="Frutas">
+                    <option value="aguacate">Aguacate</option>
+                    <option value="platano">Plátano</option>
+                    <option value="pasas">Pasas</option>
+                    <option value="datiles">Dátiles</option>
+                    <option value="higos_secos">Higos secos</option>
+                    <option value="kiwi">Kiwi</option>
+                    <option value="papaya">Papaya</option>
+                    <option value="sandia">Sandía</option>
+                </optgroup>
+                <optgroup label="Lácteos y alternativas vegetales">
+                    <option value="leche_vaca">Leche de vaca (entera)</option>
+                    <option value="yogur_natural">Yogur natural</option>
+                    <option value="bebida_soja">Bebida de soja fortificada</option>
+                    <option value="bebida_almendra">Bebida de almendra fortificada</option>
+                    <option value="tofu_firme">Tofu firme</option>
+                </optgroup>
+                <optgroup label="Otros alimentos">
+                    <option value="chocolate_negro">Chocolate negro (≥70 %)</option>
+                    <option value="cacao_polvo">Cacao en polvo (sin azúcar)</option>
+                    <option value="melaza">Melaza (1 cucharada)</option>
+                    <option value="tahini">Tahini (pasta de sésamo)</option>
+                    <option value="salsa_tomate">Salsa de tomate</option>
+                    <option value="hummus">Hummus</option>
+                </optgroup>
+                <optgroup label="Pescados y mariscos">
+                    <option value="salmon_cocido">Salmón cocido</option>
+                    <option value="caballa_cocida">Caballa cocida</option>
+                    <option value="atun_enlatado">Atún enlatado</option>
+                    <option value="langostinos_cocidos">Langostinos cocidos</option>
+                    <option value="mejillones_cocidos">Mejillones cocidos</option>
+                </optgroup>
+                <optgroup label="Carnes">
+                    <option value="pollo_asado">Pollo asado</option>
+                    <option value="pavo_asado">Pavo asado</option>
+                    <option value="ternera_asada">Ternera asada</option>
+                </optgroup>
+                <optgroup label="bebidas">
+                    <option value="cafe_negro">Café negro</option>
+                    <option value="te_verde">Té verde</option>
+                    <option value="zumo_naranja">Zumo de naranja natural</option>
+                    <option value="agua_mineral">Agua mineral</option>
+                </optgroup>
+            </select>
+        </div>
+    </div>
+
+    <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+        Calcular
+    </button>
+</form>
+
+<p class="result" style="visibility: hidden;"></p>
+<style>
+  .resultado{
+      background: #FFE636;
+      font-weight: bold;
+  }
+
+  input:not(:placeholder-shown):invalid,
+  select:invalid:not(:focus) {
+      border: 1px solid red !important;
+  }
+</style>
+<script type="text/javascript">
+  (function() {
+        //Inputs
+        const GENDER_INPUT = document.querySelector('#gender');
+        const AGE_INPUT = document.querySelector('#age');
+        const FOOD_SELECTOR = document.querySelector('#food-selector select');
+
+        //Cajas con el resultado
+        const RESULT_BOX = document.querySelector('.result');
+        //Resultado resaltado
+        const RESULT_TITLE = document.querySelector('#show-result');
+
+        //Botón de calcular
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+
+        //Formulario
+        const FORM = document.querySelector('.form-container');
+
+        //Regex para comprobar si los números cumplen con la condición de 2 decimales
+        const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
+
+        //Regex para comprobar si los números cumplen con la condición de 1 decimal
+        const DECIMAL_REGEX = new RegExp(/^(\d+|\d+,\d{1}|\d+.\d{1})$/);
+
+        //Regex para comprobar si los números cumplen con la condición de ser enteros
+        const INTEGERS_REGEX = new RegExp(/^\d+$/);
+
+        FOOD_SELECTOR.addEventListener('change', (e)=>{
+          if(FOOD_SELECTOR.selectedIndex === 0 || FOOD_SELECTOR.value === '') return;
+          const selectedOption = FOOD_SELECTOR.value;
+          const selectedOptionText = FOOD_SELECTOR.options[FOOD_SELECTOR.selectedIndex].textContent;
+          const newInput = document.createElement('div');
+          newInput.classList.add('flex');
+          newInput.innerHTML = `
+            <div>
+              <label><span>${selectedOptionText}</span><sup>porciones/semana</sup></label>
+              <div style="display: flex; flex-direction: row; gap: 0.5rem">
+                <input id="${selectedOption}" type="text" min="1" max="99" maxlength="2" name="${selectedOption}-input" placeholder="Introduce una cantidad" required>
+                <button style="border-radius: 0.25em; margin-top: 0.5em; font-weight: bold">X</button>
+              </div>
+            </div>`;
+
+          const closeBtn = newInput.querySelector('button');
+          closeBtn.addEventListener('click', ()=>{
+            e.preventDefault();
+            newInput.remove();
+          });
+
+          const input = newInput.querySelector('input');
+          input.addEventListener('input', ()=>{
+            //Comprobar si el numero es un entero
+            if(!INTEGERS_REGEX.test(input.value)){
+                input.setCustomValidity('Introduce un número válido');
+                input.reportValidity();
+                return
+            }
+
+            const VALUE = parseInt(input.value);
+            const MIN = parseInt(input.getAttribute('min'));
+            const MAX = parseInt(input.getAttribute('max'));
+
+            if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+                input.setCustomValidity(`Introduce un número válido entre ${MIN} y ${MAX}`);
+                input.reportValidity();
+            }else{
+                input.setCustomValidity('');
+            }
+
+          })
+
+          FORM.insertBefore(newInput, CALCULATE_BTN);
+          FOOD_SELECTOR.selectedIndex = 0;
+        })
+
+        //Comprobar que ha introducido edad
+        AGE_INPUT.addEventListener('input', ()=>{
+
+            //Comprobar si el numero es un entero
+            if(!INTEGERS_REGEX.test(AGE_INPUT.value)){
+                AGE_INPUT.setCustomValidity('Introduce una edad válida');
+                AGE_INPUT.reportValidity();
+                return
+            }
+
+            const VALUE = parseInt(AGE_INPUT.value);
+            const MIN = parseInt(AGE_INPUT.getAttribute('min'));
+            const MAX = parseInt(AGE_INPUT.getAttribute('max'));
+
+            if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+                AGE_INPUT.setCustomValidity(`La edad mínima son ${MIN}`);
+                AGE_INPUT.reportValidity();
+            }else{
+                AGE_INPUT.setCustomValidity('');
+            }
+        })
+
+
+        GENDER_INPUT.addEventListener('change', () => {
+          if (GENDER_INPUT.value === "" && GENDER_INPUT.selectedIndex === 0) {
+            GENDER_INPUT.setCustomValidity('Selecciona una opción válida');
+            GENDER_INPUT.reportValidity();
+          }else{
+            GENDER_INPUT.setCustomValidity('');
+          }
+        });
+
+        // Datos de magnesio para cada alimento (mg/100g)
+        const magnesioAlimentos = {
+          // Frutos secos y semillas
+          almendras: 270,
+          anacardos: 260,
+          nueces_brasil: 225,
+          semillas_girasol: 325,
+          semillas_calabaza: 550,
+          semillas_lino: 392,
+          semillas_chia: 335,
+          nueces_comunes: 139,
+          avellanas: 163,
+          pecanas: 121,
+
+          // Legumbres
+          lentejas_cocidas: 35,
+          garbanzos_cocidos: 50,
+          soja_cocida: 65,
+          frijoles_negros: 70,
+          judias_pintas: 47,
+          edamame: 64,
+          guisantes_verdes: 33,
+
+          // Cereales integrales y derivados
+          avena_cocida: 40,
+          quinoa_cocida: 64,
+          arroz_integral: 44,
+          pan_integral: 23,
+          mijo_cocido: 44,
+          trigo_integral: 160,
+          centeno_integral: 110,
+          amaranto_cocido: 65,
+          cebada_cocida: 53,
+
+          // Vegetales
+          espinacas_cocidas: 87,
+          kale_cocida: 33,
+          acelga_cocida: 81,
+          brocoli_cocido: 21,
+          grelos_cocidos: 40,
+          alcachofas_cocidas: 60,
+
+          // Tubérculos y raíces
+          patatas_piel: 23,
+          boniato_cocido: 25,
+          zanahorias_cocidas: 12,
+
+          // Frutas
+          aguacate: 58,
+          platano: 32,
+          pasas: 32,
+          datiles: 43,
+          higos_secos: 68,
+          kiwi: 17,
+          papaya: 21,
+          sandia: 10,
+
+          // Lácteos y alternativas vegetales
+          leche_vaca: 13,
+          yogur_natural: 14,
+          bebida_soja: 15,
+          bebida_almendra: 15,
+          tofu_firme: 53,
+
+          // Otros alimentos
+          chocolate_negro: 228,
+          cacao_polvo: 499,
+          melaza: 40,
+          tahini: 96,
+          salsa_tomate: 14,
+          hummus: 27
+        };
+
+        FORM.addEventListener('submit', (e)=>{
+          e.preventDefault();
+
+          if(GENDER_INPUT.value === "" || GENDER_INPUT.selectedIndex === 0) return;
+
+          //Cambiar texto botón
+          CALCULATE_BTN.innerHTML = 'Calculando...';
+
+          //Ocultar resultado anterior
+          RESULT_BOX.style.visibility = 'hidden';
+
+          let gender = GENDER_INPUT.value === 'lactation' || GENDER_INPUT.value === 'pregnancy' ? 'female' : GENDER_INPUT.value;
+          let age = parseInt(AGE_INPUT.value);
+          let specialCondition = GENDER_INPUT.value === 'lactation' || GENDER_INPUT.value === 'pregnancy' ? GENDER_INPUT.value : null;
+          let total = 0;
+
+          FORM.querySelectorAll('input').forEach(input =>{
+            if(input.id === 'gender' || input.id === 'age' || input.id === 'food') return;
+            let values = parseInt(input.value);
+            let multiplier = magnesioAlimentos[input.id];
+            let totalInput = parseInt(((values * multiplier) / 7).toFixed());
+            total += totalInput;
+          });
+
+          let recommended = obtenerRecomendacionMagnesio(age, gender, specialCondition);
+          let result = null;
+
+          if(total >= recommended){
+            result = `<strong>Tu ingesta de magnesio es adecuada</strong></br> Estás consumiendo una cantidad apropiada de magnesio que cumple con la recomendación diaria de <strong>${recommended} mg/día.</strong>`
+          }else{
+            result = `<strong>Tu ingesta de magnesio es insuficiente</strong></br> Se recomienda aumentar el consumo de alimentos ricos en magnesio para alcanzar al menos <strong>${recommended} mg/día.</strong>`
+          }
+
+          setTimeout(()=>{
+
+              //Scroll smooth hasta el resultado
+              RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+              //Volver a poner el texto en el boton
+              CALCULATE_BTN.innerHTML = 'Calcular';
+
+              //Mostrar el resultado
+              RESULT_BOX.style.visibility = 'visible';
+
+              RESULT_BOX.innerHTML = result;
+          }, 500)
+
+        })
+  })();
+
+  const recomendacionesMagnesio = {
+    "rangos": [
+      {
+        "rango": "Birth to 6 months",
+        "male": 30,
+        "female": 30,
+        "pregnancy": null,
+        "lactation": null,
+        "is_ai": true
+      },
+      {
+        "rango": "7-12 months",
+        "male": 75,
+        "female": 75,
+        "pregnancy": null,
+        "lactation": null,
+        "is_ai": true
+      },
+      {
+        "rango": "1-3 years",
+        "male": 80,
+        "female": 80,
+        "pregnancy": null,
+        "lactation": null,
+        "is_ai": false
+      },
+      {
+        "rango": "4-8 years",
+        "male": 130,
+        "female": 130,
+        "pregnancy": null,
+        "lactation": null,
+        "is_ai": false
+      },
+      {
+        "rango": "9-13 years",
+        "male": 240,
+        "female": 240,
+        "pregnancy": null,
+        "lactation": null,
+        "is_ai": false
+      },
+      {
+        "rango": "14-18 years",
+        "male": 410,
+        "female": 360,
+        "pregnancy": 400,
+        "lactation": 360,
+        "is_ai": false
+      },
+      {
+        "rango": "19-30 years",
+        "male": 400,
+        "female": 310,
+        "pregnancy": 350,
+        "lactation": 310,
+        "is_ai": false
+      },
+      {
+        "rango": "31-50 years",
+        "male": 420,
+        "female": 320,
+        "pregnancy": 360,
+        "lactation": 320,
+        "is_ai": false
+      },
+      {
+        "rango": "51+ years",
+        "male": 420,
+        "female": 320,
+        "pregnancy": null,
+        "lactation": null,
+        "is_ai": false
+      }
+    ]
+  };
+
+  function obtenerRecomendacionMagnesio(edad, sexo, condicionEspecial = null) {
+    // Encontrar el rango de edad correspondiente
+    let rangoEncontrado = null;
+
+    for (const rango of recomendacionesMagnesio.rangos) {
+      const edadRango = rango.rango;
+
+      if (edadRango === "Birth to 6 months" && edad < 0.5) {
+        rangoEncontrado = rango;
+        break;
+      } else if (edadRango === "7-12 months" && edad >= 0.5 && edad < 1) {
+        rangoEncontrado = rango;
+        break;
+      } else if (edadRango === "1-3 years" && edad >= 1 && edad <= 3) {
+        rangoEncontrado = rango;
+        break;
+      } else if (edadRango === "4-8 years" && edad >= 4 && edad <= 8) {
+        rangoEncontrado = rango;
+        break;
+      } else if (edadRango === "9-13 years" && edad >= 9 && edad <= 13) {
+        rangoEncontrado = rango;
+        break;
+      } else if (edadRango === "14-18 years" && edad >= 14 && edad <= 18) {
+        rangoEncontrado = rango;
+        break;
+      } else if (edadRango === "19-30 years" && edad >= 19 && edad <= 30) {
+        rangoEncontrado = rango;
+        break;
+      } else if (edadRango === "31-50 years" && edad >= 31 && edad <= 50) {
+        rangoEncontrado = rango;
+        break;
+      } else if (edadRango === "51+ years" && edad >= 51) {
+        rangoEncontrado = rango;
+        break;
+      }
+    }
+
+    if (!rangoEncontrado) {
+      return null; // Edad fuera de rango
+    }
+
+    // Determinar el valor según sexo y condición
+    if (condicionEspecial === "pregnancy" && rangoEncontrado.pregnancy !== null) {
+      return rangoEncontrado.pregnancy;
+    } else if (condicionEspecial === "lactation" && rangoEncontrado.lactation !== null) {
+      return rangoEncontrado.lactation;
+    } else if (sexo === "male") {
+      return rangoEncontrado.male;
+    } else if (sexo === "female") {
+      return rangoEncontrado.female;
+    }
+
+    return null; // Caso no encontrado
+  }
+</script>
