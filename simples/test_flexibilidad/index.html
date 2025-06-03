@@ -27,7 +27,7 @@
     <div id="handsBlock" style="display: none;">
         <label><span>Distancia entre las manos</span><sup>cm</sup></label>
         <input id="hands" type="text" min="1" max="99" maxlength="2" name="hands-input" placeholder="Introduce la distancia entre manos">
-        <small>Importante: Si los dedos de las manos no llegan a juntarse, pon un símbolo “menos” delante del número (número negativo). Ejemplo: “-3” hace referencia a que los dedos no se juntan y hay una distancia de 3 cm entre ellos</small>
+        <small><u>Importante:</u> si los dedos de las manos no llegan a juntarse, pon un símbolo “menos” delante del número (número negativo). <u>Ejemplo:</u> “-3” hace referencia a que los dedos no se juntan y hay una distancia de 3 cm entre ellos</small>
     </div>
     <div id="distanceBlock" style="display: none;">
       <label><span>Distancia alcanzada en el test</span><sup>cm</sup></label>
@@ -39,7 +39,7 @@
       Calcular
   </button>
 </form>
-          
+
 <p class="result" style="visibility: hidden;"></p>
 
 <style>
@@ -66,18 +66,18 @@
       //Bloque manos
       const HANDS_BLOCK = document.querySelector('#handsBlock');
       //Input distancia de manos
-      const HANDS_INPUT = document.querySelector('#hands'); 
+      const HANDS_INPUT = document.querySelector('#hands');
       //Bloque distancia alcanzada
       const DISTANCE_BLOCK = document.querySelector('#distanceBlock');
       //Input distancia alcanzada
-      const DISTANCE_INPUT = document.querySelector('#distance'); 
+      const DISTANCE_INPUT = document.querySelector('#distance');
 
       //Cajas con el resultado
       const RESULT_BOX = document.querySelector('.result');
 
       //Botón de calcular
       const CALCULATE_BTN = document.querySelector('#calculate-btn');
-      
+
       //Formulario
       const FORM = document.querySelector('.form-container');
 
@@ -111,7 +111,7 @@
             }
           });
         });
-  
+
       //Comprobar que ha introducido edad
       AGE_INPUT.addEventListener('input', ()=>{
 
@@ -121,7 +121,7 @@
               AGE_INPUT.reportValidity();
               return
           }
-          
+
           const VALUE = parseInt(AGE_INPUT.value);
           const MIN = parseInt(AGE_INPUT.getAttribute('min'));
           const MAX = parseInt(AGE_INPUT.getAttribute('max'));
@@ -174,7 +174,7 @@
             DISTANCE_INPUT.reportValidity();
             return
           }
-          
+
           const VALUE = parseInt(DISTANCE_INPUT.value);
           const MIN = parseInt(DISTANCE_INPUT.getAttribute('min'));
           const MAX = parseInt(DISTANCE_INPUT.getAttribute('max'));
@@ -196,7 +196,7 @@
 
         const selects = document.querySelectorAll('select');
         let isValid = true;
-  
+
         selects.forEach(select => {
           if (select.value === "" || select.selectedIndex === 0) {
             select.setCustomValidity('Por favor, selecciona una opción');
@@ -224,8 +224,8 @@
         let distance = DISTANCE_INPUT.value ? parseInt(DISTANCE_INPUT.value) : null;
 
         const CALCULATOR = new Flexibility(gender, age, exercise, hands, distance);
-        let result = hands ? CALCULATOR.shoulder() : CALCULATOR.back();
-          
+        let result = hands !== null ? CALCULATOR.shoulder() : CALCULATOR.back();
+
         setTimeout(()=>{
 
             //Scroll smooth hasta el resultado
@@ -236,7 +236,7 @@
 
             //Mostrar el resultado
             RESULT_BOX.style.visibility = 'visible';
-            
+
             if(hands){
               RESULT_BOX.innerHTML = `Tu flexibilidad de hombro es <strong>${result}</strong>`
             }else{
@@ -246,7 +246,7 @@
             DISTANCE_INPUT.value = null;
         }, 500)
 
-      })            
+      })
 })();
 
 class Flexibility {
@@ -267,7 +267,7 @@ class Flexibility {
 
   shoulder(){
 
-    if(!this._distance) return;
+    if(this._distance === null || this._distance === undefined) return;
 
     const flexibilityRanges = {
       h: { // hombres
@@ -312,7 +312,7 @@ class Flexibility {
 
   back(){
 
-    if(!this._distanceReached) return;
+    if(this._distanceReached === null || this._distanceReached === undefined) return;
 
     const flexibilityRanges = {
       h: { // hombres

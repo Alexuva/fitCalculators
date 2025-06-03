@@ -36,7 +36,7 @@
         <label><span>Segundos</span></label>
         <input id="seconds" type="text" min="0" max="59" maxlength="2" name="seconds-input" placeholder="Segundos">
       </div>
-    </div> 
+    </div>
   </div>
 
   <div id='optionalInputs' class="exerciseB" style="display: none;">
@@ -50,14 +50,14 @@
         <label><span>Minutos</span></label>
         <input id="minutes" type="text" min="0" max="59" maxlength="2" name="min-input" placeholder="Minutos">
       </div>
-    </div> 
+    </div>
   </div>
 
   <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
       Calcular
   </button>
 </form>
-          
+
 <p class="result" style="visibility: hidden;"></p>
 
 <style>
@@ -94,7 +94,7 @@
 
       //Botón de calcular
       const CALCULATE_BTN = document.querySelector('#calculate-btn');
-      
+
       //Formulario
       const FORM = document.querySelector('.form-container');
 
@@ -126,7 +126,7 @@
           optionalInputsTitle.style.bottom = '80%';
           optionalInputsTitle2.style.bottom = '80%';
       }
-        
+
       window.addEventListener('resize', (e)=>{
           windowWidth = window.innerWidth;
           if(windowWidth > 365 && windowWidth < 683){
@@ -153,7 +153,7 @@
         }else{
           select.setCustomValidity('');
         }
-        
+
       });
 
       EXERCISE_INPUT.addEventListener('change', ()=>{
@@ -166,7 +166,7 @@
           HOURS.required = false;
           MINUTES.value = '';
           MINUTES.required = false;
-        
+
         }else if(EXERCISE_INPUT.value === 'b'){
           EXERCISE_INPUT_A.style.display = 'none';
           RYTHM_INPUT.required = false;
@@ -191,7 +191,7 @@
         if(RYTHM_INPUT.value === 'a'){
           RYTHM_INPUT_A.style.display = 'flex';
           VELOCITY.required = true;
-          
+
           RYTHM_INPUT_B.style.display = 'none';
           MIN_INPUT.value = '';
           MIN_INPUT.required = false;
@@ -207,7 +207,7 @@
           SECONDS.required = true;
         }
       })
-  
+
       //Comprobar que ha introducido edad
       VELOCITY.addEventListener('input', ()=>{
 
@@ -217,7 +217,7 @@
             VELOCITY.reportValidity();
             return
           }
-        
+
           const VALUE = parseInt(VELOCITY.value);
           const MIN = parseInt(VELOCITY.getAttribute('min'));
           const MAX = parseInt(VELOCITY.getAttribute('max'));
@@ -254,7 +254,7 @@
           }
         }else{
           MIN_INPUT.setCustomValidity('');
-        } 
+        }
       })
 
       SECONDS.addEventListener('input', ()=>{
@@ -278,7 +278,7 @@
           }
         }else{
           SECONDS.setCustomValidity('');
-        } 
+        }
       })
 
       HOURS.addEventListener('input', ()=>{
@@ -301,7 +301,7 @@
           }
         }else{
           HOURS.setCustomValidity('');
-        } 
+        }
       })
 
       MINUTES.addEventListener('input', ()=>{
@@ -324,7 +324,7 @@
           }
         }else{
           MINUTES.setCustomValidity('');
-        } 
+        }
       })
 
       FORM.addEventListener('submit', (e)=>{
@@ -332,7 +332,7 @@
 
         const selects = document.querySelectorAll('select');
         let isValid = true;
-  
+
         selects.forEach(select => {
           if(select.required){
             if (select.value === "" || select.selectedIndex === 0) {
@@ -345,7 +345,7 @@
           }else{
             select.setCustomValidity('');
           }
-          
+
         });
 
         if (!isValid) {
@@ -366,10 +366,10 @@
         let velocity = VELOCITY.value ? parseFloat(VELOCITY.value) : min + (seconds / 60);
         let hours = HOURS.value? parseInt(HOURS.value) : null;
         let minutes = MINUTES.value? parseInt(MINUTES.value) : null;
-        
+
         const CALCULATOR = exerciseSelect === 'a' ? new RythmTime(exerciseSelect, velocity, rythmSelect, null) : new RythmTime(exerciseSelect, velocity, rythmSelect,  `${hours}:${minutes}`);
         let result = CALCULATOR.calculate();
-          
+
         setTimeout(()=>{
 
             //Scroll smooth hasta el resultado
@@ -382,14 +382,38 @@
             RESULT_BOX.style.visibility = 'visible';
             if(exerciseSelect === 'a'){
               if(rythmSelect === 'a'){
-                RESULT_BOX.innerHTML = `<ul style="list-style: none; margin: 0px"><li>Tiempo total de maratón: <strong>${result.marathon}</strong></li><li>Tiempo de paso 5km: <strong>${result.step5km}</strong></li><li>Tiempo de paso 10km: <strong>${result.step10km}</strong></li><li>Tiempo de paso 30km: <strong>${result.step30km}</strong></li><li>Tiempo de paso media maratón: <strong>${result.halfMarathon}</strong></li><li>Ritmo equivalente: <strong>${result.rythm}</strong></li></ul>`;
+                RESULT_BOX.innerHTML = `
+                  <p style="font-size: 1.2em;">Tiempo total de maratón: <strong>${result.marathon}</strong></p>
+                  <ul style="list-style: none; margin: 0px">
+                    <li style="display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; margin-bottom: 10px"><span>Tiempo de paso 5 km:</span><span style="border-bottom: dotted; height: 1em;"></span><strong>${result.step5km}</strong></li>
+                    <li style="display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; margin-bottom: 10px"><span>Tiempo de paso 10 km:</span><span style="border-bottom: dotted; height: 1em;"></span><strong>${result.step10km}</strong></li>
+                    <li style="display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; margin-bottom: 10px"><span>Tiempo de paso media maratón:</span><span style="border-bottom: dotted; height: 1em;"></span><strong>${result.halfMarathon}</strong></li>
+                    <li style="display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; margin-bottom: 10px"><span>Tiempo de paso 30 km:</span><span style="border-bottom: dotted; height: 1em;"></span><strong>${result.step30km}</strong></li>
+                    <li style="display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; margin-bottom: 10px"><span>Ritmo equivalente:</span><span style="border-bottom: dotted; height: 1em;"></span><strong>${result.rythm}</strong></li>
+                  </ul>`;
               }else{
-                RESULT_BOX.innerHTML = `<ul style="list-style: none; margin: 0px"><li>Tiempo total de maratón: <strong>${result.marathon}</strong></li><li>Tiempo de paso 5km: <strong>${result.step5km}</strong></li><li>Tiempo de paso 10km: <strong>${result.step10km}</strong></li><li>Tiempo de paso 30km: <strong>${result.step30km}</strong></li><li>Tiempo de paso media maratón: <strong>${result.halfMarathon}</strong></li><li>Velocidad equivalente: <strong>${result.speed}</strong></li></ul>`;
+                RESULT_BOX.innerHTML = `
+                  <p style="font-size: 1.2em;">Tiempo total de maratón: <strong>${result.marathon}</strong></p>
+                  <ul style="list-style: none; margin: 0px">
+                    <li style="display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; margin-bottom: 10px"><span>Tiempo de paso 5 km:</span><span style="border-bottom: dotted; height: 1em;"></span><strong>${result.step5km}</strong></li>
+                    <li style="display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; margin-bottom: 10px"><span>Tiempo de paso 10 km:</span><span style="border-bottom: dotted; height: 1em;"></span><strong>${result.step10km}</strong></li>
+                    <li style="display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; margin-bottom: 10px"><span>Tiempo de paso media maratón:</span><span style="border-bottom: dotted; height: 1em;"></span><strong>${result.halfMarathon}</strong></li>
+                    <li style="display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; margin-bottom: 10px"><span>Tiempo de paso 30 km:</span><span style="border-bottom: dotted; height: 1em;"></span><strong>${result.step30km}</strong></li>
+                    <li style="display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; margin-bottom: 10px"><span>Velocidad equivalente:</span><span style="border-bottom: dotted; height: 1em;"></span><strong>${result.speed}</strong></li>
+                  </ul>`;
               }
             }else{
-              RESULT_BOX.innerHTML = `<ul style="list-style: none; margin: 0px"><li>Tiempo total de maratón: <strong>${hours}:${minutes === 0 ? '00' : minutes}</strong></li><li>Tiempo de paso 5km: <strong>${result.step5km}</strong></li><li>Tiempo de paso 10km: <strong>${result.step10km}</strong></li><li>Tiempo de paso 30km: <strong>${result.step30km}</strong></li><li>Tiempo de paso media maratón: <strong>${result.halfMarathon}</strong></li><li>Ritmo necesario: <strong>${result.rythm}</strong></li><li>Velocidad equivalente: <strong>${result.speed}</strong></li></ul>`;
+              RESULT_BOX.innerHTML = `
+                <p style="font-size: 1.2em;">Tiempo total de maratón: <strong>${hours}:${minutes === 0 ? '00' : minutes}</strong></p>
+                <ul style="list-style: none; margin: 0px">
+                  <li style="display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; margin-bottom: 10px"><span>Tiempo de paso 5 km:</span><span style="border-bottom: dotted; height: 1em;"></span><strong>${result.step5km}</strong></li>
+                  <li style="display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; margin-bottom: 10px"><span>Tiempo de paso 10 km:</span><span style="border-bottom: dotted; height: 1em;"></span><strong>${result.step10km}</strong></li>
+                  <li style="display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; margin-bottom: 10px"><span>Tiempo de paso media maratón:</span><span style="border-bottom: dotted; height: 1em;"></span><strong>${result.halfMarathon}</strong></li>
+                  <li style="display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; margin-bottom: 10px"><span>Tiempo de paso 30 km:</span><span style="border-bottom: dotted; height: 1em;"></span><strong>${result.step30km}</strong></li>
+                  <li style="display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; margin-bottom: 10px"><span>Ritmo equivalente:</span><span style="border-bottom: dotted; height: 1em;"></span><strong>${result.rythm}</strong></li>
+                </ul>`;
             }
-            
+
             exerciseSelect = null;
             rythmSelect = null;
             velocity = null;
@@ -402,7 +426,7 @@
 
         }, 500)
 
-      })            
+      })
 })();
 
 class RythmTime {
@@ -453,8 +477,8 @@ class RythmTime {
         const step10km = 10 / this._speed;
         const hours10km = Math.floor(step10km);
         const decimalHours10km = step10km - hours10km;
-        const minutes10km = Math.floor(decimalHours10km * 60);  
-        const decimalMinutes10km = (decimalHours10km * 60) - minutes10km; 
+        const minutes10km = Math.floor(decimalHours10km * 60);
+        const decimalMinutes10km = (decimalHours10km * 60) - minutes10km;
         const seconds10km = Math.round(decimalMinutes10km * 60);
         // Formatear el resultado
         const formattedHours10km = hours10km.toString().padStart(2, '0');
@@ -493,7 +517,7 @@ class RythmTime {
         const rythMinutes = Math.floor(rythm);
         const rythmDecimalMinutes = rythm - rythMinutes;
         const rythmSeconds = Math.round(rythmDecimalMinutes * 60);
-        
+
         // Formatear el resultado
         const rythmFormattedMinutes = rythMinutes.toString().padStart(2, '0');
         const rythmFormattedSeconds = rythmSeconds.toString().padStart(2, '0');
@@ -571,7 +595,7 @@ class RythmTime {
 
         //Velocidad equivalente
         const speedEquivalent = 60 / this._speed;
-        
+
         // Formatear el resultado con un decimal
         const speedResult = `${(speedEquivalent.toFixed(1)).toLocaleString('es', {minimumFractionDigits: 1, maximumFractionDigits: 1}).replaceAll('.', ',')} km/h`;
 
@@ -596,7 +620,7 @@ class RythmTime {
       const rythmMinutes = Math.floor(rythmPerKm);
       const rythmDecimalMinutes = rythmPerKm - rythmMinutes;
       const rythmSeconds = Math.round(rythmDecimalMinutes * 60);
-      
+
       // Formatear el resultado
       const formattedMinutes = rythmMinutes.toString().padStart(2, '0');
       const formattedSeconds = rythmSeconds.toString().padStart(2, '0');

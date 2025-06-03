@@ -42,22 +42,23 @@
   </div>
   <div class="flex">
     <div>
-        <label><span>Tu peso</span><sup>kg</sup></label>
-        <input id="weight" type="text" min="20" max="250" maxlength="6" name="weight-input" placeholder="Introduce tu peso en kg." required>
+        <label><span>Peso utilizado</span><sup>kg</sup></label>
+        <input id="weight" type="text" min="0" maxlength="6" name="weight-input" placeholder="Introduce el peso utilizado." required>
     </div>
   </div>
 
   <div class="flex">
     <div>
-      <label><span>Número de repeticiones</span></label>
-      <input id="nr" type="text" min="1" maxlength="4" name="nr-input" placeholder="Introduce el número de repeticiones" required>
+      <label><span>N.º reps realizadas con ese peso</span></label>
+      <input id="nr" type="text" min="1" maxlength="4" name="nr-input" placeholder="Introduce el número de repeticiones realizadas con ese peso" required>
     </div>
   </div>
 
   <div class="flex">
     <div>
-      <label><span>RPE programado de la primera serie efectiva</span></label>
-      <input id="rpe" type="text" min="1" maxlength="2" max="10" name="rpe-input" placeholder="Siendo RPE=1 “mínimo esfuerzo” y RPE=10 “esfuerzo máximo”." required>
+      <label><span>RPE (1-10)</span></label>
+      <input id="rpe" type="text" min="1" maxlength="2" max="10" name="rpe-input" placeholder="Introduce el RPE (1-10)" required>
+      <small>Siendo RPE=1 “mínimo esfuerzo” y RPE=10 “esfuerzo máximo”. </small>
     </div>
   </div>
 
@@ -65,6 +66,7 @@
     <div>
       <label><span>1RM estimado en el ejercicio</span><sup>Kg</sup></label>
       <input id="rm" type="text" min="1" maxlength="5" name="rm-input" placeholder="Introduce tu 1RM en el ejercicio indicado">
+      <small>(Si no lo conoces, puedes hallarlo en <a href="https://fitgeneration.es/calculadora/1rm/"><u>esta otra calculadora.</u></a>)</small>
     </div>
   </div>
 
@@ -72,7 +74,7 @@
       Calcular
   </button>
 </form>
-          
+
 <p class="result" style="visibility: hidden;"></p>
 
 <style>
@@ -102,7 +104,7 @@
 
       //Botón de calcular
       const CALCULATE_BTN = document.querySelector('#calculate-btn');
-      
+
       //Formulario
       const FORM = document.querySelector('.form-container');
 
@@ -125,7 +127,7 @@
             }
           });
         });
-  
+
       //Comprobar que ha introducido edad
       WEIGHT_INPUT.addEventListener('input', ()=>{
 
@@ -135,7 +137,7 @@
             WEIGHT_INPUT.reportValidity();
             return
           }
-          
+
           const VALUE = parseInt(WEIGHT_INPUT.value);
           const MIN = parseInt(WEIGHT_INPUT.getAttribute('min'));
           const MAX = parseInt(WEIGHT_INPUT.getAttribute('max'));
@@ -148,28 +150,27 @@
           }
       })
 
-      //Comprobar que ha introducido la distancia para las manos
-      RM_INPUT.addEventListener('input', ()=>{
+      NR_INPUT.addEventListener('input', ()=>{
 
           //Comprobar si el numero tiene 2 decimales como mucho
-          if(!INTEGERS_REGEX.test(RM_INPUT.value)){
-            RM_INPUT.setCustomValidity('Introduce un número válido');
-            RM_INPUT.reportValidity();
+          if(!INTEGERS_REGEX.test(NR_INPUT.value)){
+            NR_INPUT.setCustomValidity('Introduce un número válido');
+            NR_INPUT.reportValidity();
             return
           }
 
           //Resetear borde y validación del input
-          RM_INPUT.setCustomValidity('');
+          NR_INPUT.setCustomValidity('');
 
-          const VALUE = parseFloat(RM_INPUT.value);
-          const MIN = parseFloat(RM_INPUT.getAttribute('min'));
-          const MAX = parseFloat(RM_INPUT.getAttribute('max'));
+          const VALUE = parseFloat(NR_INPUT.value);
+          const MIN = parseFloat(NR_INPUT.getAttribute('min'));
+          const MAX = parseFloat(NR_INPUT.getAttribute('max'));
 
           if(VALUE > MAX || isNaN(VALUE)){
-            RM_INPUT.setCustomValidity(`Introduce un número válido entre ${MIN} y ${MAX}`);
-            RM_INPUT.reportValidity();
+            NR_INPUT.setCustomValidity(`Introduce un número válido`);
+            NR_INPUT.reportValidity();
           }else{
-            RM_INPUT.setCustomValidity('');
+            NR_INPUT.setCustomValidity('');
           }
 
       })
@@ -200,10 +201,8 @@
 
       })
 
-      //Comprobar que ha introducido edad
       RM_INPUT.addEventListener('input', ()=>{
 
-        //Comprobar si el numero es un entero
         if(!DECIMAL_REGEX.test(RM_INPUT.value)){
           RM_INPUT.setCustomValidity('Introduce una peso válido');
           RM_INPUT.reportValidity();
@@ -215,7 +214,7 @@
         const MAX = parseInt(RM_INPUT.getAttribute('max'));
 
         if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
-          RM_INPUT.setCustomValidity(`El peso mínimo es ${MIN}kg y el máximo ${MAX}kg`);
+          RM_INPUT.setCustomValidity(`Introduce un número válido`);
           RM_INPUT.reportValidity();
         }else{
           RM_INPUT.setCustomValidity('');
@@ -227,7 +226,7 @@
 
         const selects = document.querySelectorAll('select');
         let isValid = true;
-  
+
         selects.forEach(select => {
           if (select.value === "" || select.selectedIndex === 0) {
             select.setCustomValidity('Por favor, selecciona una opción');
@@ -255,7 +254,7 @@
         let rm = parseFloat(RM_INPUT.value);
         const CALCULATOR = new FatigueRatio(exercise, weight, reps, rpe, rm);
         let result = CALCULATOR.calculate();
-          
+
         setTimeout(()=>{
 
             //Scroll smooth hasta el resultado
@@ -266,12 +265,12 @@
 
             //Mostrar el resultado
             RESULT_BOX.style.visibility = 'visible';
-            
+
             RESULT_BOX.innerHTML = `<strong>${result.message}</strong>`
-            
+
         }, 500)
 
-      })            
+      })
 })();
 
 class FatigueRatio {
@@ -292,21 +291,21 @@ class FatigueRatio {
 
   calculate() {
     let rmFactor = this._weight / this._rm;
-    let upRatio = this._weight * this._reps * this._exercise * rmFactor;
-    let downRatio = 0.1 * this._reps * this._rpe * this._weight;
-    let totalRatio = parseFloat((upRatio / downRatio).toFixed(2));
+    let up = this._reps * this._exercise * 10 * rmFactor;
+    let down = this._rpe * Math.sqrt(this._reps);
+    let totalRatio = parseFloat((up / down).toFixed(2));
 
-    if(totalRatio < 1) {
+    if(totalRatio < 1.25) {
       return {
         totalRatio: totalRatio,
-        message: 'Ratio bajo: alta fatiga en relación al estímulo.'
+        message: 'Ratio bajo: alta fatiga en relación al estímulo. Modera un poco 🥵'
       }
-    }else if(totalRatio >= 1 && totalRatio <= 2) {
+    }else if(totalRatio >= 1.25 && totalRatio <= 2.75) {
       return {
         totalRatio: totalRatio,
-        message: 'Ratio óptimo: buen equilibrio entre estímulo y fatiga.'
+        message: 'Ratio óptimo: buen equilibrio entre estímulo y fatiga ✅'
       }
-    }else {
+    }else if(totalRatio > 2.75) {
       return {
         totalRatio: totalRatio,
         message: 'Ratio demasiado alto: podrías darle algo más de caña 😉'

@@ -1,7 +1,7 @@
 /**
  * Calculadora ratio estimulo-fatiga
- * Datos necesarios: 
- * - Ejercicio: 
+ * Datos necesarios:
+ * - Ejercicio:
   *  - Press de banca - 1.0
  *  - Aperturas con mancuernas - 1.2
  *  - Aperturas en máquina - 1.1
@@ -58,21 +58,21 @@ class FatigueRatio {
 
   calculate() {
     let rmFactor = this._weight / this._rm;
-    let upRatio = this._weight * this._reps * this._exercise * rmFactor;
-    let downRatio = 0.1 * this._reps * this._rpe * this._weight;
-    let totalRatio = parseFloat((upRatio / downRatio).toFixed(2));
+    let up = this._reps * this._exercise * 10 * rmFactor;
+    let down = this._rpe * Math.sqrt(this._reps);
+    let totalRatio = parseFloat((up / down).toFixed(2));
 
-    if(totalRatio < 1) {
+    if(totalRatio < 1.25) {
       return {
         totalRatio: totalRatio,
-        message: 'Ratio bajo: alta fatiga en relación al estímulo.'
+        message: 'Ratio bajo: alta fatiga en relación al estímulo. Modera un poco 🥵'
       }
-    }else if(totalRatio >= 1 && totalRatio <= 2) {
+    }else if(totalRatio >= 1.25 && totalRatio <= 2.75) {
       return {
         totalRatio: totalRatio,
-        message: 'Ratio óptimo: buen equilibrio entre estímulo y fatiga.'
+        message: 'Ratio óptimo: buen equilibrio entre estímulo y fatiga ✅'
       }
-    }else {
+    }else if(totalRatio > 2.75) {
       return {
         totalRatio: totalRatio,
         message: 'Ratio demasiado alto: podrías darle algo más de caña 😉'

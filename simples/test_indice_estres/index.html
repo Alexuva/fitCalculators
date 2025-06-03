@@ -52,10 +52,11 @@
   <div class="flex">
     <div>
       <label><span>RIR de la serie que quieras evaluar</span></label>
-      <input id="rir" type="text" min="0" maxlength="1" name="rir-input" placeholder="RIR=5 significa “5 repeticiones hasta el fallo (poco esfuerzo)”; RIR=0 significa “fallo muscular (esfuerzo máximo)”.">
+      <input id="rir" type="text" min="0" maxlength="1" name="rir-input" placeholder="Introduce el RIR de la serie">
+      <small>RIR=5 significa “5 repeticiones hasta el fallo (poco esfuerzo)”; RIR=0 significa “fallo muscular (esfuerzo máximo)”.</small>
     </div>
   </div>
-  
+
   <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
       Calcular
   </button>
@@ -77,30 +78,30 @@
 
 <script type="text/javascript">
   (function() {
-  
+
         //Inputs
         const EXERCISE_INPUT = document.querySelector('#exercise');
         const RIR_INPUT = document.querySelector('#rir');
-  
+
         //Cajas con el resultado
         const RESULT_BOX = document.querySelector('.result');
-  
+
         //Tabla
         const RESULT_NUMBER = document.querySelector('#show-result-number');
-  
+
         //Botón de calcular
         const CALCULATE_BTN = document.querySelector('#calculate-btn');
-        
+
         //Formulario
         const FORM = document.querySelector('.form-container');
-  
+
         //Regex para comprobar si los números cumplen con la condición de 2 decimales
         const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
         const DECIMAL_REGEX = new RegExp(/^(\d+|\d+,\d{1}|\d+.\d{1})$/);
-  
+
         //Regex para comprobar si los números cumplen con la condición de ser enteros
         const INTEGERS_REGEX = new RegExp(/^\d+$/);
-  
+
         const SELECTS = document.querySelectorAll('select');
         SELECTS.forEach(select => {
           select.addEventListener('change', () => {
@@ -109,7 +110,7 @@
             }
           });
         });
-  
+
         //Comprobar que ha introducido el RIR
         RIR_INPUT.addEventListener('input', ()=>{
             //Comprobar si el numero es un entero
@@ -123,12 +124,12 @@
               RIR_INPUT.setCustomValidity('');
               return
             }
-            
-            
+
+
             const VALUE = parseInt(RIR_INPUT.value);
             const MIN = parseInt(RIR_INPUT.getAttribute('min'));
             const MAX = parseInt(RIR_INPUT.getAttribute('max'));
-  
+
             if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
               RIR_INPUT.setCustomValidity(`El mínimo son ${MIN}RIR y el máximo son ${MAX}RIR`);
               RIR_INPUT.reportValidity();
@@ -136,13 +137,13 @@
               RIR_INPUT.setCustomValidity('');
             }
         })
-  
+
         FORM.addEventListener('submit', (e)=>{
           e.preventDefault();
-  
+
           const selects = document.querySelectorAll('select');
           let isValid = true;
-    
+
           selects.forEach(select => {
             if (select.value === "" || select.selectedIndex === 0) {
               select.setCustomValidity('Por favor, selecciona una opción');
@@ -152,40 +153,40 @@
               select.setCustomValidity('');
             }
           });
-  
+
           if (!isValid) {
             return;
           }
-  
-  
+
+
           //Cambiar texto botón
           CALCULATE_BTN.innerHTML = 'Calculando...';
-  
+
           //Ocultar resultado anterior
           RESULT_BOX.style.visibility = 'hidden';
-  
+
           let exercise = EXERCISE_INPUT.value;
           let rir = parseInt(RIR_INPUT.value);
-          
+
           const CALCULATOR = new StressIndex(exercise, rir);
           let result = CALCULATOR._stressIndex;
 
           RESULT_NUMBER.innerHTML = result;
 
           setTimeout(()=>{
-  
+
               //Scroll smooth hasta el resultado
               RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
-  
+
               //Volver a poner el texto en el boton
               CALCULATE_BTN.innerHTML = 'Calcular';
-  
+
               //Mostrar el resultado
               RESULT_BOX.style.visibility = 'visible';
-              
+
           }, 500)
-  
-        })            
+
+        })
   })();
 
   class StressIndex {
@@ -200,7 +201,7 @@
     }
 
     calculateStressIndex() {
-      
+
       if(this._exerciseType === 'mam'){
         if(this._rir === 5) return 0.3;
         if(this._rir === 4) return 0.5;
@@ -219,7 +220,7 @@
         if(this._rir === 5) return 0.2;
         if(this._rir === 4) return 0.4;
         if(this._rir === 3) return 0.6;
-        if(this._rir === 2) return 0.8; 
+        if(this._rir === 2) return 0.8;
         if(this._rir === 1) return 1;
         if(this._rir === 0) return 1.2;
       }else if(this._exerciseType ==='mop'){
