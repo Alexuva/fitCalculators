@@ -13,7 +13,7 @@
   </div>
   <div class="flex">
     <div>
-      <label><span>1RM Actual en el ejercicio</span><sup>Kg</sup></label>
+      <label><span>1RM actual en el ejercicio</span><sup>kg</sup></label>
       <input id="rm" type="text" min="1" maxlength="5" name="rm-input" placeholder="Introduce tu 1RM en el ejercicio indicado">
     </div>
   </div>
@@ -32,7 +32,8 @@
   <div class="flex">
     <div>
       <label><span>RPE programado de la primera serie efectiva</span></label>
-      <input id="rpe" type="text" min="1" maxlength="2" name="rpe-input" placeholder="Siendo RPE=1 “mínimo esfuerzo” y RPE=10 “esfuerzo máximo”." required>
+      <input id="rpe" type="text" min="1" maxlength="2" name="rpe-input" placeholder="Introduce el RPE" required>
+      <small>Siendo RPE=1 “mínimo esfuerzo” y RPE=10 “esfuerzo máximo</small>
     </div>
   </div>
   <div class="flex">
@@ -50,23 +51,25 @@
   <div class="flex">
     <div>
       <label><span>RPE de la primera serie de aproximación</span></label>
-      <input id="rpe1" type="text" min="1" maxlength="2" name="rpe1-input" placeholder="Siendo RPE=1 “mínimo esfuerzo” y RPE=10 “esfuerzo máximo”." required>
+      <input id="rpe1" type="text" min="1" maxlength="2" name="rpe1-input" placeholder="Introduce el RPE" required>
+      <small>Siendo RPE=1 “mínimo esfuerzo” y RPE=10 “esfuerzo máximo</small>
     </div>
   </div>
   <div class="flex">
     <div>
       <label><span>RPE de la segunda serie de aproximación</span></label>
-      <input id="rpe2" type="text" min="1" maxlength="2" name="rpe2-input" placeholder="Siendo RPE=1 “mínimo esfuerzo” y RPE=10 “esfuerzo máximo”." required>
+      <input id="rpe2" type="text" min="1" maxlength="2" name="rpe2-input" placeholder="Introduce el RPE" required>
+      <small>Siendo RPE=1 “mínimo esfuerzo” y RPE=10 “esfuerzo máximo</small>
     </div>
   </div>
-  
+
   <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
       Calcular
   </button>
 </form>
 
 <p class="result" style="visibility: hidden;">Tus series de aproximación son:</p>
-        
+
 <table class="table" id="result-table" style="display: none">
   <thead class="thead-light">
       <tr>
@@ -75,7 +78,7 @@
           <th scope="col">N.º repeticiones</th>
       </tr>
   </thead>
-  
+
   <tbody class="text-center">
       <tr id="first">
           <td class="result-type">1ª</td>
@@ -128,7 +131,7 @@
 
       //Botón de calcular
       const CALCULATE_BTN = document.querySelector('#calculate-btn');
-      
+
       //Formulario
       const FORM = document.querySelector('.form-container');
 
@@ -161,8 +164,8 @@
             RM_INPUT.setCustomValidity('');
             return
           }
-          
-          
+
+
           const VALUE = parseInt(RM_INPUT.value);
           const MIN = parseInt(RM_INPUT.getAttribute('min'));
           const MAX = parseInt(RM_INPUT.getAttribute('max'));
@@ -188,8 +191,8 @@
             PO_INPUT.setCustomValidity('');
             return
           }
-          
-          
+
+
           const VALUE = parseInt(PO_INPUT.value);
           const MIN = parseInt(PO_INPUT.getAttribute('min'));
           const MAX = parseInt(PO_INPUT.getAttribute('max'));
@@ -214,17 +217,17 @@
             NR_INPUT.setCustomValidity('');
             return
           }
-          
+
           const VALUE = parseInt(NR_INPUT.value);
           const MIN = parseInt(NR_INPUT.getAttribute('min'));
           const MAX = parseInt(NR_INPUT.getAttribute('max'));
-      
+
           if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
             NR_INPUT.setCustomValidity(`Inserta un número de repeticiones entre ${MIN} y ${MAX}`);
             NR_INPUT.reportValidity();
           }else{
             NR_INPUT.setCustomValidity('');
-          }   
+          }
       })
 
       RPE_INPUT.addEventListener('input', ()=>{
@@ -239,17 +242,17 @@
             RPE_INPUT.setCustomValidity('');
             return
           }
-          
+
           const VALUE = parseInt(RPE_INPUT.value);
           const MIN = parseInt(RPE_INPUT.getAttribute('min'));
           const MAX = parseInt(RPE_INPUT.getAttribute('max'));
-      
+
           if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
             RPE_INPUT.setCustomValidity(`Inserta un RPE entre ${MIN} y ${MAX}`);
             RPE_INPUT.reportValidity();
           }else{
             RPE_INPUT.setCustomValidity('');
-          }   
+          }
       })
 
       RPE1_INPUT.addEventListener('input', ()=>{
@@ -264,17 +267,17 @@
             RPE1_INPUT.setCustomValidity('');
             return
           }
-          
+
           const VALUE = parseInt(RPE1_INPUT.value);
           const MIN = parseInt(RPE1_INPUT.getAttribute('min'));
           const MAX = parseInt(RPE1_INPUT.getAttribute('max'));
-      
+
           if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
             RPE1_INPUT.setCustomValidity(`Inserta un RPE entre ${MIN} y ${MAX}`);
             RPE1_INPUT.reportValidity();
           }else{
             RPE1_INPUT.setCustomValidity('');
-          }   
+          }
       })
 
       RPE2_INPUT.addEventListener('input', ()=>{
@@ -289,17 +292,17 @@
             RPE2_INPUT.setCustomValidity('');
             return
           }
-          
+
           const VALUE = parseInt(RPE2_INPUT.value);
           const MIN = parseInt(RPE2_INPUT.getAttribute('min'));
           const MAX = parseInt(RPE2_INPUT.getAttribute('max'));
-      
+
           if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
             RPE2_INPUT.setCustomValidity(`Inserta un RPE entre ${MIN} y ${MAX}`);
             RPE2_INPUT.reportValidity();
           }else{
             RPE2_INPUT.setCustomValidity('');
-          }   
+          }
       })
 
       FORM.addEventListener('submit', (e)=>{
@@ -307,7 +310,7 @@
 
         const selects = document.querySelectorAll('select');
         let isValid = true;
-  
+
         selects.forEach(select => {
           if (select.value === "" || select.selectedIndex === 0) {
             select.setCustomValidity('Por favor, selecciona una opción');
@@ -338,7 +341,7 @@
         let feeling = FEELING_INPUT.value;
         let rpe1 = parseInt(RPE1_INPUT.value);
         let rpe2 = parseInt(RPE2_INPUT.value);
-        
+
         const CALCULATOR = new Powerlifting(exercise, rm, po, nr, rpe, feeling, rpe1, rpe2);
         let aprox = CALCULATOR.Approximations;
         let repDivs = RESULT_TABLE.querySelectorAll('.reps');
@@ -360,16 +363,16 @@
             //Mostrar el resultado
             RESULT_TABLE.style.display = 'table';
             RESULT_BOX.style.visibility = 'visible';
-            
+
         }, 500)
 
-      })            
+      })
 })();
 
 class Powerlifting {
 	_exercise;
-	_rm; //1RM 
-	_objectiveWeight; //Peso Objetivo 
+	_rm; //1RM
+	_objectiveWeight; //Peso Objetivo
 	_reps; //Numero de repeticiones de la primera serie efectiva
 	_rpe;
 	_feeling; //A,B,C,D
@@ -423,7 +426,7 @@ class Powerlifting {
 			if(this._reps <= 6){
 				if(this._feeling === 'a'){
 					this._totalS1 = parseFloat((0.72 * this._objectiveWeight).toFixed(1))
-					return this._totalS1;		
+					return this._totalS1;
 				}else if(this._feeling === 'b'){
 					this._totalS1 = parseFloat((0.68 * this._objectiveWeight).toFixed(1))
 					return this._totalS1;
@@ -453,7 +456,7 @@ class Powerlifting {
 			if(this._reps <= 6){
 				if(this._feeling === 'a'){
 					this._totalS1 = parseFloat((0.75 * this._objectiveWeight).toFixed(1))
-					return this._totalS1;		
+					return this._totalS1;
 				}else if(this._feeling === 'b'){
 					this._totalS1 = parseFloat((0.72 * this._objectiveWeight).toFixed(1))
 					return this._totalS1;
