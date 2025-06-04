@@ -290,10 +290,14 @@ class FatigueRatio {
   }
 
   calculate() {
-    let rmFactor = this._weight / this._rm;
-    let up = this._reps * this._exercise * 10 * rmFactor;
-    let down = this._rpe * Math.sqrt(this._reps);
-    let totalRatio = parseFloat((up / down).toFixed(2));
+    // let rmFactor = this._weight / this._rm;
+    // let up = this._reps * this._exercise * 10 * rmFactor;
+    // let down = this._rpe * Math.sqrt(this._reps);
+    // let totalRatio = parseFloat((up / down).toFixed(2));
+
+    let rm = this._weight * this._reps * (this._rpe / 10) * this._exercise * (this._weight / this._rm);
+    let down = (Math.pow(this._rpe, 2) * this._reps * this._weight * (1 / ((10 - this._rpe) + 1))) / 31.5;
+    let totalRatio = parseFloat((rm / down).toFixed(2))
 
     if(totalRatio < 1.25) {
       return {
