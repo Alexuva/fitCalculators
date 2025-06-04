@@ -47,7 +47,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Tienes síntomas cutáneos (erupciones, dermatitis herpetiforme, picazón) relacionados con el consumo de gluten?</span></label>
@@ -60,7 +60,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Experimentas dolor de cabeza, niebla mental o dificultad para concentrarte tras consumir gluten?</span></label>
@@ -73,7 +73,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Te han diagnosticado o tienes sospechas de enfermedad celíaca, sensibilidad al gluten o alergia al trigo?</span></label>
@@ -86,7 +86,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Tienes antecedentes familiares de enfermedad celíaca o sensibilidad al gluten?</span></label>
@@ -99,7 +99,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Consumes alimentos con gluten (pan, pasta, galletas, cereales)?</span></label>
@@ -112,12 +112,12 @@
       </select>
     </div>
   </div>
-  
+
   <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
       Calcular
   </button>
 </form>
-          
+
 <p class="result" style="visibility: hidden;"></p>
 
 <style>
@@ -144,31 +144,31 @@
         const diagnosed_input = document.querySelector('#diagnosed');
         const family_history_input = document.querySelector('#family-history');
         const gluten_consumption_input = document.querySelector('#gluten-consumption');
-        
+
         //Cajas con el resultado
         const RESULT_BOX = document.querySelector('.result');
-  
+
         //Botón de calcular
         const CALCULATE_BTN = document.querySelector('#calculate-btn');
-        
+
         //Formulario
         const FORM = document.querySelector('.form-container');
-  
+
         //Regex para comprobar si los números cumplen con la condición de 2 decimales
         const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
-  
+
         //Regex para comprobar si los números cumplen con la condición de ser enteros
         const INTEGERS_REGEX = new RegExp(/^\d+$/);
-  
+
         FORM.addEventListener('submit', (e)=>{
           e.preventDefault();
-  
+
           //Cambiar texto botón
           CALCULATE_BTN.innerHTML = 'Calculando...';
-  
+
           //Ocultar resultado anterior
           RESULT_BOX.style.visibility = 'hidden';
-  
+
           let gluten_bloating = parseInt(gluten_bloating_input.value);
           let gluten_digestive = parseInt(gluten_digestive_input.value);
           let processed = parseInt(processed_input.value);
@@ -181,24 +181,24 @@
 
           const CALCULATOR = new GlutenIntoleranceTest(gluten_bloating, gluten_digestive, processed, fatigue, skin_symptoms, mental_symptoms, diagnosed, family_history, gluten_consumption);
           let result = CALCULATOR.state;
-  
+
           setTimeout(()=>{
-  
+
               //Scroll smooth hasta el resultado
               RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
-  
+
               //Volver a poner el texto en el boton
               CALCULATE_BTN.innerHTML = 'Calcular';
-  
+
               //Mostrar el resultado
               RESULT_BOX.style.visibility = 'visible';
-  
+
               RESULT_BOX.innerHTML = result;
-  
-              
+
+
           }, 500)
-  
-        })            
+
+        })
   })();
 
   class GlutenIntoleranceTest {
@@ -231,7 +231,7 @@
 
     calculate() {
       this.total = this.#abdominal + this.#diarrhea + this.#hurt + this.#fatigue + this.#skin + this.#headache + this.#medical + this.#family + this.#consume;
-      if(this.total >= 21 && this.total <= 21){
+      if(this.total >= 21){
         this.state = '<strong>Alta probabilidad de intolerancia</strong></br> Consulta con un médico o nutricionista para realizar pruebas diagnósticas (anticuerpos específicos, biopsia intestinal o dieta sin gluten supervisada)';
       }else if(this.total >= 14 && this.total <= 20){
         this.state = '<strong>Probabilidad moderada de intolerancia</strong></br> Lleva un diario de alimentos y síntomas, y consulta con un especialista para explorar la posible relación entre tus síntomas y el consumo de gluten.';

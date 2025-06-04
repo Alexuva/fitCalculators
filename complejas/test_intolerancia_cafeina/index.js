@@ -17,7 +17,7 @@
  *    - Raramente - 1
  *    - Nunca - 0
  * - ¿Sufres molestias gastrointestinales (acidez, dolor estomacal) tras consumir cafeína?
- *    - Siempre - 3 
+ *    - Siempre - 3
  *    - Frecuentemente - 2
  *    - Raramente - 1
  *    - Nunca - 0
@@ -27,7 +27,7 @@
  *    - 1 taza o equivalente - 1
  *    - Ninguna - 0
  * - ¿Consumes cafeína en la tarde o noche (después de las 4 p.m.)?
- *    - Siempre - 3 
+ *    - Siempre - 3
  *    - Frecuentemente - 2
  *    - Raramente - 1
  *    - Nunca - 0
@@ -56,7 +56,7 @@ class CaffeineIntoleranceTest {
 
   total;
   state;
-  
+
   constructor(palpitations, ansiety, insomnia, gastrointestinal, cups, night, sensitivity, family) {
     this.#palpitations = palpitations;
     this.#ansiety = ansiety;
@@ -65,13 +65,13 @@ class CaffeineIntoleranceTest {
     this.#cups = cups;
     this.#night = night;
     this.#sensitivity = sensitivity;
-    this.#family = family;   
+    this.#family = family;
     this.calculate();
   }
 
   calculate() {
     this.total = this.#palpitations + this.#ansiety + this.#insomnia + this.#gastrointestinal + this.#cups + this.#night + this.#sensitivity + this.#family;
-    if(this.total >= 21 && this.total <= 21){
+    if(this.total >= 21){
       this.state = 'Alta probabilidad de intolerancia. Reduce significativamente o elimina el consumo de cafeína y consulta a un médico si los síntomas persisten.';
     }else if(this.total >= 14 && this.total <= 20){
       this.state = 'Probabilidad moderada de intolerancia. Limita el consumo de cafeína, especialmente en la tarde y noche, y observa si los síntomas mejoran.';

@@ -17,7 +17,7 @@
  *    - Raramente - 1
  *    - Nunca - 0
  * - ¿Sientes náuseas después de consumir alimentos con fructosa?
- *    - Siempre - 3 
+ *    - Siempre - 3
  *    - Frecuentemente - 2
  *    - Raramente - 1
  *    - Nunca - 0
@@ -62,7 +62,7 @@ class FructoseIntoleranceTest {
 
   total;
   state;
-  
+
   constructor(abdominal, diarrhea, hurt, nausea, frecuency, consume, difference, medical, family) {
     this.#abdominal = abdominal;
     this.#diarrhea = diarrhea;
@@ -72,13 +72,13 @@ class FructoseIntoleranceTest {
     this.#consume = consume;
     this.#difference = difference;
     this.#medical = medical;
-    this.#family = family;   
+    this.#family = family;
     this.calculate();
   }
 
   calculate() {
     this.total = this.#abdominal + this.#diarrhea + this.#hurt + this.#nausea + this.#frecuency + this.#consume + this.#difference + this.#medical + this.#family;
-    if(this.total >= 21 && this.total <= 21){
+    if(this.total >= 21){
       this.state = 'Alta probabilidad de intolerancia. Consulta con un médico para realizar pruebas específicas (test de hidrógeno en el aliento, dieta de eliminación).';
     }else if(this.total >= 14 && this.total <= 20){
       this.state = 'Probabilidad moderada de intolerancia. Reduce el consumo de alimentos ricos en fructosa y evalúa si los síntomas mejoran. Considera consultar a un especialista.';

@@ -11,7 +11,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Sufres diarrea o heces blandas después de consumir lácteos?</span></label>
@@ -24,7 +24,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Tienes dolor abdominal o calambres después de consumir lácteos?</span></label>
@@ -37,7 +37,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Sientes náuseas después de consumir productos lácteos?</span></label>
@@ -62,7 +62,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Consumes queso o yogur con regularidad?</span></label>
@@ -75,7 +75,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Notas diferencias en los síntomas dependiendo del tipo de lácteo que consumes (leche, yogur, queso)?</span></label>
@@ -101,7 +101,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Tienes antecedentes familiares de intolerancia a la lactosa o síntomas similares?</span></label>
@@ -114,12 +114,12 @@
       </select>
     </div>
   </div>
-  
+
   <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
       Calcular
   </button>
 </form>
-          
+
 <p class="result" style="visibility: hidden;"></p>
 
 <style>
@@ -146,31 +146,31 @@
         const dairy_symptom_variation_input = document.querySelector('#dairy-symptom-variation');
         const lactose_diagnosis_input = document.querySelector('#lactose-diagnosis');
         const lactose_family_history_input = document.querySelector('#lactose-family-history');
-        
+
         //Cajas con el resultado
         const RESULT_BOX = document.querySelector('.result');
-  
+
         //Botón de calcular
         const CALCULATE_BTN = document.querySelector('#calculate-btn');
-        
+
         //Formulario
         const FORM = document.querySelector('.form-container');
-  
+
         //Regex para comprobar si los números cumplen con la condición de 2 decimales
         const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
-  
+
         //Regex para comprobar si los números cumplen con la condición de ser enteros
         const INTEGERS_REGEX = new RegExp(/^\d+$/);
-  
+
         FORM.addEventListener('submit', (e)=>{
           e.preventDefault();
-  
+
           //Cambiar texto botón
           CALCULATE_BTN.innerHTML = 'Calculando...';
-  
+
           //Ocultar resultado anterior
           RESULT_BOX.style.visibility = 'hidden';
-  
+
           let lactose_bloating = parseInt(lactose_bloating_input.value);
           let lactose_digestive = parseInt(lactose_digestive_input.value);
           let lactose_cramps = parseInt(lactose_cramps_input.value);
@@ -183,24 +183,24 @@
 
           const CALCULATOR = new LactoseIntoleranceTest(lactose_bloating, lactose_digestive, lactose_cramps, lactose_nausea, milk_frequency, cheese_yogurt_frequency, dairy_symptom_variation, lactose_diagnosis, lactose_family_history);
           let result = CALCULATOR.state;
-  
+
           setTimeout(()=>{
-  
+
               //Scroll smooth hasta el resultado
               RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
-  
+
               //Volver a poner el texto en el boton
               CALCULATE_BTN.innerHTML = 'Calcular';
-  
+
               //Mostrar el resultado
               RESULT_BOX.style.visibility = 'visible';
-  
+
               RESULT_BOX.innerHTML = result;
-  
-              
+
+
           }, 500)
-  
-        })            
+
+        })
   })();
 
   class LactoseIntoleranceTest {
@@ -233,7 +233,7 @@
 
     calculate() {
       this.total = this.#abdominal + this.#diarrhea + this.#hurt + this.#nausea + this.#frecuency + this.#consume + this.#difference + this.#medical + this.#family;
-      if(this.total >= 21 && this.total <= 21){
+      if(this.total >= 21){
         this.state = '<strong>Alta probabilidad de intolerancia</strong></br> Consulta con un médico o nutricionista para realizar pruebas específicas (test de hidrógeno en el alimento, dieta de eliminación)';
       }else if(this.total >= 14 && this.total <= 20){
         this.state = '<strong>Probabilidad moderada de intolerancia</strong></br> Reduce el consumo de lácteos, especialmente de leche, y evalúa si los síntomas mejoran. Considera consultar a un especialista.';

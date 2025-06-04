@@ -116,7 +116,7 @@
       Calcular
   </button>
 </form>
-          
+
 <p class="result" style="visibility: hidden;"></p>
 
 <style>
@@ -143,31 +143,31 @@
         const fatigue_input = document.querySelector('#fatigue');
         const skin_symptoms_input = document.querySelector('#skin-symptoms');
         const food_symptoms_relation_input = document.querySelector('#food-symptoms-relation');
-        
+
         //Cajas con el resultado
         const RESULT_BOX = document.querySelector('.result');
-  
+
         //Botón de calcular
         const CALCULATE_BTN = document.querySelector('#calculate-btn');
-        
+
         //Formulario
         const FORM = document.querySelector('.form-container');
-  
+
         //Regex para comprobar si los números cumplen con la condición de 2 decimales
         const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
-  
+
         //Regex para comprobar si los números cumplen con la condición de ser enteros
         const INTEGERS_REGEX = new RegExp(/^\d+$/);
-  
+
         FORM.addEventListener('submit', (e)=>{
           e.preventDefault();
-  
+
           //Cambiar texto botón
           CALCULATE_BTN.innerHTML = 'Calculando...';
-  
+
           //Ocultar resultado anterior
           RESULT_BOX.style.visibility = 'hidden';
-  
+
           let diary = parseInt(diary_input.value);
           let gluten = parseInt(gluten_input.value);
           let processed = parseInt(processed_input.value);
@@ -179,25 +179,25 @@
           let food_symptoms_relation = parseInt(food_symptoms_relation_input.value);
 
           const CALCULATOR = new FoodIntoleranceTest(diary, gluten, processed, fruits_discomfort, bloating, digestive_issues, fatigue, skin_symptoms, food_symptoms_relation);
-          let result = CALCULATOR.state; 
-  
+          let result = CALCULATOR.state;
+
           setTimeout(()=>{
-  
+
               //Scroll smooth hasta el resultado
               RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
-  
+
               //Volver a poner el texto en el boton
               CALCULATE_BTN.innerHTML = 'Calcular';
-  
+
               //Mostrar el resultado
               RESULT_BOX.style.visibility = 'visible';
-  
+
               RESULT_BOX.innerHTML = result;
-  
-              
+
+
           }, 500)
-  
-        })            
+
+        })
   })();
 
   class FoodIntoleranceTest {
@@ -230,7 +230,7 @@
 
     calculate() {
       this.total = this.#lactose + this.#gluten + this.#ultraprocessed + this.#fruits + this.#abdominalPain + this.#diarrhea + this.#fatigue + this.#symptoms + this.#relationship;
-      if(this.total >= 21 && this.total <= 21){
+      if(this.total >= 21){
         this.state = '<strong>Alta probabilidad de intolerancia</strong></br> Consulta a un especialista y considera pruebas específicas para detectar intolerancias.'
       }else if(this.total >= 14 && this.total <= 20){
         this.state = '<strong>Probabilidad moderada de intolerancia</strong></br> Lleva un diario de alimentos y síntomas para identificar posibles desencadenantes.'

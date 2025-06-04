@@ -9,7 +9,7 @@
       <div>
           <label><span>Calorías provenientes de alimentos ricos en fitoquímicos</span><sup>kcal/día</sup></label>
           <input id="fitoquimicos" type="text" min="0" max="20000" maxlength="5" name="fitoquimicos-input" placeholder="Introduce las calorías totales consumidas en un día" required>
-          <small>Incluyen: Frutas, verduras, legumbres, frutos secos, semillas, granos enteros, té, café, especias, aceites vegetales no refinados</small>
+          <small>Incluyen: frutas, verduras, legumbres, frutos secos, semillas, granos enteros, té, café, especias, aceites vegetales no refinados</small>
       </div>
   </div>
 
@@ -17,7 +17,7 @@
       Calcular
   </button>
 </form>
-          
+
 <p class="result" style="visibility: hidden;"></p>
 
 <style>
@@ -34,39 +34,39 @@
 
 <script type="text/javascript">
   (function() {
-  
+
         const CALORIES_INPUT = document.querySelector('#calories');
         const FITOQUIMICOS_INPUT = document.querySelector('#fitoquimicos');
-  
+
         //Cajas con el resultado
         const RESULT_BOX = document.querySelector('.result');
-  
+
         //Botón de calcular
         const CALCULATE_BTN = document.querySelector('#calculate-btn');
-        
+
         //Formulario
         const FORM = document.querySelector('.form-container');
-  
+
         //Regex para comprobar si los números cumplen con la condición de 2 decimales
         const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
-  
+
         //Regex para comprobar si los números cumplen con la condición de ser enteros
         const INTEGERS_REGEX = new RegExp(/^\d+$/);
-  
+
         //Comprobar que ha introducido edad
         CALORIES_INPUT.addEventListener('input', ()=>{
-  
+
             //Comprobar si el numero es un entero
             if(!INTEGERS_REGEX.test(CALORIES_INPUT.value)){
               CALORIES_INPUT.setCustomValidity('Introduce un número válido');
               CALORIES_INPUT.reportValidity();
               return
             }
-            
+
             const VALUE = parseInt(CALORIES_INPUT.value);
             const MIN = parseInt(CALORIES_INPUT.getAttribute('min'));
             const MAX = parseInt(CALORIES_INPUT.getAttribute('max'));
-  
+
             if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
               CALORIES_INPUT.setCustomValidity(`Introduce un número válido`);
               CALORIES_INPUT.reportValidity();
@@ -74,24 +74,24 @@
               CALORIES_INPUT.setCustomValidity('');
             }
         })
-  
+
         //Comprobar que ha introducido el peso
         FITOQUIMICOS_INPUT.addEventListener('input', ()=>{
-  
+
             //Comprobar si el numero tiene 2 decimales como mucho
             if(!INTEGERS_REGEX.test(FITOQUIMICOS_INPUT.value)){
               FITOQUIMICOS_INPUT.setCustomValidity('Introduce un número válido');
               FITOQUIMICOS_INPUT.reportValidity();
                 return
             }
-  
+
             //Resetear borde y validación del input
             FITOQUIMICOS_INPUT.setCustomValidity('');
-            
+
             const VALUE = parseFloat(FITOQUIMICOS_INPUT.value);
             const MIN = parseFloat(FITOQUIMICOS_INPUT.getAttribute('min'));
             const MAX = parseFloat(FITOQUIMICOS_INPUT.getAttribute('max'));
-  
+
             if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
               FITOQUIMICOS_INPUT.setCustomValidity(`Introduce un número válido`);
               FITOQUIMICOS_INPUT.reportValidity();
@@ -99,45 +99,45 @@
               FITOQUIMICOS_INPUT.setCustomValidity('');
             }
         })
-  
+
         FORM.addEventListener('submit', (e)=>{
           e.preventDefault();
-  
+
           //Cambiar texto botón
           CALCULATE_BTN.innerHTML = 'Calculando...';
-  
+
           //Ocultar resultado anterior
           RESULT_BOX.style.visibility = 'hidden';
-  
+
           let calories = parseInt(CALORIES_INPUT.value) ?? 0;
           let fitoquimicos = parseInt(FITOQUIMICOS_INPUT.value) ?? 0;
-  
+
           const CALCULATOR = new FitoIndex(calories, fitoquimicos);
           let result = CALCULATOR.classification;
-  
+
           setTimeout(()=>{
-  
+
               //Scroll smooth hasta el resultado
               RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
-  
+
               //Volver a poner el texto en el boton
               CALCULATE_BTN.innerHTML = 'Calcular';
-  
+
               //Mostrar el resultado
               RESULT_BOX.style.visibility = 'visible';
-  
+
               RESULT_BOX.innerHTML = result;
-  
-              
+
+
           }, 500)
-  
-        })            
+
+        })
   })();
 
   class FitoIndex {
     #totalCalories;
     #richCalories;
-    
+
     total;
     classification;
 

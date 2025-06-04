@@ -11,7 +11,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Sufres diarrea o heces blandas después de consumir alimentos ricos en fructosa?</span></label>
@@ -24,7 +24,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Tienes dolor abdominal o calambres tras consumir alimentos con fructosa?</span></label>
@@ -37,7 +37,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Sientes náuseas después de consumir alimentos con fructosa?</span></label>
@@ -63,7 +63,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Consumes miel, jarabes o productos endulzados con fructosa con regularidad?</span></label>
@@ -76,7 +76,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Notas diferencias en los síntomas dependiendo del tipo de alimento rico en fructosa que consumes?</span></label>
@@ -102,7 +102,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Tienes antecedentes familiares de intolerancia a la fructosa o síntomas similares?</span></label>
@@ -115,12 +115,12 @@
       </select>
     </div>
   </div>
-  
+
   <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
       Calcular
   </button>
 </form>
-          
+
 <p class="result" style="visibility: hidden;"></p>
 
 <style>
@@ -150,28 +150,28 @@
 
         //Cajas con el resultado
         const RESULT_BOX = document.querySelector('.result');
-  
+
         //Botón de calcular
         const CALCULATE_BTN = document.querySelector('#calculate-btn');
-        
+
         //Formulario
         const FORM = document.querySelector('.form-container');
-  
+
         //Regex para comprobar si los números cumplen con la condición de 2 decimales
         const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
-  
+
         //Regex para comprobar si los números cumplen con la condición de ser enteros
         const INTEGERS_REGEX = new RegExp(/^\d+$/);
-  
+
         FORM.addEventListener('submit', (e)=>{
           e.preventDefault();
-  
+
           //Cambiar texto botón
           CALCULATE_BTN.innerHTML = 'Calculando...';
-  
+
           //Ocultar resultado anterior
           RESULT_BOX.style.visibility = 'hidden';
-  
+
           let fructose_bloating = parseInt(fructose_bloating_input.value);
           let fructose_diarrhea = parseInt(fructose_diarrhea_input.value);
           let fructose_cramps = parseInt(fructose_cramps_input.value);
@@ -180,29 +180,29 @@
           let fructose_products_frequency = parseInt(fructose_products_frequency_input.value);
           let fructose_symptom_variation = parseInt(fructose_symptom_variation_input.value);
           let fructose_diagnosis = parseInt(fructose_diagnosis_input.value);
-          let fructose_family_history = parseInt(fructose_family_history_input.value);  
+          let fructose_family_history = parseInt(fructose_family_history_input.value);
 
           const CALCULATOR = new FructoseIntoleranceTest(fructose_bloating, fructose_diarrhea, fructose_cramps, fructose_nausea, fructose_fruits_frequency, fructose_products_frequency, fructose_symptom_variation, fructose_diagnosis, fructose_family_history);
 
           let result = CALCULATOR.state;
-  
+
           setTimeout(()=>{
-  
+
               //Scroll smooth hasta el resultado
               RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
-  
+
               //Volver a poner el texto en el boton
               CALCULATE_BTN.innerHTML = 'Calcular';
-  
+
               //Mostrar el resultado
               RESULT_BOX.style.visibility = 'visible';
-  
+
               RESULT_BOX.innerHTML = result;
-  
-              
+
+
           }, 500)
-  
-        })            
+
+        })
   })();
 
   class FructoseIntoleranceTest {
@@ -229,13 +229,13 @@
       this.#consume = consume;
       this.#difference = difference;
       this.#medical = medical;
-      this.#family = family;   
+      this.#family = family;
       this.calculate();
     }
 
     calculate() {
       this.total = this.#abdominal + this.#diarrhea + this.#hurt + this.#nausea + this.#frecuency + this.#consume + this.#difference + this.#medical + this.#family;
-      if(this.total >= 21 && this.total <= 21){
+      if(this.total >= 21){
         this.state = '<strong>Alta probabilidad de intolerancia</strong></br> Consulta con un médico para realizar pruebas específicas (test de hidrógeno en el aliento, dieta de eliminación).';
       }else if(this.total >= 14 && this.total <= 20){
         this.state = '<strong>Probabilidad moderada de intolerancia</strong></br> Reduce el consumo de alimentos ricos en fructosa y evalúa si los síntomas mejoran. Considera consultar a un especialista.';

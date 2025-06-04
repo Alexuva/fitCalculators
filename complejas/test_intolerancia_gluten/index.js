@@ -17,12 +17,12 @@
  *    - Raramente - 1
  *    - Nunca - 0
  * - ¿Experimentas fatiga o cansancio extremo tras consumir alimentos con gluten?
- *    - Siempre - 3 
+ *    - Siempre - 3
  *    - Frecuentemente - 2
  *    - Raramente - 1
  *    - Nunca - 0
  * - ¿Tienes síntomas cutáneos (erupciones, dermatitis herpetiforme, picazón) relacionados con el consumo de gluten?
- *    - Siempre - 3 
+ *    - Siempre - 3
  *    - Frecuentemente - 2
  *    - Raramente - 1
  *    - Nunca - 0
@@ -62,7 +62,7 @@ class GlutenIntoleranceTest {
 
   total;
   state;
-  
+
   constructor(abdominal, diarrhea, hurt, fatigue, skin, headache, medical, family, consume) {
     this.#abdominal = abdominal;
     this.#diarrhea = diarrhea;
@@ -78,7 +78,7 @@ class GlutenIntoleranceTest {
 
   calculate() {
     this.total = this.#abdominal + this.#diarrhea + this.#hurt + this.#fatigue + this.#skin + this.#headache + this.#medical + this.#family + this.#consume;
-    if(this.total >= 21 && this.total <= 21){
+    if(this.total >= 21){
       this.state = 'Alta probabilidad de intolerancia. Consulta con un médico o nutricionista para realizar pruebas diagnósticas (anticuerpos específicos, biopsia intestinal o dieta sin gluten supervisada)';
     }else if(this.total >= 14 && this.total <= 20){
       this.state = 'Probabilidad moderada de intolerancia. Lleva un diario de alimentos y síntomas, y consulta con un especialista para explorar la posible relación entre tus síntomas y el consumo de gluten.';

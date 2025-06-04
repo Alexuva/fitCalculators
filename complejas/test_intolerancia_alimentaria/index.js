@@ -37,7 +37,7 @@
  *    - Raramente - 1
  *    - Nunca - 0
  * - ¿Experimentas síntomas cutáneos (como urticaria, erupciones o picazón) tras consumir ciertos alimentos?
- *    - Siempre - 3 
+ *    - Siempre - 3
  *    - Frecuentemente - 2
  *    - Raramente - 1
  *    - Nunca - 0
@@ -78,7 +78,7 @@ class FoodIntoleranceTest {
 
   calculate() {
     this.total = this.#lactose + this.#gluten + this.#ultraprocessed + this.#fruits + this.#abdominalPain + this.#diarrhea + this.#fatigue + this.#symptoms + this.#relationship;
-    if(this.total >= 21 && this.total <= 21){
+    if(this.total >= 21){
       this.state = 'Alta probabilidad de intolerancia. Consulta a un especialista y considera pruebas específicas para detectar intolerancias.'
     }else if(this.total >= 14 && this.total <= 20){
       this.state = 'Probabilidad moderada de intolerancia. Lleva un diario de alimentos y síntomas para identificar posibles desencadenantes.'
