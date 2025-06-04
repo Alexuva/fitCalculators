@@ -11,7 +11,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Sientes ansiedad o nerviosismo tras consumir cafeína?</span></label>
@@ -24,7 +24,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Tienes insomnio o dificultad para dormir después de consumir cafeína?</span></label>
@@ -37,7 +37,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Sufres molestias gastrointestinales (acidez, dolor estomacal) tras consumir cafeína?</span></label>
@@ -50,7 +50,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Cuántas tazas de café, té, bebidas energéticas o refrescos con cafeína consumes al día?</span></label>
@@ -63,7 +63,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Consumes cafeína en la tarde o noche (después de las 4 p.m.)?</span></label>
@@ -89,7 +89,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="flex">
     <div>
       <label><span>¿Tienes antecedentes familiares de sensibilidad o intolerancia a la cafeína?</span></label>
@@ -102,13 +102,13 @@
       </select>
     </div>
   </div>
-  
-  
+
+
   <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
       Calcular
   </button>
 </form>
-          
+
 <p class="result" style="visibility: hidden;"></p>
 
 <style>
@@ -137,28 +137,28 @@
 
         //Cajas con el resultado
         const RESULT_BOX = document.querySelector('.result');
-  
+
         //Botón de calcular
         const CALCULATE_BTN = document.querySelector('#calculate-btn');
-        
+
         //Formulario
         const FORM = document.querySelector('.form-container');
-  
+
         //Regex para comprobar si los números cumplen con la condición de 2 decimales
         const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
-  
+
         //Regex para comprobar si los números cumplen con la condición de ser enteros
         const INTEGERS_REGEX = new RegExp(/^\d+$/);
-  
+
         FORM.addEventListener('submit', (e)=>{
           e.preventDefault();
-  
+
           //Cambiar texto botón
           CALCULATE_BTN.innerHTML = 'Calculando...';
-  
+
           //Ocultar resultado anterior
           RESULT_BOX.style.visibility = 'hidden';
-  
+
           let caffeine_palpitations = parseInt(caffeine_palpitations_input.value);
           let caffeine_anxiety = parseInt(caffeine_anxiety_input.value);
           let caffeine_insomnia = parseInt(caffeine_insomnia_input.value);
@@ -171,24 +171,24 @@
           const CALCULATOR = new CaffeineIntoleranceTest(caffeine_palpitations, caffeine_anxiety, caffeine_insomnia, caffeine_gi_symptoms, caffeine_daily_intake, caffeine_evening_intake, caffeine_sensitivity, caffeine_family_history);
 
           let result = CALCULATOR.state;
-  
+
           setTimeout(()=>{
-  
+
               //Scroll smooth hasta el resultado
               RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
-  
+
               //Volver a poner el texto en el boton
               CALCULATE_BTN.innerHTML = 'Calcular';
-  
+
               //Mostrar el resultado
               RESULT_BOX.style.visibility = 'visible';
-  
+
               RESULT_BOX.innerHTML = result;
-  
-              
+
+
           }, 500)
-  
-        })            
+
+        })
   })();
 
   class CaffeineIntoleranceTest {
@@ -213,13 +213,13 @@
       this.#cups = cups;
       this.#night = night;
       this.#sensitivity = sensitivity;
-      this.#family = family;   
+      this.#family = family;
       this.calculate();
     }
 
     calculate() {
       this.total = this.#palpitations + this.#ansiety + this.#insomnia + this.#gastrointestinal + this.#cups + this.#night + this.#sensitivity + this.#family;
-      if(this.total >= 21 && this.total <= 21){
+      if(this.total >= 21){
         this.state = '<strong>Alta probabilidad de intolerancia</strong></br> Reduce significativamente o elimina el consumo de cafeína y consulta a un médico si los síntomas persisten.';
       }else if(this.total >= 14 && this.total <= 20){
         this.state = '<strong>Probabilidad moderada de intolerancia</strong></br> Limita el consumo de cafeína, especialmente en la tarde y noche, y observa si los síntomas mejoran.';
