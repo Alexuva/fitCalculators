@@ -296,7 +296,7 @@ class FatigueRatio {
     // let totalRatio = parseFloat((up / down).toFixed(2));
 
     let rm = this._weight * this._reps * (this._rpe / 10) * this._exercise * (this._weight / this._rm);
-    let down = (Math.pow(this._rpe, 2) * this._reps * this._weight * (1 / ((10 - this._rpe) + 1))) / 36 * (Math.max(0.1, 1.25 - 0.01 * (reps - 10) ** 2));
+    let down = (Math.pow(this._rpe, 2) * this._reps * this._weight * (1 / ((10 - this._rpe) + 1))) / 36 * (Math.max(0.1, 1.25 - 0.01 * (this._reps - 10) ** 2));
     let totalRatio = parseFloat((rm / down).toFixed(2))
 
     if(totalRatio < 1.25) {
