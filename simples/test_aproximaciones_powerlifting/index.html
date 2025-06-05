@@ -32,7 +32,7 @@
   <div class="flex">
     <div>
       <label><span>RPE programado de la primera serie efectiva</span></label>
-      <input id="rpe" type="text" min="1" maxlength="2" name="rpe-input" placeholder="Introduce el RPE" required>
+      <input id="rpe" type="text" min="1" maxlength="3" max="10" name="rpe-input" placeholder="Introduce el RPE" required>
       <small>Siendo RPE=1 “mínimo esfuerzo” y RPE=10 “esfuerzo máximo”</small>
     </div>
   </div>
@@ -51,15 +51,15 @@
   <div class="flex">
     <div>
       <label><span>RPE de la primera serie de aproximación</span></label>
-      <input id="rpe1" type="text" min="1" maxlength="2" name="rpe1-input" placeholder="Introduce el RPE" required>
-      <small>Siendo RPE=1 “mínimo esfuerzo” y RPE=10 “esfuerzo máximo</small>
+      <input id="rpe1" type="text" min="1" max="10" maxlength="3" name="rpe1-input" placeholder="Introduce el RPE" required>
+      <small>Siendo RPE=1 “mínimo esfuerzo” y RPE=10 “esfuerzo máximo”</small>
     </div>
   </div>
   <div class="flex">
     <div>
       <label><span>RPE de la segunda serie de aproximación</span></label>
-      <input id="rpe2" type="text" min="1" maxlength="2" name="rpe2-input" placeholder="Introduce el RPE" required>
-      <small>Siendo RPE=1 “mínimo esfuerzo” y RPE=10 “esfuerzo máximo</small>
+      <input id="rpe2" type="text" min="1" max="10" maxlength="3" name="rpe2-input" placeholder="Introduce el RPE" required>
+      <small>Siendo RPE=1 “mínimo esfuerzo” y RPE=10 “esfuerzo máximo”</small>
     </div>
   </div>
 
@@ -233,7 +233,7 @@
       RPE_INPUT.addEventListener('input', ()=>{
           //Comprobar si el numero es un entero
           if(RPE_INPUT.value.length > 0){
-              if(!INTEGERS_REGEX.test(RPE_INPUT.value)){
+              if(!DECIMAL_REGEX.test(RPE_INPUT.value)){
                 RPE_INPUT.setCustomValidity('Introduce un RPE válido');
                 RPE_INPUT.reportValidity();
                 return
@@ -243,9 +243,9 @@
             return
           }
 
-          const VALUE = parseInt(RPE_INPUT.value);
-          const MIN = parseInt(RPE_INPUT.getAttribute('min'));
-          const MAX = parseInt(RPE_INPUT.getAttribute('max'));
+          const VALUE = parseFloat(RPE_INPUT.value);
+          const MIN = parseFloat(RPE_INPUT.getAttribute('min'));
+          const MAX = parseFloat(RPE_INPUT.getAttribute('max'));
 
           if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
             RPE_INPUT.setCustomValidity(`Inserta un RPE entre ${MIN} y ${MAX}`);
@@ -258,7 +258,7 @@
       RPE1_INPUT.addEventListener('input', ()=>{
           //Comprobar si el numero es un entero
           if(RPE1_INPUT.value.length > 0){
-              if(!INTEGERS_REGEX.test(RPE1_INPUT.value)){
+              if(!DECIMAL_REGEX.test(RPE1_INPUT.value)){
                 RPE1_INPUT.setCustomValidity('Introduce un RPE válido');
                 RPE1_INPUT.reportValidity();
                 return
@@ -268,9 +268,9 @@
             return
           }
 
-          const VALUE = parseInt(RPE1_INPUT.value);
-          const MIN = parseInt(RPE1_INPUT.getAttribute('min'));
-          const MAX = parseInt(RPE1_INPUT.getAttribute('max'));
+          const VALUE = parseFloat(RPE1_INPUT.value);
+          const MIN = parseFloat(RPE1_INPUT.getAttribute('min'));
+          const MAX = parseFloat(RPE1_INPUT.getAttribute('max'));
 
           if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
             RPE1_INPUT.setCustomValidity(`Inserta un RPE entre ${MIN} y ${MAX}`);
@@ -283,7 +283,7 @@
       RPE2_INPUT.addEventListener('input', ()=>{
           //Comprobar si el numero es un entero
           if(RPE2_INPUT.value.length > 0){
-              if(!INTEGERS_REGEX.test(RPE2_INPUT.value)){
+              if(!DECIMAL_REGEX.test(RPE2_INPUT.value)){
                 RPE2_INPUT.setCustomValidity('Introduce un RPE válido');
                 RPE2_INPUT.reportValidity();
                 return
@@ -293,9 +293,9 @@
             return
           }
 
-          const VALUE = parseInt(RPE2_INPUT.value);
-          const MIN = parseInt(RPE2_INPUT.getAttribute('min'));
-          const MAX = parseInt(RPE2_INPUT.getAttribute('max'));
+          const VALUE = parseFloat(RPE2_INPUT.value);
+          const MIN = parseFloat(RPE2_INPUT.getAttribute('min'));
+          const MAX = parseFloat(RPE2_INPUT.getAttribute('max'));
 
           if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
             RPE2_INPUT.setCustomValidity(`Inserta un RPE entre ${MIN} y ${MAX}`);
@@ -337,10 +337,10 @@
         let rm = parseFloat(RM_INPUT.value.replace(',','.'));
         let po = parseFloat(PO_INPUT.value.replace(',','.'));
         let nr = parseInt(NR_INPUT.value);
-        let rpe = parseInt(RPE_INPUT.value);
+        let rpe = parseFloat(RPE_INPUT.value);
         let feeling = FEELING_INPUT.value;
-        let rpe1 = parseInt(RPE1_INPUT.value);
-        let rpe2 = parseInt(RPE2_INPUT.value);
+        let rpe1 = parseFloat(RPE1_INPUT.value);
+        let rpe2 = parseFloat(RPE2_INPUT.value);
 
         const CALCULATOR = new Powerlifting(exercise, rm, po, nr, rpe, feeling, rpe1, rpe2);
         let aprox = CALCULATOR.Approximations;

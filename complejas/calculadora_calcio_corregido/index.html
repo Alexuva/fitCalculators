@@ -1,13 +1,13 @@
 <form class="form-container">
   <div class="flex">
       <div>
-          <label><span>Calcio total</span><sup>mg/dL</sup></label>
+          <label><span>Calcio total</span><sup>mg/dl</sup></label>
           <input id="calcium" type="text" min="0" max="400" maxlength="4" name="calcium-input" placeholder="Introduce los valores de calcio total" required>
       </div>
   </div>
   <div class="flex">
       <div>
-          <label><span>Albúmina</span><sup>g/dL</sup></label>
+          <label><span>Albúmina</span><sup>g/dl</sup></label>
           <input id="albumina" type="text" min="0" max="400" maxlength="4" name="albumina-input" placeholder="Introduce los valores de albumina" required>
       </div>
   </div>
@@ -16,7 +16,7 @@
       Calcular
   </button>
 </form>
-          
+
 <p class="result" style="visibility: hidden;"></p>
 
 <style>
@@ -42,7 +42,7 @@
 
       //Botón de calcular
       const CALCULATE_BTN = document.querySelector('#calculate-btn');
-      
+
       //Formulario
       const FORM = document.querySelector('.form-container');
 
@@ -61,7 +61,7 @@
             CALCIUM_INPUT.reportValidity();
             return
           }
-          
+
           const VALUE = parseInt(CALCIUM_INPUT.value);
           const MIN = parseInt(CALCIUM_INPUT.getAttribute('min'));
           const MAX = parseInt(CALCIUM_INPUT.getAttribute('max'));
@@ -86,7 +86,7 @@
 
           //Resetear borde y validación del input
           ALBUMINA_INPUT.setCustomValidity('');
-          
+
           const VALUE = parseFloat(ALBUMINA_INPUT.value);
           const MIN = parseFloat(ALBUMINA_INPUT.getAttribute('min'));
           const MAX = parseFloat(ALBUMINA_INPUT.getAttribute('max'));
@@ -127,10 +127,10 @@
 
             RESULT_BOX.innerHTML = result;
 
-            
+
         }, 500)
 
-      })            
+      })
 })();
 
 class CorrectedCalcium {
@@ -151,11 +151,11 @@ class CorrectedCalcium {
 
   get range(){
     if(this.total < 8.5){
-      return `El nivel de calcio corregido es de <strong>${this.total.toString().replaceAll('.', ',')} mg/dL</strong>, está fuera de los rangos razonables y se corresponde con Hipocalcemia`
+      return `El nivel de calcio corregido es de <strong>${this.total.toString().replaceAll('.', ',')} mg/dl</strong>, está fuera de los rangos razonables y se corresponde con Hipocalcemia`
     }else if(this.total >= 8.5 && this.total <= 10.5){
-      return `El nivel de calcio corregido es de <strong>${this.total.toString().replaceAll('.', ',')} mg/dL</strong>, está dentro de los rangos razonables y se corresponde con un nivel normal`
+      return `El nivel de calcio corregido es de <strong>${this.total.toString().replaceAll('.', ',')} mg/dl</strong>, está dentro de los rangos razonables y se corresponde con un nivel normal`
     }else{
-      return `El nivel de calcio corregido es de <strong>${this.total.toString().replaceAll('.', ',')} mg/dL</strong>, está fuera de los rangos razonables y se corresponde con Hipercalcemia`
+      return `El nivel de calcio corregido es de <strong>${this.total.toString().replaceAll('.', ',')} mg/dl</strong>, está fuera de los rangos razonables y se corresponde con Hipercalcemia`
     }
   }
 

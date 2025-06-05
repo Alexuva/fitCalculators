@@ -57,14 +57,14 @@
   <div class="flex">
     <div>
       <label><span>RPE (1-10)</span></label>
-      <input id="rpe" type="text" min="1" maxlength="2" max="10" name="rpe-input" placeholder="Introduce el RPE (1-10)" required>
+      <input id="rpe" type="text" min="1" maxlength="3" max="10" name="rpe-input" placeholder="Introduce el RPE (1-10)" required>
       <small>Siendo RPE=1 “mínimo esfuerzo” y RPE=10 “esfuerzo máximo”. </small>
     </div>
   </div>
 
   <div class="flex">
     <div>
-      <label><span>1RM estimado en el ejercicio</span><sup>Kg</sup></label>
+      <label><span>1RM estimado en el ejercicio</span><sup>kg</sup></label>
       <input id="rm" type="text" min="1" maxlength="5" name="rm-input" placeholder="Introduce tu 1RM en el ejercicio indicado">
       <small>(Si no lo conoces, puedes hallarlo en <a href="https://fitgeneration.es/calculadora/1rm/"><u>esta otra calculadora.</u></a>)</small>
     </div>
@@ -179,7 +179,7 @@
       RPE_INPUT.addEventListener('input', ()=>{
 
         //Comprobar si el numero tiene 2 decimales como mucho
-        if(!INTEGERS_REGEX.test(RPE_INPUT.value)){
+        if(!DECIMAL_REGEX.test(RPE_INPUT.value)){
           RPE_INPUT.setCustomValidity('Introduce un número válido');
           RPE_INPUT.reportValidity();
           return
@@ -250,7 +250,7 @@
         let exercise = parseFloat(EXERCISE_INPUT.value);
         let weight = parseFloat(WEIGHT_INPUT.value);
         let reps = parseInt(NR_INPUT.value);
-        let rpe = parseInt(RPE_INPUT.value);
+        let rpe = parseFloat(RPE_INPUT.value);
         let rm = parseFloat(RM_INPUT.value);
         const CALCULATOR = new FatigueRatio(exercise, weight, reps, rpe, rm);
         let result = CALCULATOR.calculate();
