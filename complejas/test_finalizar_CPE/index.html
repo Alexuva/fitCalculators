@@ -1,0 +1,393 @@
+<form class="form-container calculator-cpe" style="background: white;">
+    <div class="row">
+        <div class="column-1">
+            <div class="flex">
+                <div>
+                    <label><span>¿Cuánto tiempo llevas practicando ejercicio?</span></label>
+                    <select id="experience" type="select" name="experience-input" required style="width: 100%">
+                        <option disabled selected>Selecciona una opción</option>
+                        <option value="0">No tengo ninguna experiencia</option>
+                        <option value="1">Entreno a nivel usuario (0-12 meses)</option>
+                        <option value="2">Entreno a menudo desde hace más de 12 meses</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex">
+                <div>
+                    <label><span>¿Cuál es tu experiencia práctica en el sector del fitness?</span></label>
+                    <select id="workingExperience" type="select" name="workingExperience-input" style="width: 100%" required>
+                        <option disabled selected>Selecciona una opción</option>
+                        <option value="0">Ninguna, empiezo desde cero</option>
+                        <option value="1">Tengo algo de experiencia: he hecho cursos básicos</option>
+                        <option value="2">Tengo experiencia profesional directa</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="column-2">
+            <div class="flex">
+                <div>
+                    <label><span>¿Conoces los conceptos y herramientas fundamentales que se verán en el curso?</span></label>
+                    <select id="knowledge" type="select" name="knowledge-input" required>
+                        <option disabled selected>Selecciona una opción</option>
+                        <option value="0">No, necesito aprenderlos desde la base</option>
+                        <option value="1">Conozco algunos</option>
+                        <option value="2">Sí, los conozco y los he aplicado</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex">
+                <div>
+                    <label><span>¿Cuántos días a la semana crees que podrías dedicarle a estudiar?</span></label>
+                    <select id="studyDays" type="select" name="studyDays-input" required>
+                        <option disabled selected>Selecciona una opción</option>
+                        <option value="4">4 días a la semana</option>
+                        <option value="5">5 días a la semana</option>
+                        <option value="6">6 días a la semana</option>
+                        <option value="7">Todos los días</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex">
+        <div>
+            <label><span>¿Cuántas horas de estudio puedes dedicar al día?</span></label>
+            <div class="range-container">
+                <input type="range" id="dailyTime" name="dailyTime" min="3" max="8" step="1" value="3" required/>
+                <div class="range-output">
+                    <strong><span id="hours-value">3</span> hora(s) al día</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button id="calculate-btn" type="submit" value="Calcular tiempo estimado" class="btn-calculate">
+        Calcular tiempo estimado
+    </button>
+</form>
+
+<p class="result" style="visibility: hidden;"></p>
+
+<style>
+
+    #calculator_fg{
+
+        .calculator-cpe .flex{
+            margin-left: 0;
+            margin-right: 0;
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .calculator-cpe .row {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            gap: 5%;
+        }
+
+        .column-1{
+            flex-direction: column;
+            width: 50%;
+        }
+
+        .column-2{
+            flex-direction: column;
+            width: 50%;
+            justify-content: space-around;
+        }
+
+        select {
+            cursor:pointer;
+        }
+
+    }
+    .resultado{
+        background: #FFE636;
+        font-weight: bold;
+    }
+
+    input:not(:placeholder-shown):invalid,
+    select:invalid:not(:focus) {
+        border: 1px solid red !important;
+    }
+
+    /* Estilos para el range */
+    .range-container {
+        position: relative;
+        margin: 0.3rem 0;
+    }
+
+    input[type="range"] {
+        width: 100%;
+        margin: 15px 0;
+        -webkit-appearance: none;
+        appearance: none;
+        height: 8px;
+        border-radius: 4px;
+        background: linear-gradient(to right, #FFE636 0%, #FFE636 50%, #ddd 50%, #ddd 100%);
+        outline: none;
+        cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #FFE636;
+        cursor: pointer;
+        border: 3px solid #333;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #FFE636;
+        cursor: pointer;
+        border: 3px solid #333;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .range-output {
+        text-align: center;
+        font-size: 1.3em;
+        color: #333;
+        margin: 15px 0;
+    }
+
+    .range-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85em;
+        color: #666;
+        margin-top: -5px;
+        padding: 0 12px;
+    }
+
+    @media(max-width: 991px){
+
+        .calculator-cpe .row {
+            flex-direction: column !important;
+            gap: unset;
+        }
+
+        .column-1{
+            width: 100% !important;
+        }
+
+        .column-2{
+            width: 100% !important;
+        }
+
+    }
+
+</style>
+
+<script type="text/javascript">
+    (function() {
+
+        const experience_input = document.querySelector('#experience');
+        const workingExperience_input = document.querySelector('#workingExperience');
+        const knowledge_input = document.querySelector('#knowledge');
+        const dailyTime_input = document.querySelector('#dailyTime');
+        const studyDays_input = document.querySelector('#studyDays');
+        const hours_value = document.querySelector('#hours-value');
+
+        //Cajas con el resultado
+        const RESULT_BOX = document.querySelector('.result');
+
+        //Botón de calcular
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+
+        //Formulario
+        const FORM = document.querySelector('.form-container');
+
+        // Actualizar visualización del range
+        function updateRangeDisplay() {
+            const value = parseInt(dailyTime_input.value);
+            hours_value.textContent = value;
+
+            // Actualizar gradiente del fondo
+            const percentage = ((value - 3) / (8 - 3)) * 100;
+            dailyTime_input.style.background = `linear-gradient(to right, #FFE636 0%, #FFE636 ${percentage}%, #ddd ${percentage}%, #ddd 100%)`;
+        }
+
+        // Event listener para el range
+        dailyTime_input.addEventListener('input', updateRangeDisplay);
+
+        // Inicializar visualización
+        updateRangeDisplay();
+
+        // Validación de selects
+        const SELECTS = document.querySelectorAll('select');
+        SELECTS.forEach(select => {
+            select.addEventListener('change', () => {
+                if (select.value !== "" && select.selectedIndex !== 0) {
+                    select.setCustomValidity('');
+                }
+            });
+        });
+
+        // //Validación de días
+        // studyDays_input.forEach(checkbox => {
+        //     checkbox.addEventListener('change', () => {
+        //         // Validar días de estudio
+        //         let studyDaysChecked = Array.from(studyDays_input).filter(day => day.checked);
+        //
+        //         if (studyDaysChecked.length === 0) {
+        //             studyDays_input[0].setCustomValidity('Debes seleccionar al menos un día de estudio');
+        //             studyDays_input[0].reportValidity();
+        //         } else {
+        //             studyDays_input.forEach(checkbox => {
+        //                 checkbox.setCustomValidity('');
+        //             });
+        //         }
+        //     });
+        // })
+
+        FORM.addEventListener('submit', (e)=>{
+            e.preventDefault();
+
+            // Validar selects
+            const selects = document.querySelectorAll('select');
+            let isValid = true;
+
+            selects.forEach(select => {
+                if (select.value === "" || select.selectedIndex === 0) {
+                    select.setCustomValidity('Por favor, selecciona una opción');
+                    select.reportValidity();
+                    isValid = false;
+                } else {
+                    select.setCustomValidity('');
+                }
+            });
+
+            // // Validar días de estudio
+            // let studyDaysChecked = Array.from(studyDays_input).filter(day => day.checked);
+            //
+            // if (studyDaysChecked.length === 0) {
+            //     studyDays_input[0].setCustomValidity('Debes seleccionar al menos un día de estudio');
+            //     studyDays_input[0].reportValidity();
+            //     isValid = false;
+            // } else {
+            //     studyDays_input.forEach(checkbox => {
+            //         checkbox.setCustomValidity('');
+            //     });
+            // }
+
+            if (!isValid) {
+                return;
+            }
+
+            //Cambiar texto botón
+            CALCULATE_BTN.innerHTML = 'Calculando...';
+
+            //Ocultar resultado anterior
+            RESULT_BOX.style.visibility = 'hidden';
+
+            let experience = parseInt(experience_input.value);
+            let workingExperience = parseInt(workingExperience_input.value);
+            let knowledge = parseInt(knowledge_input.value);
+            let dailyTime = parseInt(dailyTime_input.value);
+            let studyDays = parseInt(studyDays_input.value);
+
+            const CALCULATOR = new FinishTimeCPE(experience, workingExperience, knowledge, dailyTime, studyDays);
+            let totalMonths = CALCULATOR.total;
+            let neededHours = CALCULATOR.neededTime;
+            let weeklyHours = dailyTime * studyDays;
+
+            setTimeout(()=>{
+
+                //Scroll smooth hasta el resultado
+                RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+                //Volver a poner el texto en el boton
+                CALCULATE_BTN.innerHTML = 'Calcular tiempo estimado';
+
+                //Mostrar el resultado
+                RESULT_BOX.style.visibility = 'visible';
+
+                RESULT_BOX.innerHTML = `
+                  <p style="color: #222222">📅 Tiempo estimado para completar el CPE:</p>
+                  <div class="resultado" style="font-size: 1.25em;">
+                      <strong>${totalMonths} ${totalMonths === 1 ? 'mes' : 'meses'}</strong>
+                  </div>
+              `;
+
+            }, 500)
+
+        })
+    })();
+
+
+    class FinishTimeCPE {
+        #experience;
+        #workingExperience;
+        #knowledge;
+        #dailyTime;
+        #studyDays;
+
+        constructor(experience = 0, workingExperience = 0, knowledge = 0, dailyTime = 3, studyDays = 4) {
+            this.experience = experience;
+            this.workingExperience = workingExperience;
+            this.knowledge = knowledge;
+            this.dailyTime = dailyTime;
+            this.studyDays = studyDays;
+        }
+
+
+        set experience(experience){
+            this.#experience = experience;
+        }
+
+        set workingExperience(workingExperience){
+            this.#workingExperience = workingExperience;
+        }
+
+        set knowledge(knowledge){
+            this.#knowledge = knowledge;
+        }
+
+        set dailyTime(dailyTime){
+            this.#dailyTime = dailyTime;
+        }
+
+        set studyDays(studyDays){
+            this.#studyDays = studyDays;
+        }
+
+        get total(){
+
+            const neededTime = this.neededTime;
+            const dailyTime = this.#dailyTime;
+            const studyDays = this.#studyDays;
+            const weeklyHours = dailyTime * studyDays;
+            const totalWeeks = neededTime / weeklyHours;
+            const totalMonths = totalWeeks / 4.345;
+
+            return (totalMonths % 1) >= 0.25 ? Math.ceil(totalMonths) : Math.floor(totalMonths);
+
+        }
+
+        get neededTime() {
+
+            const points = this.#experience + this.#workingExperience + this.#knowledge;
+
+            const pointsMap = {
+                0: 1200,
+                1: 1133,
+                2: 1067,
+                3: 1000,
+                4: 933,
+                5: 867
+            };
+
+            return pointsMap[points] || 800;
+
+        }
+    }
+</script>
