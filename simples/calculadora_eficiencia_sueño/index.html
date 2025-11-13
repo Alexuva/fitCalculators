@@ -1,0 +1,272 @@
+<form class="form-container">
+    <div class="flex">
+        <div>
+            <label><span>Hora a la que te vas a la cama</span><sup>hh:mm</sup></label>
+            <input id="sleepTime" type="time" name="sleepTime_input" min="00:00" max="23:59" required>
+            <span id="invalid_sleepTime" style="display: none;"></span>
+        </div>
+        <div>
+            <label><span>Hora a la que te despiertas</span><sup>hh:mm</sup></label>
+            <input id="wakeUpTime" type="time" name="wakeUpTime_input" min="00:00" max="23:59" required>
+            <span id="invalid_wakeUpTime" style="display: none;"></span>
+        </div>
+    </div>
+    <div class="flex">
+        <div>
+            <label><span>¿Cuánto tiempo tardas en quedarte dormido?</span><sup>minutos</sup></label>
+            <input id="fallAsleepTime" type="text" min="0" max="180" maxlength="3" name="fallAsleepTime_input" placeholder="Introduce los minutos" required>
+            <span id="invalid_fallAsleepTime" style="display: none;"></span>
+        </div>
+        <div>
+            <label><span>¿Te despiertas alguna vez durante la noche?</span></label>
+            <select id="interruptedSleep" type="select" name="interruptedSleep_input">
+                <option disabled selected>Selecciona una opción</option>
+                <option value="y">Si</option>
+                <option value="n">No</option>
+            </select>
+        </div>
+    </div>
+    <div class="flex" id="isInterruptedSleep" style="display: none;">
+        <div>
+            <label><span>¿Cuántas veces te despiertas durante la noche?</span></label>
+            <input id="wakeUps" type="text" min="0" max="20" maxlength="2" name="wakeUps_input" placeholder="Introduce el número de veces">
+            <span id="invalid_wakeUps" style="display: none;"></span>
+        </div>
+        <div>
+            <label><span>¿Cuánto tiempo estás despierto en total durante la noche?</span><sup>hh:mm</sup></label>
+            <input id="totalAwakeTime" type="time" name="totalAwakeTime_input" min="00:00" max="23:59">
+            <span id="invalid_totalAwakeTime" style="display: none;"></span>
+        </div>
+    </div>
+    <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+        Calcular
+    </button>
+</form>
+
+<p class="result" style="visibility: hidden;"></p>
+
+<script type="text/javascript">
+    (function() {
+
+        //Inputs de horas
+        const SLEEP_TIME = document.querySelector('#sleepTime');
+        const WAKE_UP_TIME = document.querySelector('#wakeUpTime');
+        const TOTAL_AWAKE_TIME = document.querySelector('#totalAwakeTime');
+
+        //Inputs numéricos
+        const FALL_ASLEEP_TIME = document.querySelector('#fallAsleepTime');
+        const INVALID_FALL_ASLEEP_TIME = document.querySelector('#invalid_fallAsleepTime');
+        const WAKE_UPS = document.querySelector('#wakeUps');
+        const INVALID_WAKE_UPS = document.querySelector('#invalid_wakeUps');
+
+        //Select si te despiertas alguna vez durante la noche
+        const INTERRUPTED_SLEEP = document.querySelector('#interruptedSleep');
+
+        //Contenedor si te despiertas alguna vez durante la noche
+        const IS_INTERRUPTED_SLEEP = document.querySelector('#isInterruptedSleep');
+
+        //Caja con el resultado
+        const RESULT_BOX = document.querySelector('.result');
+
+        //Botón de calcular
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+
+        //Formulario
+        const FORM = document.querySelector('.form-container');
+
+        //Regex para comprobar si los números cumplen con la condición de ser enteros
+        const INTEGERS_REGEX = new RegExp(/^\d+$/);
+
+        //Comprobar que ha introducido valor en los select
+        const SELECTS = document.querySelectorAll('select');
+        SELECTS.forEach(select => {
+            select.addEventListener('change', () => {
+                if (select.value !== "" && select.selectedIndex !== 0) select.setCustomValidity('');
+
+                if (select.id === "interruptedSleep") {
+                    if (select.value === "y") {
+                        IS_INTERRUPTED_SLEEP.style.display = 'block';
+                        WAKE_UPS.required = true;
+                        TOTAL_AWAKE_TIME.required = true;
+                    } else {
+                        IS_INTERRUPTED_SLEEP.style.display = 'none';
+                        WAKE_UPS.required = false;
+                        TOTAL_AWAKE_TIME.required = false;
+                    }
+                }
+            });
+        });
+
+        //Comprobar si ha introducido correctamente el tiempo en quedarse dormido
+        FALL_ASLEEP_TIME.addEventListener('input', ()=>{
+
+            //Comprobar si el numero es un entero
+            if(!INTEGERS_REGEX.test(FALL_ASLEEP_TIME.value)){
+                FALL_ASLEEP_TIME.setCustomValidity('Introduce un número de minutos válido');
+                FALL_ASLEEP_TIME.reportValidity();
+                return
+            }
+
+            const VALUE = parseInt(FALL_ASLEEP_TIME.value);
+            const MIN = parseInt(FALL_ASLEEP_TIME.getAttribute('min'));
+            const MAX = parseInt(FALL_ASLEEP_TIME.getAttribute('max'));
+
+            //Comprobar si el numero es entre los min y max
+            if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+                FALL_ASLEEP_TIME.setCustomValidity(`Los minutos mínimos son ${MIN} y los máximos son ${MAX}`);
+                FALL_ASLEEP_TIME.reportValidity();
+            }else{
+                FALL_ASLEEP_TIME.setCustomValidity('');
+            }
+        })
+
+        //Comprobar si ha introducido correctamente el número de veces que se despierta
+        WAKE_UPS.addEventListener('input', ()=>{
+
+            //Comprobar si el numero es un entero
+            if(!INTEGERS_REGEX.test(WAKE_UPS.value)){
+                WAKE_UPS.setCustomValidity('Introduce un número válido');
+                WAKE_UPS.reportValidity();
+                return
+            }
+
+            const VALUE = parseInt(WAKE_UPS.value);
+            const MIN = parseInt(WAKE_UPS.getAttribute('min'));
+            const MAX = parseInt(WAKE_UPS.getAttribute('max'));
+
+            //Comprobar si el numero es entre los min y max
+            if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
+                WAKE_UPS.setCustomValidity(`El mínimo son ${MIN} y el máximo son ${MAX}`);
+                WAKE_UPS.reportValidity();
+            }else{
+                WAKE_UPS.setCustomValidity('');
+            }
+        })
+
+        FORM.addEventListener('submit', (e)=>{
+            e.preventDefault();
+
+            const selects = document.querySelectorAll('select');
+            let isValid = true;
+
+            selects.forEach(select => {
+                if (select.value === "" || select.selectedIndex === 0) {
+                    select.setCustomValidity('Por favor, selecciona una opción');
+                    select.reportValidity();
+                    isValid = false;
+                } else {
+                    select.setCustomValidity('');
+                }
+            });
+
+            if (!isValid) {
+                return;
+            }
+
+            //Cambiar texto botón
+            CALCULATE_BTN.innerHTML = 'Calculando...';
+
+            //Ocultar resultado anterior
+            RESULT_BOX.style.visibility = 'hidden';
+
+            const sleepTime = SLEEP_TIME.value;
+            const wakeUpTime = WAKE_UP_TIME.value;
+            const fallAsleepTime = parseInt(FALL_ASLEEP_TIME.value);
+            const wakeUps = INTERRUPTED_SLEEP.value === 'y' ? parseInt(WAKE_UPS.value) : 0;
+            const totalAwakeTime = INTERRUPTED_SLEEP.value === 'y' ? TOTAL_AWAKE_TIME.value : '00:00';
+
+            const CALCULATOR = new SleepEfficiency(
+                sleepTime,
+                wakeUpTime,
+                fallAsleepTime,
+                wakeUps,
+                totalAwakeTime
+            );
+
+            const result = CALCULATOR.sleepEfficiency;
+
+            setTimeout(()=>{
+
+                //Scroll smooth hasta el resultado
+                RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+                //Volver a poner el texto en el boton
+                CALCULATE_BTN.innerHTML = 'Calcular';
+
+                //Mostrar el resultado
+                RESULT_BOX.style.visibility = 'visible';
+
+                RESULT_BOX.innerHTML = `<span>Tu eficiencia de sueño es de <strong>${result.efficiency}%,</strong></span><br><span> Lo que corresponde a una eficiencia <strong>${result.message}</strong></span>`
+
+            }, 500)
+
+        })
+
+    })();
+
+    class SleepEfficiency {
+        _sleepTime;
+        _wakeUpTime;
+        _fallAsleepTime;
+        _wakeUps;
+        _totalAwakeTime;
+
+        constructor(sleepTime, wakeUpTime, fallAsleepTime, wakeUps, totalAwakeTime) {
+            this._sleepTime = sleepTime;
+            this._wakeUpTime = wakeUpTime;
+            this._fallAsleepTime = fallAsleepTime;
+            this._wakeUps = wakeUps;
+            this._totalAwakeTime = totalAwakeTime;
+        }
+
+        get sleepEfficiency() {
+            let timeInBed = this.minutesFromHours(this._wakeUpTime) - this.minutesFromHours(this._sleepTime);
+            // Si el resultado es negativo, significa que cruzamos la medianoche
+            if (timeInBed < 0) {
+                timeInBed = (1440 - this.minutesFromHours(this._sleepTime)) + this.minutesFromHours(this._wakeUpTime);
+            }
+
+            const totalTimeAwake = this._fallAsleepTime + (15 * this._wakeUps) + this.minutesFromHours(this._totalAwakeTime);
+            const totalTimeSleep = timeInBed - totalTimeAwake;
+            const efficiency = parseFloat(((totalTimeSleep / timeInBed) * 100).toFixed(2));
+
+            switch (true) {
+                case (efficiency <= 80):
+                    return {
+                        efficiency,
+                        message: 'muy baja'
+                    }
+
+                case (efficiency > 80 && efficiency <= 84):
+                    return {
+                        efficiency,
+                        message: 'baja'
+                    }
+
+                case (efficiency > 84 && efficiency <= 85):
+                    return {
+                        efficiency,
+                        message: 'normal'
+                    }
+
+                case (efficiency > 85 && efficiency <= 90):
+                    return {
+                        efficiency,
+                        message: 'buena'
+                    }
+
+                default:
+                    return {
+                        efficiency,
+                        message: 'muy buena'
+                    }
+            }
+        }
+
+        minutesFromHours(time){
+            const [h, m] = time.split(':').map(Number);
+            return h * 60 + m;
+        }
+
+    }
+</script>
