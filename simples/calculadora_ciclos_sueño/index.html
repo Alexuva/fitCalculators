@@ -194,17 +194,157 @@
                 return
             }
 
-            const VALUE = parseInt(INTEGERS_REGEX.value);
-            const MIN = parseInt(INTEGERS_REGEX.getAttribute('min'));
-            const MAX = parseInt(INTEGERS_REGEX.getAttribute('max'));
+            const VALUE = parseInt(INTERRUPTED_TIMES.value);
+            const MIN = parseInt(INTERRUPTED_TIMES.getAttribute('min'));
+            const MAX = parseInt(INTERRUPTED_TIMES.getAttribute('max'));
 
             //Comprobar si el numero es entre los min y max
             if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
-                INTEGERS_REGEX.setCustomValidity(`El mínimo son ${MIN} y el máximo son ${MAX}`);
-                INTEGERS_REGEX.reportValidity();
+                INTERRUPTED_TIMES.setCustomValidity(`El mínimo son ${MIN} y el máximo son ${MAX}`);
+                INTERRUPTED_TIMES.reportValidity();
             }else{
-                INTEGERS_REGEX.setCustomValidity('');
+                INTERRUPTED_TIMES.setCustomValidity('');
             }
         })
+
+        FORM.addEventListener('submit', (e)=>{
+            e.preventDefault();
+
+            const selects = document.querySelectorAll('select');
+            let isValid = true;
+
+            selects.forEach(select => {
+                if (select.value === "" || select.selectedIndex === 0) {
+                    select.setCustomValidity('Por favor, selecciona una opción');
+                    select.reportValidity();
+                    isValid = false;
+                } else {
+                    select.setCustomValidity('');
+                }
+            });
+
+            if (!isValid) {
+                return;
+            }
+
+            //Cambiar texto botón
+            CALCULATE_BTN.innerHTML = 'Calculando...';
+
+            //Ocultar resultado anterior
+            RESULT_BOX.style.visibility = 'hidden';
+
+            const type = CALCULATOR_TYPE.value;
+            const sleepHour = SLEEP_HOUR.value ?? null;
+            const wakeHour = WAKE_HOUR.value ?? null;
+            const desireAwakeHour = DESIRE_AWAKE_HOUR.value ?? null;
+            const sleepCicles = parseInt(SLEEP_CICLES.value) ?? null;
+            const interruptedTimes = parseInt(INTERRUPTED_TIMES.value) ?? null;
+            const interruptedTime = INTERRUPTED_TIME.value ?? null;
+
+            const CALCULATOR = new SleepCycleCalculator(type, sleepHour, wakeHour, desireAwakeHour, sleepCicles, interruptedTimes, interruptedTime);
+            let result = null;
+            if (type === 'a') result = CALCULATOR.calculateSleepCycle();
+            if (type === 'b') result = CALCULATOR.calculateTimeToSleep();
+
+            setTimeout(()=>{
+
+                //Scroll smooth hasta el resultado
+                RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+                //Volver a poner el texto en el boton
+                CALCULATE_BTN.innerHTML = 'Calcular';
+
+                //Mostrar el resultado
+                RESULT_BOX.style.visibility = 'visible';
+
+                if (type === 'a'){
+                    RESULT_BOX.innerHTML = `<span>Cumplirías con <strong>${result.totalCicles}</strong> ciclos de sueño.</span><br><span><strong>${result.isRecommended ? 'Sí' : 'No'}</strong> cumples con el mínimo recomendado (4 ciclos)</span>`
+                } else {
+                    RESULT_BOX.innerHTML = `<span>Deberías irte a dormir a las  <strong>${result.bedTime}</strong> h.</span><br><span><strong>${result.isRecommended ? 'Sí' : 'No'}</strong> cumples con el mínimo recomendado (7 horas)</span>`
+                }
+
+            }, 500)
+
+        })
+
     })();
+    class SleepCycleCalculator {
+
+        _type;
+        _sleepHour;
+        _wakeHour;
+        _desireAwakeHour;
+        _sleepCicles;
+        _interruptedTimes;
+        _interruptedTime;
+
+        constructor(type, sleepHour = null, wakeHour = null, desireAwakeHour = null, sleepCicles = null, interruptedTimes = null, interruptedTime = null) {
+            this._type = type;
+            this._sleepHour = sleepHour;
+            this._wakeHour = wakeHour;
+            this._desireAwakeHour = desireAwakeHour;
+            this._sleepCicles = sleepCicles;
+            this._interruptedTimes = interruptedTimes;
+            this._interruptedTime = interruptedTime;
+        }
+
+        calculateSleepCycle() {
+            const [h,m] = this._sleepHour.split(':').map(Number);
+            const [h2,m2] = this._wakeHour.split(':').map(Number);
+            let minutesSleeped = ((h2 * 60 + m2) - (h * 60 + m));
+
+            if (minutesSleeped < 0) {
+                minutesSleeped += 24 * 60;
+            }
+
+            if (this._interruptedTimes) {
+                const [hAwake, mAwake] = this._interruptedTime.split(':').map(Number);
+                const totalInterruptedTime = (15 * (1 + this._interruptedTimes)) + ((hAwake * 60 + mAwake));
+                minutesSleeped -= totalInterruptedTime;
+            } else {
+                minutesSleeped -= 15;
+            }
+
+            const totalCicles = (minutesSleeped / 90).toFixed(1);
+            const isRecommended = parseFloat(totalCicles) >= 4 ? true : false;
+
+            return {
+                totalCicles,
+                isRecommended,
+                hoursSleeped: `${String(Math.floor(minutesSleeped / 60)).padStart(2, '0')}:${String(minutesSleeped % 60).padStart(2, '0')}`,
+            }
+        }
+
+        calculateTimeToSleep() {
+            let totalSleepTimeNeeded = 90 * this._sleepCicles;
+            const totalCicleHours = totalSleepTimeNeeded / 60;
+
+            if (this._interruptedTimes) {
+                const [hAwake, mAwake] = this._interruptedTime.split(':').map(Number);
+                const totalInterruptedTime = (15 * (1 + this._interruptedTimes)) + ((hAwake * 60 + mAwake));
+                totalSleepTimeNeeded += totalInterruptedTime;
+            } else {
+                totalSleepTimeNeeded += 15;
+            }
+
+            const [h, m] = this._desireAwakeHour.split(':').map(Number);
+            const desireAwakeMinutes = (h * 60 + m);
+
+            let bedTimeMinutes = desireAwakeMinutes - totalSleepTimeNeeded;
+
+            if (bedTimeMinutes < 0) {
+                bedTimeMinutes += 24 * 60;
+            }
+
+            const bedTimeHours = Math.floor(bedTimeMinutes / 60);
+            const bedTimeMin = bedTimeMinutes % 60;
+            const isRecommended = totalCicleHours >= 7;
+
+            return {
+                bedTime: `${String(bedTimeHours).padStart(2, '0')}:${String(bedTimeMin).padStart(2, '0')}`,
+                isRecommended
+            }
+
+        }
+    }
 </script>
