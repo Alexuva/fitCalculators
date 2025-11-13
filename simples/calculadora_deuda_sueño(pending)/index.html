@@ -1,58 +1,59 @@
- <form class="form-container">
+<form class="form-container">
     <div class="flex">
         <div>
-            <label><span>Elige qué quieres calcular:</span></label>
-            <select id="calculatorType" type="select" name="calculatorType_input">
-                <option disabled selected>Selecciona una opción</option>
-                <option value="a">Fijar la hora de irte a dormir y calcular nº ciclos de sueño</option>
-                <option value="b">Fijar nº ciclos de sueño y calcular la hora de irte a dormir</option>
-            </select>
-        </div>
-    </div>
-    <div class="flex" id="option_a" style="display: none;">
-        <div>
-            <label><span>Hora a la que te vas a dormir</span><sup>hh:mm</sup></label>
-            <input id="sleepHour" type="time" name="sleepHour_input" min="00:00" max="23:59">
-            <span id="invalid_sleepHour" style="display: none;"></span>
-        </div>
-        <div>
-            <label><span>Hora a la que te quieres despertar</span><sup>hh:mm</sup></label>
-            <input id="wakeHour" type="time" name="wakeHour_input" min="00:00" max="23:59">
-            <span id="invalid_wakeHour" style="display: none;"></span>
-        </div>
-    </div>
-    <div class="flex" id="option_b" style="display: none;">
-        <div>
-            <label><span>Hora a la que te quieres despertar</span><sup>hh:mm</sup></label>
-            <input id="desireAwakeHour" type="time" name="desireAwakeHour_input" min="00:00" max="23:59">
-            <span id="invalid_desireAwakeHour" style="display: none;"></span>
-        </div>
-        <div>
-            <label><span>¿Cuántos ciclos de sueño quieres completar (90 min/ciclo)?</span></label>
-            <input id="sleepCicles" type="text" min="1" max="10" maxlength="2" name="sleepCicles_input" placeholder="Introduce el número de ciclos">
-            <span id="invalid_sleepCicles" style="display: none;"></span>
+            <label><span>¿Cuántas horas necesitas dormir cada día?</span><sup>hh:mm</sup></label>
+            <input id="neededSleepHours" type="time" name="neededSleepHours_input" min="00:00" max="23:59" required>
+            <span id="invalid_neededSleepHours" style="display: none;"></span>
         </div>
     </div>
     <div class="flex">
         <div>
-            <label><span>¿Te despiertas alguna vez durante la noche?</span></label>
-            <select id="interruptedSleep" type="select" name="interruptedSleep_input">
-                <option disabled selected>Selecciona una opción</option>
-                <option value="y">Si</option>
-                <option value="n">No</option>
-            </select>
+            <label><span>Horas dormidas el lunes</span><sup>hh:mm</sup></label>
+            <input id="monday" type="time" name="monday_input" min="00:00" max="23:59" required>
+            <span id="invalid_monday" style="display: none;"></span>
+        </div>
+        <div>
+            <label><span>Horas dormidas el martes</span><sup>hh:mm</sup></label>
+            <input id="tuesday" type="time" name="tuesday_input" min="00:00" max="23:59" required>
+            <span id="invalid_tuesday" style="display: none;"></span>
         </div>
     </div>
-    <div class="flex" id="isInterruptedSleep" style="display: none;">
+    <div class="flex">
         <div>
-            <label><span>¿Cuántas veces te despiertas durante la noche?</span></label>
-            <input id="interruptedTimes" type="text" min="1" max="10" maxlength="2" name="interruptedTimes_input" placeholder="Introduce el número de veces que te despiertas">
-            <span id="invalid_interruptedTimes" style="display: none;"></span>
+            <label><span>Horas dormidas el miércoles</span><sup>hh:mm</sup></label>
+            <input id="wednesday" type="time" name="wednesday_input" min="00:00" max="23:59" required>
+            <span id="invalid_wednesday" style="display: none;"></span>
         </div>
         <div>
-            <label><span>¿Cuánto tiempo estás despierto durante la noche, contando todos los despertares?</span><sup>hh:mm</sup></label>
-            <input id="interruptedTime" type="time" name="interruptedTime_input" min="00:00" max="23:59">
-            <span id="invalid_interruptedTime" style="display: none;"></span>
+            <label><span>Horas dormidas el jueves</span><sup>hh:mm</sup></label>
+            <input id="thursday" type="time" name="thursday_input" min="00:00" max="23:59" required>
+            <span id="invalid_thursday" style="display: none;"></span>
+        </div>
+    </div>
+    <div class="flex">
+        <div>
+            <label><span>Horas dormidas el viernes</span><sup>hh:mm</sup></label>
+            <input id="friday" type="time" name="friday_input" min="00:00" max="23:59" required>
+            <span id="invalid_friday" style="display: none;"></span>
+        </div>
+        <div>
+            <label><span>Horas dormidas el sábado</span><sup>hh:mm</sup></label>
+            <input id="saturday" type="time" name="saturday_input" min="00:00" max="23:59" required>
+            <span id="invalid_saturday" style="display: none;"></span>
+        </div>
+    </div>
+    <div class="flex">
+        <div>
+            <label><span>Horas dormidas el domingo</span><sup>hh:mm</sup></label>
+            <input id="sunday" type="time" name="sunday_input" min="00:00" max="23:59" required>
+            <span id="invalid_sunday" style="display: none;"></span>
+        </div>
+    </div>
+    <div class="flex">
+        <div>
+            <label><span>¿En cuántos días quieres recuperar tu deuda de sueño?</span></label>
+            <input id="daysToRecover" type="text" min="1" max="365" maxlength="3" name="daysToRecover_input" placeholder="Introduce el número de días" required>
+            <span id="invalid_daysToRecover" style="display: none;"></span>
         </div>
     </div>
     <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
@@ -65,44 +66,21 @@
 <script type="text/javascript">
     (function() {
 
-        //Select tipo calculadora
-        const CALCULATOR_TYPE = document.querySelector('#calculatorType');
+        //Inputs de horas
+        const NEEDED_SLEEP_HOURS = document.querySelector('#neededSleepHours');
+        const MONDAY = document.querySelector('#monday');
+        const TUESDAY = document.querySelector('#tuesday');
+        const WEDNESDAY = document.querySelector('#wednesday');
+        const THURSDAY = document.querySelector('#thursday');
+        const FRIDAY = document.querySelector('#friday');
+        const SATURDAY = document.querySelector('#saturday');
+        const SUNDAY = document.querySelector('#sunday');
 
-        //Contenedor de opciones
-        const OPTION_A = document.querySelector('#option_a');
-        const OPTION_B = document.querySelector('#option_b');
+        //Input días para recuperar
+        const DAYS_TO_RECOVER = document.querySelector('#daysToRecover');
+        const INVALID_DAYS_TO_RECOVER = document.querySelector('#invalid_daysToRecover');
 
-        //Input hora a la que te vas a dormir
-        const SLEEP_HOUR = document.querySelector('#sleepHour');
-        const INVALID_SLEEP_HOUR = document.querySelector('#invalid_sleepHour');
-
-        //Input hora a la que te quieres despertar
-        const WAKE_HOUR = document.querySelector('#wakeHour');
-        const INVALID_WAKE_HOUR = document.querySelector('#invalid_wakeHour');
-
-        //Input hora a la que te quieres despertar
-        const DESIRE_AWAKE_HOUR = document.querySelector('#desireAwakeHour');
-        const INVALID_DESIRE_AWAKE_HOUR = document.querySelector('#invalid_desireAwakeHour');
-
-        //Input ciclos de sueño que quieres completar
-        const SLEEP_CICLES = document.querySelector('#sleepCicles');
-        const INVALID_SLEEP_CICLES = document.querySelector('#invalid_sleepCicles');
-
-        //Select si te despiertas alguna vez durante la noche
-        const INTERRUPTED_SLEEP = document.querySelector('#interruptedSleep');
-
-        //Contenedor si te despiertas alguna vez durante la noche
-        const IS_INTERRUPTED_SLEEP = document.querySelector('#isInterruptedSleep');
-
-        //Input veces que te despiertas durante la noche
-        const INTERRUPTED_TIMES = document.querySelector('#interruptedTimes');
-        const INVALID_INTERRUPTED_TIMES = document.querySelector('#invalid_interruptedTimes');
-
-        //Input duración de las interrupciones
-        const INTERRUPTED_TIME = document.querySelector('#interruptedTime');
-        const INVALID_INTERRUPTED_TIME = document.querySelector('#invalid_interruptedTime');
-
-        //Cajas con el resultado
+        //Caja con el resultado
         const RESULT_BOX = document.querySelector('.result');
 
         //Botón de calcular
@@ -111,100 +89,130 @@
         //Formulario
         const FORM = document.querySelector('.form-container');
 
-        //Regex para comprobar si los números cumplen con la condición de 2 decimales
-        const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+.\d{1,2})$/);
-
-        //Regex para comprobar si los números cumplen con la condición de 1 decimal
-        const DECIMAL_REGEX = new RegExp(/^(\d+|\d+,\d{1}|\d+.\d{1})$/);
-
         //Regex para comprobar si los números cumplen con la condición de ser enteros
         const INTEGERS_REGEX = new RegExp(/^\d+$/);
-        const NEGATIVE_INTEGERS_REGEX = new RegExp(/^-?\d+$/);
 
-        //Comprobar que ha introducido valor en los select
-        const SELECTS = document.querySelectorAll('select');
-        SELECTS.forEach(select => {
-            select.addEventListener('change', () => {
-                if (select.value !== "" && select.selectedIndex !== 0) select.setCustomValidity('');
-
-                if (select.id === "calculatorType") {
-                    if (select.value === "a") {
-                        OPTION_A.style.display = 'block';
-                        OPTION_B.style.display = 'none';
-
-                        SLEEP_HOUR.required = true;
-                        WAKE_HOUR.required = true;
-                        DESIRE_AWAKE_HOUR.required = false;
-                        SLEEP_CICLES.required = false;
-                    }
-
-                    if (select.value === "b") {
-                        OPTION_A.style.display = 'none';
-                        OPTION_B.style.display = 'block';
-
-                        SLEEP_HOUR.required = false;
-                        WAKE_HOUR.required = false;
-                        DESIRE_AWAKE_HOUR.required = true;
-                        SLEEP_CICLES.required = true;
-                    }
-                } else if (select.id === "interruptedSleep") {
-                    if (select.value === "y") {
-                        IS_INTERRUPTED_SLEEP.style.display = 'block';
-                        INTERRUPTED_TIMES.required = true;
-                        INTERRUPTED_TIME.required = true;
-                    } else {
-                        IS_INTERRUPTED_SLEEP.style.display = 'none';
-                        INTERRUPTED_TIMES.required = false;
-                        INTERRUPTED_TIME.required = false;
-                    }
-                }
-            });
-        });
-
-        //Comprobar si ha introducido correctamente el numero de ciclos
-        SLEEP_CICLES.addEventListener('input', ()=>{
+        //Comprobar si ha introducido correctamente el número de días
+        DAYS_TO_RECOVER.addEventListener('input', ()=>{
 
             //Comprobar si el numero es un entero
-            if(!INTEGERS_REGEX.test(SLEEP_CICLES.value)){
-                SLEEP_CICLES.setCustomValidity('Introduce un número de ciclos válido');
-                SLEEP_CICLES.reportValidity();
+            if(!INTEGERS_REGEX.test(DAYS_TO_RECOVER.value)){
+                DAYS_TO_RECOVER.setCustomValidity('Introduce un número de días válido');
+                DAYS_TO_RECOVER.reportValidity();
                 return
             }
 
-            const VALUE = parseInt(SLEEP_CICLES.value);
-            const MIN = parseInt(SLEEP_CICLES.getAttribute('min'));
-            const MAX = parseInt(SLEEP_CICLES.getAttribute('max'));
+            const VALUE = parseInt(DAYS_TO_RECOVER.value);
+            const MIN = parseInt(DAYS_TO_RECOVER.getAttribute('min'));
+            const MAX = parseInt(DAYS_TO_RECOVER.getAttribute('max'));
 
             //Comprobar si el numero es entre los min y max
             if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
-                SLEEP_CICLES.setCustomValidity(`Los ciclos mínimos son ${MIN} y los máximos son ${MAX}`);
-                SLEEP_CICLES.reportValidity();
+                DAYS_TO_RECOVER.setCustomValidity(`Los días mínimos son ${MIN} y los máximos son ${MAX}`);
+                DAYS_TO_RECOVER.reportValidity();
             }else{
-                SLEEP_CICLES.setCustomValidity('');
+                DAYS_TO_RECOVER.setCustomValidity('');
             }
         })
 
-        //Comprobar si ha introducido correctamente el numero de veces que te despiertas
-        INTERRUPTED_TIMES.addEventListener('input', ()=>{
+        FORM.addEventListener('submit', (e)=>{
+            e.preventDefault();
 
-            //Comprobar si el numero es un entero
-            if(!INTEGERS_REGEX.test(INTERRUPTED_TIMES.value)){
-                INTERRUPTED_TIMES.setCustomValidity('Introduce un número válido');
-                INTERRUPTED_TIMES.reportValidity();
-                return
-            }
+            //Cambiar texto botón
+            CALCULATE_BTN.innerHTML = 'Calculando...';
 
-            const VALUE = parseInt(INTEGERS_REGEX.value);
-            const MIN = parseInt(INTEGERS_REGEX.getAttribute('min'));
-            const MAX = parseInt(INTEGERS_REGEX.getAttribute('max'));
+            //Ocultar resultado anterior
+            RESULT_BOX.style.visibility = 'hidden';
 
-            //Comprobar si el numero es entre los min y max
-            if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
-                INTEGERS_REGEX.setCustomValidity(`El mínimo son ${MIN} y el máximo son ${MAX}`);
-                INTEGERS_REGEX.reportValidity();
-            }else{
-                INTEGERS_REGEX.setCustomValidity('');
-            }
+            const neededSleepHours = NEEDED_SLEEP_HOURS.value;
+            const monday = MONDAY.value;
+            const tuesday = TUESDAY.value;
+            const wednesday = WEDNESDAY.value;
+            const thursday = THURSDAY.value;
+            const friday = FRIDAY.value;
+            const saturday = SATURDAY.value;
+            const sunday = SUNDAY.value;
+            const daysToRecover = parseInt(DAYS_TO_RECOVER.value);
+
+            const CALCULATOR = new SleepDebtCalculator(
+                neededSleepHours,
+                monday,
+                tuesday,
+                wednesday,
+                thursday,
+                friday,
+                saturday,
+                sunday,
+                daysToRecover
+            );
+
+            const result = CALCULATOR.sleepDebt;
+
+            setTimeout(()=>{
+
+                //Scroll smooth hasta el resultado
+                RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+                //Volver a poner el texto en el boton
+                CALCULATE_BTN.innerHTML = 'Calcular';
+
+                //Mostrar el resultado
+                RESULT_BOX.style.visibility = 'visible';
+
+                RESULT_BOX.innerHTML = `<span>Tienes <strong>${result.debtFormatted} hora(s)</strong> de deuda de sueño.</span><br><span>Lo podrás recuperar durmiendo <strong>${result.debtPerDayFormatted} hora(s)</strong> más en los próximos <strong>${daysToRecover} días</strong></span>`
+
+            }, 500)
+
         })
+
     })();
+
+    class SleepDebtCalculator {
+        _neededSleepHours;
+        _monday;
+        _tuesday;
+        _wednesday;
+        _thursday;
+        _friday;
+        _saturday;
+        _sunday;
+        _daysToRecover;
+
+        constructor(neededSleepHours, monday, tuesday, wednesday, thursday, friday, saturday, sunday, daysToRecover) {
+            this._neededSleepHours = neededSleepHours;
+            this._monday = monday;
+            this._tuesday = tuesday;
+            this._wednesday = wednesday;
+            this._thursday = thursday;
+            this._friday = friday;
+            this._saturday = saturday;
+            this._sunday = sunday;
+            this._daysToRecover = daysToRecover;
+        }
+
+        get sleepDebt(){
+            const totalSleepNeeded = (this.minutesFromHours(this._neededSleepHours)) * 7;
+
+            const days = [this._monday, this._tuesday, this._wednesday, this._thursday, this._friday, this._saturday, this._sunday];
+            let totalSleept = 0;
+            for (const day of days) {
+                totalSleept += this.minutesFromHours(day);
+            }
+
+            const debt = totalSleepNeeded - totalSleept;
+            const debtFormatted = `${String(Math.floor(debt / 60)).padStart(2, '0')}:${String(debt % 60).padStart(2, '0')}`;
+            const debtPerDay = debt / this._daysToRecover;
+            const debtPerDayFormatted = `${String(Math.floor(debtPerDay / 60)).padStart(2, '0')}:${String(Math.floor(debtPerDay % 60)).padStart(2, '0')}`;
+
+            return {
+                debtFormatted,
+                debtPerDayFormatted,
+            }
+        }
+
+        minutesFromHours(time){
+            const [h, m] = time.split(':').map(Number);
+            return h * 60 + m;
+        }
+    }
 </script>
