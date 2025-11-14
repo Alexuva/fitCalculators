@@ -1,0 +1,176 @@
+<form class="form-container">
+    <p style="margin-bottom: 20px; text-align: center; font-style: italic;">El Índice de Masa Muscular Esquelética (SMI) es un indicador mucho más preciso que el IMC para evaluar tu composición corporal y potencial atlético. Esta calculadora, basada en resultados de bioimpedancia o DXA, te ayudará a saber si tu nivel de masa muscular es bajo, normal o alto en comparación con la población general y los atletas.</p>
+
+    <div class="flex">
+        <div>
+            <label><span>Sexo</span></label>
+            <select id="gender" type="select" name="gender-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="male">Hombre</option>
+                <option value="female">Mujer</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Altura (cm)</span></label>
+            <input id="height" type="number" name="height-input" min="100" max="250" step="0.1" placeholder="Ej: 175" required>
+            <span id="invalid_height" style="display: none;"></span>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Masa muscular esquelética (kg)</span><sup>resultados de bioimpedancia o DXA</sup></label>
+            <input id="muscularMass" type="number" name="muscularMass-input" min="1" max="100" step="0.1" placeholder="Ej: 30.5" required>
+            <span id="invalid_muscularMass" style="display: none;"></span>
+        </div>
+    </div>
+
+    <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+        Calcular
+    </button>
+</form>
+
+<p class="result" style="visibility: hidden;"></p>
+
+<script type="text/javascript">
+    (function() {
+
+        //Inputs
+        const GENDER = document.querySelector('#gender');
+        const HEIGHT = document.querySelector('#height');
+        const MUSCULAR_MASS = document.querySelector('#muscularMass');
+
+        //Caja con el resultado
+        const RESULT_BOX = document.querySelector('.result');
+
+        //Botón de calcular
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+
+        //Formulario
+        const FORM = document.querySelector('.form-container');
+
+        //Comprobar que ha introducido valor en los select
+        const SELECTS = document.querySelectorAll('select');
+        SELECTS.forEach(select => {
+            select.addEventListener('change', () => {
+                if (select.value !== "" && select.selectedIndex !== 0) {
+                    select.setCustomValidity('');
+                }
+            });
+        });
+
+        FORM.addEventListener('submit', (e)=>{
+            e.preventDefault();
+
+            // Validar selects
+            const selects = document.querySelectorAll('select');
+            let isValid = true;
+
+            selects.forEach(select => {
+                if (select.value === "" || select.selectedIndex === 0) {
+                    select.setCustomValidity('Por favor, selecciona una opción');
+                    select.reportValidity();
+                    isValid = false;
+                } else {
+                    select.setCustomValidity('');
+                }
+            });
+
+            if (!isValid) {
+                return;
+            }
+
+            // Validar inputs numéricos
+            if (!HEIGHT.value || HEIGHT.value < 100 || HEIGHT.value > 250) {
+                HEIGHT.setCustomValidity('Por favor, introduce una altura válida entre 100 y 250 cm');
+                HEIGHT.reportValidity();
+                return;
+            }
+
+            if (!MUSCULAR_MASS.value || MUSCULAR_MASS.value < 1 || MUSCULAR_MASS.value > 100) {
+                MUSCULAR_MASS.setCustomValidity('Por favor, introduce una masa muscular válida entre 1 y 100 kg');
+                MUSCULAR_MASS.reportValidity();
+                return;
+            }
+
+            //Cambiar texto botón
+            CALCULATE_BTN.innerHTML = 'Calculando...';
+
+            //Ocultar resultado anterior
+            RESULT_BOX.style.visibility = 'hidden';
+
+            const gender = GENDER.value;
+            const height = parseFloat(HEIGHT.value);
+            const muscularMass = parseFloat(MUSCULAR_MASS.value);
+
+            const CALCULATOR = new MuscularMassCalculator(gender, height, muscularMass);
+            const result = CALCULATOR.massMuscular;
+
+            setTimeout(()=>{
+
+                //Scroll smooth hasta el resultado
+                RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+                //Volver a poner el texto en el boton
+                CALCULATE_BTN.innerHTML = 'Calcular';
+
+                //Mostrar el resultado
+                RESULT_BOX.style.visibility = 'visible';
+
+                // Calcular SMI para mostrarlo
+                const heightInMeters = height / 100;
+                const smi = (muscularMass / Math.pow(heightInMeters, 2)).toFixed(1);
+
+                RESULT_BOX.innerHTML = `
+                    <span>Tu índice de masa muscular esquelética (SMI) es <strong>${smi}</strong></span><br><br>
+                    <span>Tu nivel de masa muscular esquelética es <strong>${result}</strong></span>
+                `;
+
+            }, 500)
+
+        })
+
+    })();
+
+    class MuscularMassCalculator {
+        _gender;
+        _height;
+        _muscularMass;
+
+        constructor(gender, height, muscularMass) {
+            this._gender = gender;
+            this._height = height;
+            this._muscularMass = muscularMass;
+        }
+
+        get massMuscular(){
+            const heightInMeters = this._height / 100;
+            const muscularMassInKg = this._muscularMass / Math.pow(heightInMeters, 2);
+
+            if (this._gender === 'male') {
+                if (muscularMassInKg <= 7) {
+                    return 'bajo';
+                } else if (muscularMassInKg > 7 && muscularMassInKg <= 8) {
+                    return 'normal';
+                } else if (muscularMassInKg > 8 && muscularMassInKg <= 10) {
+                    return 'alto';
+                } else {
+                    return 'muy alto';
+                }
+            } else {
+                if (muscularMassInKg <= 5.5) {
+                    return 'bajo';
+                } else if (muscularMassInKg > 5.5 && muscularMassInKg <= 6.7) {
+                    return 'normal';
+                } else if (muscularMassInKg > 6.7 && muscularMassInKg <= 8) {
+                    return 'alto';
+                } else {
+                    return 'muy alto';
+                }
+            }
+        }
+    }
+</script>
