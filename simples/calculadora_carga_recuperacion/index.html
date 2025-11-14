@@ -1,0 +1,364 @@
+<form class="form-container">
+    <p style="margin-bottom: 20px; text-align: center; font-style: italic;">El ratio estímulo-fatiga ayuda a estimar la efectividad de un ejercicio comparando el estímulo muscular con la fatiga sistémica generada. Esta calculadora te ayudará a ajustar tu carga de entrenamiento según tu nivel de fatiga actual.</p>
+
+    <div class="flex">
+        <div>
+            <label><span>1. ¿Cómo son tus ganas y motivación actuales para ir a entrenar?</span></label>
+            <select id="q1" type="select" name="q1-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Altas, tengo ganas y disfruto.</option>
+                <option value="1">Bajas, a menudo siento pereza o me cuesta empezar.</option>
+                <option value="2">Nulas, ir a entrenar se ha convertido en una obligación pesada.</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>2. ¿Cómo es tu progresión en los entrenamientos en las últimas 4 semanas?</span></label>
+            <select id="q2" type="select" name="q2-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Sigo mejorando y progresando.</option>
+                <option value="1">Estoy estancado/a, me cuesta mucho mejorar.</option>
+                <option value="2">Mi rendimiento ha empeorado notablemente.</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>3. ¿Cómo sientes que es tu nivel de fatiga general durante el día (fuera del entrenamiento)?</span></label>
+            <select id="q3" type="select" name="q3-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Normal, me siento con energía la mayor parte del día.</option>
+                <option value="1">Cansado/a, me falta energía por la tarde o necesito un extra.</option>
+                <option value="2">Agotado/a, me siento cansado/a incluso después de descansar.</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>4. ¿Sientes dolores musculares o de articulaciones más allá de lo normal tras entrenar (horas o días)?</span></label>
+            <select id="q4" type="select" name="q4-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">No, solo las agujetas habituales.</option>
+                <option value="1">Sí, siento dolores persistentes o agujetas que tardan mucho en irse.</option>
+                <option value="2">Sí, tengo dolores constantes incluso en días de descanso.</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>5. ¿Qué tipo de ejercicio practicas principalmente?</span></label>
+            <select id="sportType" type="select" name="sportType-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="endurance">Ejercicio de resistencia (carrera, ciclismo, natación...)</option>
+                <option value="strength">Ejercicio de fuerza (gimnasio, calistenia, powerlifting, halterofilia...)</option>
+                <option value="concurrent">Ejercicio concurrente (resistencia y fuerza)</option>
+                <option value="mixed">Deportes mixtos (fútbol, baloncesto, tenis, artes marciales...)</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Condicionales según tipo de deporte -->
+    <div class="flex" id="endurance-input" style="display: none;">
+        <div>
+            <label><span>¿Cuántos kilómetros has acumulado en la última semana?</span></label>
+            <input id="km" type="number" name="km-input" min="0" max="500" step="0.1" placeholder="Ej: 32.5">
+            <span id="invalid_km" style="display: none;"></span>
+        </div>
+    </div>
+
+    <div class="flex" id="strength-input" style="display: none;">
+        <div>
+            <label><span>En promedio, ¿cuántas series efectivas por grupo muscular o movimiento has acumulado en la última semana?</span></label>
+            <input id="sets" type="number" name="sets-input" min="0" max="50" step="1" placeholder="Ej: 18">
+            <span id="invalid_sets" style="display: none;"></span>
+        </div>
+    </div>
+
+    <div class="flex" id="concurrent-input" style="display: none;">
+        <div>
+            <label><span>Resistencia: ¿Cuántos kilómetros has acumulado en la última semana?</span><sup>km</sup></label>
+            <input id="km-concurrent" type="number" name="km-concurrent-input" min="0" max="500" step="0.1" placeholder="Ej: 20">
+            <span id="invalid_km_concurrent" style="display: none;"></span>
+        </div>
+        <div>
+            <label><span>Fuerza: En promedio, ¿cuántas series efectivas por grupo muscular has acumulado en la última semana?</span></label>
+            <input id="sets-concurrent" type="number" name="sets-concurrent-input" min="0" max="50" step="1" placeholder="Ej: 18">
+            <span id="invalid_sets_concurrent" style="display: none;"></span>
+        </div>
+    </div>
+
+    <div class="flex" id="mixed-input" style="display: none;">
+        <div>
+            <label><span>En promedio, ¿cuál ha sido la duración de cada una de las sesiones de entrenamiento que has realizado en la última semana?</span><sup>minutos</sup></label>
+            <input id="minutes" type="number" name="minutes-input" min="0" max="300" step="1" placeholder="Ej: 90">
+            <span id="invalid_minutes" style="display: none;"></span>
+        </div>
+    </div>
+
+    <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+        Calcular carga recomendada
+    </button>
+</form>
+
+<p class="result" style="visibility: hidden;"></p>
+
+<script type="text/javascript">
+    (function() {
+
+        //Inputs de las preguntas
+        const Q1 = document.querySelector('#q1');
+        const Q2 = document.querySelector('#q2');
+        const Q3 = document.querySelector('#q3');
+        const Q4 = document.querySelector('#q4');
+        const SPORT_TYPE = document.querySelector('#sportType');
+
+        // Inputs condicionales
+        const KM = document.querySelector('#km');
+        const SETS = document.querySelector('#sets');
+        const KM_CONCURRENT = document.querySelector('#km-concurrent');
+        const SETS_CONCURRENT = document.querySelector('#sets-concurrent');
+        const MINUTES = document.querySelector('#minutes');
+
+        // Contenedores condicionales
+        const ENDURANCE_INPUT = document.querySelector('#endurance-input');
+        const STRENGTH_INPUT = document.querySelector('#strength-input');
+        const CONCURRENT_INPUT = document.querySelector('#concurrent-input');
+        const MIXED_INPUT = document.querySelector('#mixed-input');
+
+        //Caja con el resultado
+        const RESULT_BOX = document.querySelector('.result');
+
+        //Botón de calcular
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+
+        //Formulario
+        const FORM = document.querySelector('.form-container');
+
+        //Comprobar que ha introducido valor en los select
+        const SELECTS = document.querySelectorAll('select');
+        SELECTS.forEach(select => {
+            select.addEventListener('change', () => {
+                if (select.value !== "" && select.selectedIndex !== 0) {
+                    select.setCustomValidity('');
+                }
+
+                // Mostrar/ocultar inputs según tipo de deporte
+                if (select.id === 'sportType') {
+                    ENDURANCE_INPUT.style.display = 'none';
+                    STRENGTH_INPUT.style.display = 'none';
+                    CONCURRENT_INPUT.style.display = 'none';
+                    MIXED_INPUT.style.display = 'none';
+
+                    KM.required = false;
+                    SETS.required = false;
+                    KM_CONCURRENT.required = false;
+                    SETS_CONCURRENT.required = false;
+                    MINUTES.required = false;
+
+                    if (select.value === 'endurance') {
+                        ENDURANCE_INPUT.style.display = 'block';
+                        KM.required = true;
+                    } else if (select.value === 'strength') {
+                        STRENGTH_INPUT.style.display = 'block';
+                        SETS.required = true;
+                    } else if (select.value === 'concurrent') {
+                        CONCURRENT_INPUT.style.display = 'block';
+                        KM_CONCURRENT.required = true;
+                        SETS_CONCURRENT.required = true;
+                    } else if (select.value === 'mixed') {
+                        MIXED_INPUT.style.display = 'block';
+                        MINUTES.required = true;
+                    }
+                }
+            });
+        });
+
+        FORM.addEventListener('submit', (e)=>{
+            e.preventDefault();
+
+            const selects = document.querySelectorAll('select');
+            let isValid = true;
+
+            selects.forEach(select => {
+                if (select.value === "" || select.selectedIndex === 0) {
+                    select.setCustomValidity('Por favor, selecciona una opción');
+                    select.reportValidity();
+                    isValid = false;
+                } else {
+                    select.setCustomValidity('');
+                }
+            });
+
+            if (!isValid) {
+                return;
+            }
+
+            //Cambiar texto botón
+            CALCULATE_BTN.innerHTML = 'Calculando...';
+
+            //Ocultar resultado anterior
+            RESULT_BOX.style.visibility = 'hidden';
+
+            // Obtener valores de todas las preguntas
+            const q1 = parseInt(Q1.value);
+            const q2 = parseInt(Q2.value);
+            const q3 = parseInt(Q3.value);
+            const q4 = parseInt(Q4.value);
+            const sportType = SPORT_TYPE.value;
+
+            // Preparar datos según tipo de deporte
+            const data = {};
+            if (sportType === 'endurance') {
+                data.km = parseFloat(KM.value);
+            } else if (sportType === 'strength') {
+                data.sets = parseInt(SETS.value);
+            } else if (sportType === 'concurrent') {
+                data.km = parseFloat(KM_CONCURRENT.value);
+                data.sets = parseInt(SETS_CONCURRENT.value);
+            } else if (sportType === 'mixed') {
+                data.minutes = parseInt(MINUTES.value);
+            }
+
+            const CALCULATOR = new RecoveryLoadCalculator(q1, q2, q3, q4, sportType, data);
+            const result = CALCULATOR.recoveryLoad;
+
+            setTimeout(()=>{
+
+                //Scroll smooth hasta el resultado
+                RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+                //Volver a poner el texto en el boton
+                CALCULATE_BTN.innerHTML = 'Calcular carga recomendada';
+
+                //Mostrar el resultado
+                RESULT_BOX.style.visibility = 'visible';
+
+                let recommendationText = '';
+                if (result.sportType === 'endurance') {
+                    recommendationText = `<strong>${result.recommendation.message}</strong>`;
+                } else if (result.sportType === 'strength') {
+                    recommendationText = `<strong>${result.recommendation.message}</strong>`;
+                } else if (result.sportType === 'concurrent') {
+                    recommendationText = `
+                        <span style="display: block;">• <strong>Resistencia:</strong> ${result.recommendation.endurance.min}-${result.recommendation.endurance.max} km.</span>
+                        <span style="display: block;">• <strong>Fuerza:</strong> ${result.recommendation.strength.min}-${result.recommendation.strength.max} series por grupo muscular o movimiento.</span>
+                    `;
+                } else {
+                    recommendationText = `<strong>${result.recommendation.message}</strong>`;
+                }
+
+                RESULT_BOX.innerHTML = `
+                    <span style="display: block; margin-bottom: 15px;">Tu nivel de fatiga es <strong>${result.fatigueLevel}</strong></span>
+                    <span style="display: block;">Carga de entrenamiento recomendada para la próxima semana:</span>
+                    <span style="display: block; margin-top: 10px;">${recommendationText}</span>
+                `;
+
+            }, 500)
+
+        })
+
+    })();
+
+    class RecoveryLoadCalculator {
+        _q1;
+        _q2;
+        _q3;
+        _q4;
+        _sportType;
+        _km;
+        _sets;
+        _minutes;
+
+        constructor(q1, q2, q3, q4, sportType, data) {
+            this._q1 = q1;
+            this._q2 = q2;
+            this._q3 = q3;
+            this._q4 = q4;
+            this._sportType = sportType;
+
+            this._km = data.km || 0;
+            this._sets = data.sets || 0;
+            this._minutes = data.minutes || 0;
+        }
+
+        get recoveryLoad() {
+            const fatigueScore = this._q1 + this._q2 + this._q3 + this._q4;
+            let fatigueLevel = '';
+
+            if (fatigueScore <= 1) {
+                fatigueLevel = 'baja';
+            } else if (fatigueScore >= 2 && fatigueScore <= 4) {
+                fatigueLevel = 'moderada';
+            } else if (fatigueScore >= 5 && fatigueScore <= 6) {
+                fatigueLevel = 'alta';
+            } else {
+                fatigueLevel = 'muy alta';
+            }
+
+            const recommendation = this.calculateLoad(fatigueLevel);
+
+            return {
+                fatigueScore,
+                fatigueLevel,
+                sportType: this._sportType,
+                recommendation
+            };
+        }
+
+        calculateLoad(fatigueLevel) {
+            const multipliers = {
+                'baja': { min: 0.9, max: 1 },
+                'moderada': { min: 0.8, max: 0.9 },
+                'alta': { min: 0.6, max: 0.75 },
+                'muy alta': { min: 0.5, max: 0.5 }
+            };
+
+            const mult = multipliers[fatigueLevel];
+
+            if (this._sportType === 'endurance') {
+                const minKm = (this._km * mult.min).toFixed(1);
+                const maxKm = (this._km * mult.max).toFixed(1);
+                return {
+                    type: 'km',
+                    min: parseFloat(minKm),
+                    max: parseFloat(maxKm),
+                    message: `${minKm}-${maxKm} km`
+                };
+            } else if (this._sportType === 'strength') {
+                const minSets = Math.round(this._sets * mult.min);
+                const maxSets = Math.round(this._sets * mult.max);
+                return {
+                    type: 'series',
+                    min: minSets,
+                    max: maxSets,
+                    message: `${minSets}-${maxSets} series por grupo muscular o movimiento`
+                };
+            } else if (this._sportType === 'concurrent') {
+                const minKm = (this._km * mult.min).toFixed(1);
+                const maxKm = (this._km * mult.max).toFixed(1);
+                const minSets = Math.round(this._sets * mult.min);
+                const maxSets = Math.round(this._sets * mult.max);
+                return {
+                    type: 'concurrent',
+                    endurance: { min: parseFloat(minKm), max: parseFloat(maxKm) },
+                    strength: { min: minSets, max: maxSets },
+                    message: `Resistencia: ${minKm}-${maxKm} km | Fuerza: ${minSets}-${maxSets} series`
+                };
+            } else {
+                const minMin = Math.round(this._minutes * mult.min);
+                const maxMin = Math.round(this._minutes * mult.max);
+                return {
+                    type: 'minutos',
+                    min: minMin,
+                    max: maxMin,
+                    message: `${minMin}-${maxMin} min/sesión`
+                };
+            }
+        }
+    }
+</script>
