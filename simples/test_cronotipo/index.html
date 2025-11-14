@@ -1,0 +1,261 @@
+<form class="form-container">
+    <p style="margin-bottom: 20px; text-align: center; font-style: italic;">Responde a las siguientes preguntas con la mayor honestidad posible, pensando en cómo te comportarías si no tuvieras obligaciones externas (trabajo, familia, etc.).</p>
+
+    <div class="flex">
+        <div>
+            <label><span>1. Si no tuvieras ninguna obligación al día siguiente, ¿a qué hora te levantarías de forma natural?</span></label>
+            <select id="q1" type="select" name="q1-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Antes de las 7:30 h</option>
+                <option value="1">De 7:30 h a 8:45 h</option>
+                <option value="2">De 8:45 h a 10:00 h</option>
+                <option value="3">Después de las 10:00 h</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>2. ¿Cómo te sientes durante la primera media hora después de despertar (sin cafeína)?</span></label>
+            <select id="q2" type="select" name="q2-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Muy despejado y listo para empezar</option>
+                <option value="1">Algo somnoliento, pero funciono bien</option>
+                <option value="2">Bastante aturdido y lento</option>
+                <option value="3">Totalmente "zombi", necesito mucho tiempo para activarme</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>3. Si pudieras elegir tu horario ideal, ¿a qué hora te irías a dormir?</span></label>
+            <select id="q3" type="select" name="q3-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Antes de las 23:00 h</option>
+                <option value="1">De 23:00 h a 00:30 h</option>
+                <option value="2">De 00:30 h a 02:00 h</option>
+                <option value="3">Después de las 02:00 h</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>4. ¿En qué momento del día sientes que tu mente está más aguda para realizar tareas que requieren concentración?</span></label>
+            <select id="q4" type="select" name="q4-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Temprano por la mañana</option>
+                <option value="1">A media mañana o mediodía</option>
+                <option value="2">Por la tarde</option>
+                <option value="3">Por la noche</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>5. ¿Cuánta dependencia tienes de la cafeína (café, té, etc.) por la mañana para espabilarte?</span></label>
+            <select id="q5" type="select" name="q5-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Ninguna, no la necesito</option>
+                <option value="1">Un poco, me ayuda pero no es esencial</option>
+                <option value="2">Bastante, me cuesta funcionar sin ella</option>
+                <option value="3">Es absolutamente vital para ser persona</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>6. Si tienes que hacer ejercicio físico intenso, ¿cuál es tu momento ideal?</span></label>
+            <select id="q6" type="select" name="q6-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Por la mañana</option>
+                <option value="1">A mediodía</option>
+                <option value="2">Por la tarde</option>
+                <option value="3">Por la noche</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>7. La sociedad a menudo nos impone madrugar. Si tienes que levantarte a las 6:00 AM, ¿cómo lo llevas?</span></label>
+            <select id="q7" type="select" name="q7-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Es fácil, mi cuerpo se adapta sin problema</option>
+                <option value="1">Me cuesta un poco, pero lo consigo</option>
+                <option value="2">Es muy difícil, me siento fatal</option>
+                <option value="3">Es una tortura, me arruina todo el día</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>8. Finalmente, ¿cómo te describes a ti mismo?</span></label>
+            <select id="q8" type="select" name="q8-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Definitivamente, soy una persona de mañanas</option>
+                <option value="1">Soy más de mañanas que de tarde-noche</option>
+                <option value="2">Soy más de tarde-noche que de mañanas</option>
+                <option value="3">Definitivamente, soy una persona de tarde-noche</option>
+            </select>
+        </div>
+    </div>
+
+    <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+        Ver mi cronotipo
+    </button>
+</form>
+
+<p class="result" style="visibility: hidden;"></p>
+
+<script type="text/javascript">
+    (function() {
+
+        //Inputs de las preguntas
+        const Q1 = document.querySelector('#q1');
+        const Q2 = document.querySelector('#q2');
+        const Q3 = document.querySelector('#q3');
+        const Q4 = document.querySelector('#q4');
+        const Q5 = document.querySelector('#q5');
+        const Q6 = document.querySelector('#q6');
+        const Q7 = document.querySelector('#q7');
+        const Q8 = document.querySelector('#q8');
+
+        //Caja con el resultado
+        const RESULT_BOX = document.querySelector('.result');
+
+        //Botón de calcular
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+
+        //Formulario
+        const FORM = document.querySelector('.form-container');
+
+        //Comprobar que ha introducido valor en los select
+        const SELECTS = document.querySelectorAll('select');
+        SELECTS.forEach(select => {
+            select.addEventListener('change', () => {
+                if (select.value !== "" && select.selectedIndex !== 0) {
+                    select.setCustomValidity('');
+                }
+            });
+        });
+
+        FORM.addEventListener('submit', (e)=>{
+            e.preventDefault();
+
+            const selects = document.querySelectorAll('select');
+            let isValid = true;
+
+            selects.forEach(select => {
+                if (select.value === "" || select.selectedIndex === 0) {
+                    select.setCustomValidity('Por favor, selecciona una opción');
+                    select.reportValidity();
+                    isValid = false;
+                } else {
+                    select.setCustomValidity('');
+                }
+            });
+
+            if (!isValid) {
+                return;
+            }
+
+            //Cambiar texto botón
+            CALCULATE_BTN.innerHTML = 'Calculando...';
+
+            //Ocultar resultado anterior
+            RESULT_BOX.style.visibility = 'hidden';
+
+            // Obtener valores de todas las preguntas
+            const q1 = parseInt(Q1.value);
+            const q2 = parseInt(Q2.value);
+            const q3 = parseInt(Q3.value);
+            const q4 = parseInt(Q4.value);
+            const q5 = parseInt(Q5.value);
+            const q6 = parseInt(Q6.value);
+            const q7 = parseInt(Q7.value);
+            const q8 = parseInt(Q8.value);
+
+            const CALCULATOR = new ChronotypeCalculator(q1, q2, q3, q4, q5, q6, q7, q8);
+            const result = CALCULATOR.chronotype;
+
+            setTimeout(()=>{
+
+                //Scroll smooth hasta el resultado
+                RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+                //Volver a poner el texto en el boton
+                CALCULATE_BTN.innerHTML = 'Ver mi cronotipo';
+
+                //Mostrar el resultado
+                RESULT_BOX.style.visibility = 'visible';
+
+                RESULT_BOX.innerHTML = `
+                    <span>Tu cronotipo es:</span><br><br>
+                    <span><strong>${result.type}</strong></span><br>
+                    <span>${result.description}</span>
+                `;
+
+            }, 500)
+
+        })
+
+    })();
+
+    class ChronotypeCalculator {
+        _q1;
+        _q2;
+        _q3;
+        _q4;
+        _q5;
+        _q6;
+        _q7;
+        _q8;
+
+        constructor(q1, q2, q3, q4, q5, q6, q7, q8) {
+            this._q1 = q1;
+            this._q2 = q2;
+            this._q3 = q3;
+            this._q4 = q4;
+            this._q5 = q5;
+            this._q6 = q6;
+            this._q7 = q7;
+            this._q8 = q8;
+        }
+
+        get chronotype() {
+            const totalScore = this._q1 + this._q2 + this._q3 + this._q4 + this._q5 + this._q6 + this._q7 + this._q8;
+
+            let type = '';
+            let description = '';
+
+            if (totalScore <= 5) {
+                type = 'Alondra matutina';
+                description = 'Funcionas bastante mejor por la mañana.';
+            } else if (totalScore >= 6 && totalScore <= 10) {
+                type = 'Entre alondra matutina y colibrí intermedio';
+                description = 'No funcionas muy bien madrugando, pero sí pasadas unas horas.';
+            } else if (totalScore >= 11 && totalScore <= 15) {
+                type = 'Colibrí intermedio';
+                description = 'Te cuesta bastante madrugar y funcionas mejor a mediodía.';
+            } else if (totalScore >= 16 && totalScore <= 20) {
+                type = 'Entre colibrí intermedio y búho nocturno';
+                description = 'Funcionas bastante mejor a primera hora de la tarde.';
+            } else {
+                type = 'Búho nocturno';
+                description = 'Tu pico de creatividad, energía y concentración llega por la tarde y, sobre todo, por la noche.';
+            }
+
+            return {
+                totalScore,
+                type,
+                description
+            };
+        }
+    }
+</script>
+
