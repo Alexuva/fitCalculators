@@ -1,0 +1,371 @@
+<form class="form-container">
+    <p style="margin-bottom: 20px; text-align: center; font-style: italic;">Evalúa tu condición física general a través de 4 indicadores clave: fuerza del tren superior, fuerza del tren inferior, capacidad cardiovascular (VO2 máx.) y flexibilidad.</p>
+
+    <div class="flex">
+        <div>
+            <label><span>Sexo</span></label>
+            <select id="gender" type="select" name="gender-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="male">Hombre</option>
+                <option value="female">Mujer</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Edad (años)</span><sup>mínimo 15</sup></label>
+            <input id="age" type="number" name="age-input" min="15" max="120" step="1" placeholder="Ej: 25" required>
+            <span id="invalid_age" style="display: none;"></span>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Fuerza tren superior: número de flexiones en el suelo en 60 segundos (sin parar)</span></label>
+            <input id="pushups" type="number" name="pushups-input" min="0" max="100" step="1" placeholder="Ej: 30" required>
+            <span id="invalid_pushups" style="display: none;"></span>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Fuerza tren inferior: número de sentadillas sin peso hasta el fallo (sin parar)</span></label>
+            <input id="squats" type="number" name="squats-input" min="0" max="100" step="1" placeholder="Ej: 40" required>
+            <span id="invalid_squats" style="display: none;"></span>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Test del escalón Harvard - Pulsaciones 1 minuto después de finalizar (sentado, latidos/min)</span></label>
+            <input id="p1" type="number" name="p1-input" min="40" max="200" step="1" placeholder="Ej: 120" required>
+            <span id="invalid_p1" style="display: none;"></span>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Test del escalón Harvard - Pulsaciones 2 minutos después de finalizar (sentado, latidos/min)</span></label>
+            <input id="p2" type="number" name="p2-input" min="40" max="200" step="1" placeholder="Ej: 100" required>
+            <span id="invalid_p2" style="display: none;"></span>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Test del escalón Harvard - Pulsaciones 3 minutos después de finalizar (sentado, latidos/min)</span></label>
+            <input id="p3" type="number" name="p3-input" min="40" max="200" step="1" placeholder="Ej: 85" required>
+            <span id="invalid_p3" style="display: none;"></span>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Flexibilidad: distancia entre las manos (cm)</span><sup>negativo si no se juntan</sup></label>
+            <input id="flexibility" type="number" name="flexibility-input" min="-20" max="20" step="1" placeholder="Ej: 2 o -3" required>
+            <span id="invalid_flexibility" style="display: none;"></span>
+        </div>
+    </div>
+
+    <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+        Ver resultados
+    </button>
+</form>
+
+<p class="result" style="visibility: hidden;"></p>
+
+<script type="text/javascript">
+    (function() {
+
+        //Inputs
+        const GENDER = document.querySelector('#gender');
+        const AGE = document.querySelector('#age');
+        const PUSHUPS = document.querySelector('#pushups');
+        const SQUATS = document.querySelector('#squats');
+        const P1 = document.querySelector('#p1');
+        const P2 = document.querySelector('#p2');
+        const P3 = document.querySelector('#p3');
+        const FLEXIBILITY = document.querySelector('#flexibility');
+
+        //Caja con el resultado
+        const RESULT_BOX = document.querySelector('.result');
+
+        //Botón de calcular
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+
+        //Formulario
+        const FORM = document.querySelector('.form-container');
+
+        //Comprobar que ha introducido valor en los select
+        const SELECTS = document.querySelectorAll('select');
+        SELECTS.forEach(select => {
+            select.addEventListener('change', () => {
+                if (select.value !== "" && select.selectedIndex !== 0) {
+                    select.setCustomValidity('');
+                }
+            });
+        });
+
+        FORM.addEventListener('submit', (e)=>{
+            e.preventDefault();
+
+            // Validar selects
+            const selects = document.querySelectorAll('select');
+            let isValid = true;
+
+            selects.forEach(select => {
+                if (select.value === "" || select.selectedIndex === 0) {
+                    select.setCustomValidity('Por favor, selecciona una opción');
+                    select.reportValidity();
+                    isValid = false;
+                } else {
+                    select.setCustomValidity('');
+                }
+            });
+
+            if (!isValid) {
+                return;
+            }
+
+            // Validaciones básicas de inputs
+            if (!AGE.value || AGE.value < 15) {
+                AGE.setCustomValidity('Por favor, introduce una edad válida (mínimo 15 años)');
+                AGE.reportValidity();
+                return;
+            }
+
+            //Cambiar texto botón
+            CALCULATE_BTN.innerHTML = 'Calculando...';
+
+            //Ocultar resultado anterior
+            RESULT_BOX.style.visibility = 'hidden';
+
+            const gender = GENDER.value;
+            const age = parseInt(AGE.value);
+            const pushups = parseInt(PUSHUPS.value);
+            const squats = parseInt(SQUATS.value);
+            const p1 = parseInt(P1.value);
+            const p2 = parseInt(P2.value);
+            const p3 = parseInt(P3.value);
+            const flexibility = parseInt(FLEXIBILITY.value);
+
+            const CALCULATOR = new FitnessLevelCalculator(gender, age, pushups, squats, p1, p2, p3, flexibility);
+            const result = CALCULATOR.fitnessLevel;
+
+            setTimeout(()=>{
+
+                //Scroll smooth hasta el resultado
+                RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+                //Volver a poner el texto en el boton
+                CALCULATE_BTN.innerHTML = 'Ver resultados';
+
+                //Mostrar el resultado
+                RESULT_BOX.style.visibility = 'visible';
+
+                RESULT_BOX.innerHTML = `
+                    <span>Tu nivel de condición física general es <strong>${result.level}</strong></span><br><br>
+                    <span style="display: block;">• <strong>Fuerza tren superior:</strong> ${result.upperBodyLevel}</span>
+                    <span style="display: block;">• <strong>Fuerza tren inferior:</strong> ${result.lowerBodyLevel}</span>
+                    <span style="display: block;">• <strong>VO2 máx.:</strong> ${result.vo2MaxLevel}</span>
+                    <span style="display: block;">• <strong>Flexibilidad:</strong> ${result.flexibilityLevel}</span>
+                `;
+
+            }, 500)
+
+        })
+
+    })();
+
+    // Tablas de datos completas según el PDF
+    const PUSHUPS_DATA = {
+        male: [
+            { ageRange: [15, 19], levels: { 'muy bajo': [0, 17], 'bajo': [18, 23], 'normal': [24, 29], 'bueno': [30, 35], 'excelente': [36, 999] } },
+            { ageRange: [20, 29], levels: { 'muy bajo': [0, 15], 'bajo': [16, 21], 'normal': [22, 27], 'bueno': [28, 33], 'excelente': [34, 999] } },
+            { ageRange: [30, 39], levels: { 'muy bajo': [0, 10], 'bajo': [11, 16], 'normal': [17, 21], 'bueno': [22, 27], 'excelente': [28, 999] } },
+            { ageRange: [40, 49], levels: { 'muy bajo': [0, 7], 'bajo': [8, 12], 'normal': [12, 15], 'bueno': [16, 21], 'excelente': [22, 999] } },
+            { ageRange: [50, 59], levels: { 'muy bajo': [0, 4], 'bajo': [5, 8], 'normal': [9, 12], 'bueno': [13, 17], 'excelente': [18, 999] } },
+            { ageRange: [60, 69], levels: { 'muy bajo': [0, 3], 'bajo': [4, 7], 'normal': [8, 11], 'bueno': [12, 16], 'excelente': [17, 999] } },
+            { ageRange: [70, 999], levels: { 'muy bajo': [0, 2], 'bajo': [3, 5], 'normal': [6, 9], 'bueno': [10, 13], 'excelente': [14, 999] } }
+        ],
+        female: [
+            { ageRange: [15, 19], levels: { 'muy bajo': [0, 11], 'bajo': [12, 15], 'normal': [16, 20], 'bueno': [21, 26], 'excelente': [27, 999] } },
+            { ageRange: [20, 29], levels: { 'muy bajo': [0, 9], 'bajo': [10, 13], 'normal': [14, 18], 'bueno': [19, 24], 'excelente': [25, 999] } },
+            { ageRange: [30, 39], levels: { 'muy bajo': [0, 7], 'bajo': [8, 11], 'normal': [12, 16], 'bueno': [17, 21], 'excelente': [22, 999] } },
+            { ageRange: [40, 49], levels: { 'muy bajo': [0, 4], 'bajo': [5, 8], 'normal': [9, 12], 'bueno': [13, 17], 'excelente': [18, 999] } },
+            { ageRange: [50, 59], levels: { 'muy bajo': [0, 2], 'bajo': [3, 6], 'normal': [7, 10], 'bueno': [11, 15], 'excelente': [16, 999] } },
+            { ageRange: [60, 69], levels: { 'muy bajo': [0, 1], 'bajo': [2, 4], 'normal': [4, 7], 'bueno': [8, 12], 'excelente': [13, 999] } },
+            { ageRange: [70, 999], levels: { 'muy bajo': [0, 0], 'bajo': [1, 3], 'normal': [3, 5], 'bueno': [5, 8], 'excelente': [9, 999] } }
+        ]
+    };
+
+    const SQUATS_DATA = {
+        male: [
+            { ageRange: [16, 25], levels: { 'muy bajo': [0, 24], 'bajo': [25, 30], 'algo bajo': [31, 34], 'normal': [35, 38], 'bueno': [39, 43], 'muy bueno': [44, 49], 'excelente': [50, 999] } },
+            { ageRange: [26, 35], levels: { 'muy bajo': [0, 21], 'bajo': [22, 27], 'algo bajo': [28, 31], 'normal': [32, 35], 'bueno': [36, 39], 'muy bueno': [40, 45], 'excelente': [46, 999] } },
+            { ageRange: [36, 45], levels: { 'muy bajo': [0, 16], 'bajo': [17, 22], 'algo bajo': [23, 26], 'normal': [27, 30], 'bueno': [31, 34], 'muy bueno': [35, 41], 'excelente': [42, 999] } },
+            { ageRange: [46, 55], levels: { 'muy bajo': [0, 12], 'bajo': [13, 17], 'algo bajo': [18, 21], 'normal': [22, 25], 'bueno': [26, 29], 'muy bueno': [30, 35], 'excelente': [36, 999] } },
+            { ageRange: [56, 65], levels: { 'muy bajo': [0, 8], 'bajo': [9, 12], 'algo bajo': [13, 16], 'normal': [17, 20], 'bueno': [21, 24], 'muy bueno': [25, 30], 'excelente': [31, 999] } },
+            { ageRange: [66, 75], levels: { 'muy bajo': [0, 6], 'bajo': [7, 10], 'algo bajo': [11, 14], 'normal': [15, 18], 'bueno': [19, 22], 'muy bueno': [23, 28], 'excelente': [29, 999] } },
+            { ageRange: [76, 999], levels: { 'muy bajo': [0, 4], 'bajo': [5, 7], 'algo bajo': [8, 11], 'normal': [12, 15], 'bueno': [16, 20], 'muy bueno': [21, 25], 'excelente': [26, 999] } }
+        ],
+        female: [
+            { ageRange: [16, 25], levels: { 'muy bajo': [0, 17], 'bajo': [18, 24], 'algo bajo': [25, 28], 'normal': [29, 33], 'bueno': [34, 37], 'muy bueno': [38, 43], 'excelente': [44, 999] } },
+            { ageRange: [26, 35], levels: { 'muy bajo': [0, 14], 'bajo': [15, 20], 'algo bajo': [21, 26], 'normal': [27, 31], 'bueno': [32, 35], 'muy bueno': [35, 39], 'excelente': [40, 999] } },
+            { ageRange: [36, 45], levels: { 'muy bajo': [0, 11], 'bajo': [12, 16], 'algo bajo': [17, 21], 'normal': [22, 27], 'bueno': [28, 32], 'muy bueno': [33, 36], 'excelente': [37, 999] } },
+            { ageRange: [46, 55], levels: { 'muy bajo': [0, 6], 'bajo': [7, 13], 'algo bajo': [14, 18], 'normal': [19, 22], 'bueno': [23, 26], 'muy bueno': [27, 33], 'excelente': [34, 999] } },
+            { ageRange: [56, 65], levels: { 'muy bajo': [0, 4], 'bajo': [5, 10], 'algo bajo': [11, 14], 'normal': [15, 18], 'bueno': [19, 22], 'muy bueno': [23, 27], 'excelente': [28, 999] } },
+            { ageRange: [66, 75], levels: { 'muy bajo': [0, 2], 'bajo': [3, 6], 'algo bajo': [7, 9], 'normal': [10, 12], 'bueno': [13, 17], 'muy bueno': [18, 24], 'excelente': [25, 999] } },
+            { ageRange: [76, 999], levels: { 'muy bajo': [0, 1], 'bajo': [2, 4], 'algo bajo': [5, 8], 'normal': [9, 13], 'bueno': [14, 16], 'muy bueno': [17, 23], 'excelente': [24, 999] } }
+        ]
+    };
+
+    const VO2MAX_DATA = {
+        male: { 'muy bajo': [0, 54], 'bajo': [55, 64], 'normal': [65, 79], 'bueno': [80, 90], 'excelente': [91, 999] },
+        female: { 'muy bajo': [0, 49], 'bajo': [50, 60], 'normal': [61, 75], 'bueno': [76, 86], 'excelente': [87, 999] }
+    };
+
+    const FLEXIBILITY_DATA = {
+        male: [
+            { ageRange: [15, 19], levels: { 'muy baja': [-999, -5], 'baja': [-4, -2], 'normal': [-1, 1], 'buena': [2, 3], 'excelente': [4, 999] } },
+            { ageRange: [20, 29], levels: { 'muy baja': [-999, -6], 'baja': [-5, -3], 'normal': [-2, 0], 'buena': [1, 2], 'excelente': [3, 999] } },
+            { ageRange: [30, 39], levels: { 'muy baja': [-999, -7], 'baja': [-6, -4], 'normal': [-3, -1], 'buena': [0, 1], 'excelente': [2, 999] } },
+            { ageRange: [40, 49], levels: { 'muy baja': [-999, -8], 'baja': [-7, -5], 'normal': [-4, -2], 'buena': [-1, 0], 'excelente': [1, 999] } },
+            { ageRange: [50, 59], levels: { 'muy baja': [-999, -9], 'baja': [-8, -6], 'normal': [-5, -3], 'buena': [-2, -1], 'excelente': [0, 999] } },
+            { ageRange: [60, 70], levels: { 'muy baja': [-999, -10], 'baja': [-9, -7], 'normal': [-6, -4], 'buena': [-3, -2], 'excelente': [-1, 999] } },
+            { ageRange: [71, 999], levels: { 'muy baja': [-999, -11], 'baja': [-10, -8], 'normal': [-7, -5], 'buena': [-4, -3], 'excelente': [-2, 999] } }
+        ],
+        female: [
+            { ageRange: [15, 19], levels: { 'muy baja': [-999, -4], 'baja': [-3, -1], 'normal': [0, 2], 'buena': [3, 4], 'excelente': [5, 999] } },
+            { ageRange: [20, 29], levels: { 'muy baja': [-999, -5], 'baja': [-4, -2], 'normal': [-1, 1], 'buena': [2, 3], 'excelente': [4, 999] } },
+            { ageRange: [30, 39], levels: { 'muy baja': [-999, -6], 'baja': [-5, -3], 'normal': [-2, 0], 'buena': [1, 2], 'excelente': [3, 999] } },
+            { ageRange: [40, 49], levels: { 'muy baja': [-999, -7], 'baja': [-6, -4], 'normal': [-3, -1], 'buena': [0, 1], 'excelente': [2, 999] } },
+            { ageRange: [50, 59], levels: { 'muy baja': [-999, -8], 'baja': [-7, -5], 'normal': [-4, -2], 'buena': [-1, 0], 'excelente': [1, 999] } },
+            { ageRange: [60, 70], levels: { 'muy baja': [-999, -9], 'baja': [-8, -6], 'normal': [-5, -3], 'buena': [-2, -1], 'excelente': [0, 999] } },
+            { ageRange: [71, 999], levels: { 'muy baja': [-999, -10], 'baja': [-9, -7], 'normal': [-6, -4], 'buena': [-3, -2], 'excelente': [-1, 999] } }
+        ]
+    };
+
+    class FitnessLevelCalculator {
+        _gender;
+        _age;
+        _pushups;
+        _squats;
+        _p1;
+        _p2;
+        _p3;
+        _flexibility;
+
+        constructor(gender, age, pushups, squats, p1, p2, p3, flexibility) {
+            this._gender = gender;
+            this._age = age;
+            this._pushups = pushups;
+            this._squats = squats;
+            this._p1 = p1;
+            this._p2 = p2;
+            this._p3 = p3;
+            this._flexibility = flexibility;
+        }
+
+        findLevel(value, ageData) {
+            for (let level in ageData.levels) {
+                const range = ageData.levels[level];
+                if (value >= range[0] && value <= range[1]) {
+                    return level;
+                }
+            }
+            return 'muy bajo';
+        }
+
+        findAgeRange(dataArray) {
+            for (let item of dataArray) {
+                if (this._age >= item.ageRange[0] && this._age <= item.ageRange[1]) {
+                    return item;
+                }
+            }
+            return dataArray[dataArray.length - 1];
+        }
+
+        getScoreFromLevel(level) {
+            const scoreMap = {
+                'muy bajo': 0,
+                'muy baja': 0,
+                'bajo': 1,
+                'baja': 1,
+                'algo bajo': 2,
+                'normal': 2,
+                'bueno': 3,
+                'buena': 3,
+                'muy bueno': 4,
+                'excelente': 4
+            };
+            return scoreMap[level] || 0;
+        }
+
+        get fitnessLevel() {
+            // Calcular puntuaciones individuales
+            const upperBodyLevel = this.calculateUpperBodyLevel();
+            const lowerBodyLevel = this.calculateLowerBodyLevel();
+            const vo2MaxLevel = this.calculateVO2MaxLevel();
+            const flexibilityLevel = this.calculateFlexibilityLevel();
+
+            const upperBodyScore = this.getScoreFromLevel(upperBodyLevel);
+            const lowerBodyScore = this.getScoreFromLevel(lowerBodyLevel);
+            const vo2MaxScore = this.getScoreFromLevel(vo2MaxLevel);
+            const flexibilityScore = this.getScoreFromLevel(flexibilityLevel);
+
+            const totalScore = upperBodyScore + lowerBodyScore + vo2MaxScore + flexibilityScore;
+
+            let level = '';
+            if (totalScore <= 3) {
+                level = 'muy bajo';
+            } else if (totalScore >= 4 && totalScore <= 7) {
+                level = 'bajo';
+            } else if (totalScore >= 8 && totalScore <= 11) {
+                level = 'normal';
+            } else if (totalScore >= 12 && totalScore <= 15) {
+                level = 'bueno';
+            } else {
+                level = 'excelente';
+            }
+
+            return {
+                totalScore,
+                level,
+                upperBodyLevel,
+                lowerBodyLevel,
+                vo2MaxLevel,
+                flexibilityLevel
+            };
+        }
+
+        calculateUpperBodyLevel() {
+            const ageData = this.findAgeRange(PUSHUPS_DATA[this._gender]);
+            return this.findLevel(this._pushups, ageData);
+        }
+
+        calculateLowerBodyLevel() {
+            const ageData = this.findAgeRange(SQUATS_DATA[this._gender]);
+            return this.findLevel(this._squats, ageData);
+        }
+
+        calculateVO2MaxLevel() {
+            const vo2max = Math.floor(30000 / (this._p1 + this._p2 + this._p3));
+            const levels = VO2MAX_DATA[this._gender];
+
+            for (let level in levels) {
+                const range = levels[level];
+                if (vo2max >= range[0] && vo2max <= range[1]) {
+                    return level;
+                }
+            }
+            return 'muy bajo';
+        }
+
+        calculateFlexibilityLevel() {
+            const ageData = this.findAgeRange(FLEXIBILITY_DATA[this._gender]);
+            return this.findLevel(this._flexibility, ageData);
+        }
+    }
+</script>
