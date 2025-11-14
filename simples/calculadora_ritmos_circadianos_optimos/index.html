@@ -1,0 +1,159 @@
+<form class="form-container">
+    <div class="flex">
+        <div>
+            <label><span>¿A qué hora te despiertas?</span><sup>hh:mm</sup></label>
+            <input id="awakeTime" type="time" name="awakeTime_input" min="00:00" max="23:59" required>
+            <span id="invalid_awakeTime" style="display: none;"></span>
+        </div>
+    </div>
+    <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+        Calcular
+    </button>
+</form>
+
+<p class="result" style="visibility: hidden;"></p>
+
+<script type="text/javascript">
+    (function() {
+
+        //Input hora de despertar
+        const AWAKE_TIME = document.querySelector('#awakeTime');
+
+        //Caja con el resultado
+        const RESULT_BOX = document.querySelector('.result');
+
+        //Botón de calcular
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+
+        //Formulario
+        const FORM = document.querySelector('.form-container');
+
+        FORM.addEventListener('submit', (e)=>{
+            e.preventDefault();
+
+            //Cambiar texto botón
+            CALCULATE_BTN.innerHTML = 'Calculando...';
+
+            //Ocultar resultado anterior
+            RESULT_BOX.style.visibility = 'hidden';
+
+            const awakeTime = AWAKE_TIME.value;
+
+            const CALCULATOR = new CircadianRhythm(awakeTime);
+            const result = CALCULATOR.circadianRhythm;
+
+            setTimeout(()=>{
+
+                //Scroll smooth hasta el resultado
+                RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+                //Volver a poner el texto en el boton
+                CALCULATE_BTN.innerHTML = 'Calcular';
+
+                //Mostrar el resultado
+                RESULT_BOX.style.visibility = 'visible';
+
+                RESULT_BOX.innerHTML = `
+                    <h3 style="margin-bottom: 20px;">Tu ritmo circadiano ideal:</h3>
+                    <table class="circadian-table">
+                        <tr>
+                            <td><strong>☀️ Exposición solar:</strong></td>
+                            <td>${result.solar_first} - ${result.solar_second} h</td>
+                        </tr>
+                        <tr>
+                            <td><strong>💪 Ventana de ejercicio:</strong></td>
+                            <td>${result.physical_first} - ${result.physical_second} h</td>
+                        </tr>
+                        <tr>
+                            <td><strong>☕ Límite de cafeína:</strong></td>
+                            <td>${result.limitCaffeine} h</td>
+                        </tr>
+                        <tr>
+                            <td><strong>🍽️ Última comida:</strong></td>
+                            <td>${result.lastMeal_second} - ${result.lastMeal_first} h</td>
+                        </tr>
+                        <tr>
+                            <td><strong>📱 Evitar luz azul después de:</strong></td>
+                            <td>${result.blueLight} h</td>
+                        </tr>
+                        <tr>
+                            <td><strong>🛏️ Hora de acostarse:</strong></td>
+                            <td>${result.goToBed} h</td>
+                        </tr>
+                    </table>
+                `;
+
+            }, 500)
+        })
+
+    })();
+
+    class CircadianRhythm {
+        _awakeTime;
+
+        constructor(awakeTime) {
+            this._awakeTime = awakeTime;
+        }
+
+        get circadianRhythm(){
+            const awakeMinutes = this.minutesFromHours(this._awakeTime);
+
+            const solar_1 = this.normalizeMinutes(awakeMinutes + 15);
+            const solar_2 = this.normalizeMinutes(awakeMinutes + 45);
+
+            const physical_1 = this.normalizeMinutes(awakeMinutes + (60 * 5));
+            const physical_2 = this.normalizeMinutes(awakeMinutes + (60 * 8));
+
+            const limitCaffeine = this.normalizeMinutes(awakeMinutes - (15 * 60));
+
+            const lastMeal_1 = this.normalizeMinutes(awakeMinutes - (10 * 60));
+            const lastMeal_2 = this.normalizeMinutes(awakeMinutes - (11 * 60));
+
+            const blueLight = this.normalizeMinutes(awakeMinutes - (10 * 60));
+
+            const goToBed = this.normalizeMinutes(awakeMinutes - this.minutesFromHours("08:15"));
+
+            return {
+                solar_first: `${String(Math.floor(solar_1 / 60)).padStart(2, '0')}:${String(solar_1 % 60).padStart(2, '0')}`,
+                solar_second: `${String(Math.floor(solar_2 / 60)).padStart(2, '0')}:${String(solar_2 % 60).padStart(2, '0')}`,
+                physical_first: `${String(Math.floor(physical_1 / 60)).padStart(2, '0')}:${String(physical_1 % 60).padStart(2, '0')}`,
+                physical_second: `${String(Math.floor(physical_2 / 60)).padStart(2, '0')}:${String(physical_2 % 60).padStart(2, '0')}`,
+                limitCaffeine: `${String(Math.floor(limitCaffeine / 60)).padStart(2, '0')}:${String(limitCaffeine % 60).padStart(2, '0')}`,
+                lastMeal_first: `${String(Math.floor(lastMeal_1 / 60)).padStart(2, '0')}:${String(lastMeal_1 % 60).padStart(2, '0')}`,
+                lastMeal_second: `${String(Math.floor(lastMeal_2 / 60)).padStart(2, '0')}:${String(lastMeal_2 % 60).padStart(2, '0')}`,
+                blueLight: `${String(Math.floor(blueLight / 60)).padStart(2, '0')}:${String(blueLight % 60).padStart(2, '0')}`,
+                goToBed: `${String(Math.floor(goToBed / 60)).padStart(2, '0')}:${String(goToBed % 60).padStart(2, '0')}`,
+            }
+        }
+
+        minutesFromHours(time){
+            const [h, m] = time.split(':').map(Number);
+            return h * 60 + m;
+        }
+
+        // Helper para normalizar minutos cuando cruzan medianoche
+        normalizeMinutes(minutes) {
+            if (minutes < 0) {
+                return 1440 + minutes; // Suma 24 horas
+            }
+            if (minutes >= 1440) {
+                return minutes - 1440; // Resta 24 horas
+            }
+            return minutes;
+        }
+    }
+</script>
+
+<style>
+    .circadian-table {
+        border-collapse: collapse;
+        margin: 0 auto;
+        text-align: left;
+        border: 1px solid #e0e0e0;
+    }
+
+    .circadian-table td {
+        padding: 10px 15px;
+        border: 1px solid #e0e0e0;
+    }
+</style>
