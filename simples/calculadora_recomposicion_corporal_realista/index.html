@@ -1,0 +1,346 @@
+<form class="form-container">
+    <p style="margin-bottom: 20px; text-align: center; font-style: italic;">¿Es posible ganar músculo y perder grasa al mismo tiempo? Sí, se llama recomposición corporal. Esta calculadora te dará una estimación realista de lo que puedes esperar en las próximas semanas, basada en tu nivel de experiencia y composición corporal actual.</p>
+
+    <div class="flex">
+        <div>
+            <label><span>Sexo</span></label>
+            <select id="gender" type="select" name="gender-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="male">Hombre</option>
+                <option value="female">Mujer</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Peso corporal actual (kg)</span></label>
+            <input id="weight" type="number" name="weight-input" min="30" max="200" step="0.1" placeholder="Ej: 75.5" required>
+            <span id="invalid_weight" style="display: none;"></span>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Porcentaje de grasa corporal actual (%)</span></label>
+            <input id="fat" type="number" name="fat-input" min="5" max="60" step="0.1" placeholder="Ej: 20.5" required>
+            <span id="invalid_fat" style="display: none;"></span>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Nivel de experiencia entrenando</span></label>
+            <select id="experience" type="select" name="experience-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="beginner">Principiante</option>
+                <option value="intermediate">Intermedio</option>
+                <option value="advanced">Avanzado</option>
+                <option value="expert">Experto</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>¿En cuánto tiempo quieres el cambio (semanas)?</span><sup>mínimo 1, máximo 16</sup></label>
+            <input id="weeks" type="number" name="weeks-input" min="1" max="16" step="1" placeholder="Ej: 12" required>
+            <span id="invalid_weeks" style="display: none;"></span>
+        </div>
+    </div>
+
+    <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+        Calcular
+    </button>
+</form>
+
+<p class="result" style="visibility: hidden;"></p>
+
+<script type="text/javascript">
+    (function() {
+
+        //Inputs
+        const GENDER = document.querySelector('#gender');
+        const WEIGHT = document.querySelector('#weight');
+        const FAT = document.querySelector('#fat');
+        const EXPERIENCE = document.querySelector('#experience');
+        const WEEKS = document.querySelector('#weeks');
+
+        //Caja con el resultado
+        const RESULT_BOX = document.querySelector('.result');
+
+        //Botón de calcular
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+
+        //Formulario
+        const FORM = document.querySelector('.form-container');
+
+        //Comprobar que ha introducido valor en los select
+        const SELECTS = document.querySelectorAll('select');
+        SELECTS.forEach(select => {
+            select.addEventListener('change', () => {
+                if (select.value !== "" && select.selectedIndex !== 0) {
+                    select.setCustomValidity('');
+                }
+            });
+        });
+
+        FORM.addEventListener('submit', (e)=>{
+            e.preventDefault();
+
+            // Validar selects
+            const selects = document.querySelectorAll('select');
+            let isValid = true;
+
+            selects.forEach(select => {
+                if (select.value === "" || select.selectedIndex === 0) {
+                    select.setCustomValidity('Por favor, selecciona una opción');
+                    select.reportValidity();
+                    isValid = false;
+                } else {
+                    select.setCustomValidity('');
+                }
+            });
+
+            if (!isValid) {
+                return;
+            }
+
+            // Validar inputs numéricos
+            if (!WEIGHT.value || WEIGHT.value < 30 || WEIGHT.value > 200) {
+                WEIGHT.setCustomValidity('Por favor, introduce un peso válido entre 30 y 200 kg');
+                WEIGHT.reportValidity();
+                return;
+            }
+
+            if (!FAT.value || FAT.value < 5 || FAT.value > 60) {
+                FAT.setCustomValidity('Por favor, introduce un porcentaje de grasa válido entre 5 y 60%');
+                FAT.reportValidity();
+                return;
+            }
+
+            if (!WEEKS.value || WEEKS.value < 1 || WEEKS.value > 16) {
+                WEEKS.setCustomValidity('Por favor, introduce un número de semanas válido entre 1 y 16');
+                WEEKS.reportValidity();
+                return;
+            }
+
+            //Cambiar texto botón
+            CALCULATE_BTN.innerHTML = 'Calculando...';
+
+            //Ocultar resultado anterior
+            RESULT_BOX.style.visibility = 'hidden';
+
+            const gender = GENDER.value;
+            const weight = parseFloat(WEIGHT.value);
+            const fat = parseFloat(FAT.value);
+            const experience = EXPERIENCE.value;
+            const weeks = parseInt(WEEKS.value);
+
+            const CALCULATOR = new BodyRecomposition(gender, weight, fat, experience, weeks);
+            const result = CALCULATOR.bodyRecomposition;
+
+            setTimeout(()=>{
+
+                //Scroll smooth hasta el resultado
+                RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+                //Volver a poner el texto en el boton
+                CALCULATE_BTN.innerHTML = 'Calcular';
+
+                //Mostrar el resultado
+                RESULT_BOX.style.visibility = 'visible';
+
+                RESULT_BOX.innerHTML = `
+                    <span>En <strong>${weeks} semanas</strong> puedes conseguir:</span><br><br>
+                    <span style="display: block; margin-bottom: 5px;"><strong>Perder</strong>, como máximo, entre <strong>${result.fatLoss.totalMin}</strong> y <strong>${result.fatLoss.totalMax} kg</strong> de grasa corporal (≈ ${result.fatLoss.weeklyMin}–${result.fatLoss.weeklyMax} kg/sem).</span>
+                    <span style="display: block; text-align: center; margin: 10px 0;">o</span>
+                    <span style="display: block;"><strong>Ganar</strong>, como máximo, entre <strong>${result.muscleGain.totalMin}</strong> y <strong>${result.muscleGain.totalMax} kg</strong> de masa muscular (≈ ${result.muscleGain.weeklyMin}–${result.muscleGain.weeklyMax} kg/sem).</span>
+                `;
+
+            }, 500)
+
+        })
+
+    })();
+
+    const BODY_RECOMPOSITION_DATA = {
+        male: [
+            {
+                fatRange: { min: 25.1, max: 100 },
+                label: ">25%",
+                fatLossWeekly: { min: 1, max: 1.5 },
+                muscleGainWeekly: {
+                    beginner: { min: 0.28, max: 0.4 },
+                    intermediate: { min: 0.21, max: 0.28 },
+                    advanced: { min: 0.12, max: 0.21 },
+                    expert: { min: 0.07, max: 0.15 }
+                }
+            },
+            {
+                fatRange: { min: 20.1, max: 25 },
+                label: "20.1-25%",
+                fatLossWeekly: { min: 0.8, max: 1.2 },
+                muscleGainWeekly: {
+                    beginner: { min: 0.27, max: 0.39 },
+                    intermediate: { min: 0.2, max: 0.27 },
+                    advanced: { min: 0.11, max: 0.2 },
+                    expert: { min: 0.07, max: 0.14 }
+                }
+            },
+            {
+                fatRange: { min: 15.1, max: 20 },
+                label: "15.1-20%",
+                fatLossWeekly: { min: 0.5, max: 1.0 },
+                muscleGainWeekly: {
+                    beginner: { min: 0.26, max: 0.38 },
+                    intermediate: { min: 0.19, max: 0.26 },
+                    advanced: { min: 0.1, max: 0.19 },
+                    expert: { min: 0.06, max: 0.13 }
+                }
+            },
+            {
+                fatRange: { min: 10, max: 15 },
+                label: "10-15%",
+                fatLossWeekly: { min: 0.3, max: 0.8 },
+                muscleGainWeekly: {
+                    beginner: { min: 0.25, max: 0.37 },
+                    intermediate: { min: 0.18, max: 0.25 },
+                    advanced: { min: 0.09, max: 0.18 },
+                    expert: { min: 0.05, max: 0.12 }
+                }
+            },
+            {
+                fatRange: { min: 0, max: 9.9 },
+                label: "<10%",
+                fatLossWeekly: { min: 0.2, max: 0.5 },
+                muscleGainWeekly: {
+                    beginner: { min: 0.24, max: 0.36 },
+                    intermediate: { min: 0.17, max: 0.24 },
+                    advanced: { min: 0.07, max: 0.17 },
+                    expert: { min: 0.04, max: 0.11 }
+                }
+            }
+        ],
+        female: [
+            {
+                fatRange: { min: 33.1, max: 100 },
+                label: ">33%",
+                fatLossWeekly: { min: 1, max: 1.5 },
+                muscleGainWeekly: {
+                    beginner: { min: 0.28, max: 0.4 },
+                    intermediate: { min: 0.21, max: 0.28 },
+                    advanced: { min: 0.12, max: 0.21 },
+                    expert: { min: 0.07, max: 0.15 }
+                }
+            },
+            {
+                fatRange: { min: 28.1, max: 33 },
+                label: "28.1-33%",
+                fatLossWeekly: { min: 0.8, max: 1.2 },
+                muscleGainWeekly: {
+                    beginner: { min: 0.27, max: 0.39 },
+                    intermediate: { min: 0.2, max: 0.27 },
+                    advanced: { min: 0.11, max: 0.2 },
+                    expert: { min: 0.07, max: 0.14 }
+                }
+            },
+            {
+                fatRange: { min: 23.1, max: 28 },
+                label: "23.1-28%",
+                fatLossWeekly: { min: 0.5, max: 1.0 },
+                muscleGainWeekly: {
+                    beginner: { min: 0.26, max: 0.38 },
+                    intermediate: { min: 0.19, max: 0.26 },
+                    advanced: { min: 0.1, max: 0.19 },
+                    expert: { min: 0.06, max: 0.13 }
+                }
+            },
+            {
+                fatRange: { min: 18.1, max: 23 },
+                label: "18.1-23%",
+                fatLossWeekly: { min: 0.3, max: 0.8 },
+                muscleGainWeekly: {
+                    beginner: { min: 0.25, max: 0.37 },
+                    intermediate: { min: 0.18, max: 0.25 },
+                    advanced: { min: 0.09, max: 0.18 },
+                    expert: { min: 0.05, max: 0.12 }
+                }
+            },
+            {
+                fatRange: { min: 0, max: 18 },
+                label: "<18%",
+                fatLossWeekly: { min: 0.2, max: 0.5 },
+                muscleGainWeekly: {
+                    beginner: { min: 0.24, max: 0.36 },
+                    intermediate: { min: 0.17, max: 0.24 },
+                    advanced: { min: 0.07, max: 0.17 },
+                    expert: { min: 0.04, max: 0.11 }
+                }
+            }
+        ]
+    };
+
+    class BodyRecomposition {
+        _gender;
+        _weight;
+        _fat;
+        _experience;
+        _weeks;
+
+        constructor(gender, weight, fat, experience, weeks) {
+            this._gender = gender;
+            this._weight = weight;
+            this._fat = fat;
+            this._experience = experience;
+            this._weeks = weeks;
+        }
+
+        getRate(gender, fatPercentage, experienceLevel) {
+            const data = BODY_RECOMPOSITION_DATA[gender];
+            const range = data.find(r => fatPercentage >= r.fatRange.min && fatPercentage <= r.fatRange.max);
+
+            return {
+                fatLoss: range.fatLossWeekly,
+                muscleGain: range.muscleGainWeekly[experienceLevel]
+            };
+        }
+
+        get bodyRecomposition() {
+            const {fatLoss, muscleGain} = this.getRate(this._gender, this._fat, this._experience);
+
+            // Convertir porcentajes a decimales (dividir entre 100)
+            const minFatLossRate = fatLoss.min / 100;
+            const maxFatLossRate = fatLoss.max / 100;
+            const minMuscleGainRate = muscleGain.min / 100;
+            const maxMuscleGainRate = muscleGain.max / 100;
+
+            // Pérdida de grasa
+            const m = (this._weeks * minFatLossRate * this._weight).toFixed(2);
+            const n = (this._weeks * maxFatLossRate * this._weight).toFixed(2);
+            const p = (minFatLossRate * this._weight).toFixed(2);
+            const q = (maxFatLossRate * this._weight).toFixed(2);
+
+            // Ganancia muscular
+            const a = (this._weeks * minMuscleGainRate * this._weight).toFixed(2);
+            const b = (this._weeks * maxMuscleGainRate * this._weight).toFixed(2);
+            const c = (minMuscleGainRate * this._weight).toFixed(2);
+            const d = (maxMuscleGainRate * this._weight).toFixed(2);
+
+            return {
+                fatLoss: {
+                    totalMin: parseFloat(m),
+                    totalMax: parseFloat(n),
+                    weeklyMin: parseFloat(p),
+                    weeklyMax: parseFloat(q)
+                },
+                muscleGain: {
+                    totalMin: parseFloat(a),
+                    totalMax: parseFloat(b),
+                    weeklyMin: parseFloat(c),
+                    weeklyMax: parseFloat(d)
+                }
+            };
+        }
+    }
+</script>
