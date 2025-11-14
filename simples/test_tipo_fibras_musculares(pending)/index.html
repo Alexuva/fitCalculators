@@ -1,0 +1,122 @@
+<form class="form-container">
+    <p style="margin-bottom: 20px; text-align: center; font-style: italic;">Esta calculadora te ayudará a estimar si tus músculos del tren inferior y superior tienen un predominio de fibras de contracción rápida (tipo II) o de contracción lenta (tipo I). El test se basa en tu capacidad de realizar repeticiones con el 80% de tu 1RM en sentadilla y press de banca, un método validado por la ciencia reciente, aunque con limitaciones.</p>
+    <p style="margin-bottom: 20px; text-align: center; font-weight: bold; font-size: 0.9em;">⚠️ Antes de empezar, haz un test de máximas repeticiones al fallo con el 80% de tu 1RM en sentadilla y en press de banca.</p>
+
+    <div class="flex">
+        <div>
+            <label><span>Repeticiones hasta el fallo con el 80% 1RM en sentadilla</span><sup>entre 1 y 20</sup></label>
+            <input id="squatReps" type="number" name="squatReps-input" min="1" max="20" step="1" placeholder="Ej: 10" required>
+            <span id="invalid_squatReps" style="display: none;"></span>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Repeticiones hasta el fallo con el 80% 1RM en press de banca</span><sup>entre 1 y 20</sup></label>
+            <input id="benchPressReps" type="number" name="benchPressReps-input" min="1" max="20" step="1" placeholder="Ej: 10" required>
+            <span id="invalid_benchPressReps" style="display: none;"></span>
+        </div>
+    </div>
+
+    <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+        Ver resultados
+    </button>
+</form>
+
+<p class="result" style="visibility: hidden;"></p>
+
+<script type="text/javascript">
+    (function() {
+
+        //Inputs
+        const SQUAT_REPS = document.querySelector('#squatReps');
+        const BENCH_PRESS_REPS = document.querySelector('#benchPressReps');
+
+        //Caja con el resultado
+        const RESULT_BOX = document.querySelector('.result');
+
+        //Botón de calcular
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+
+        //Formulario
+        const FORM = document.querySelector('.form-container');
+
+        FORM.addEventListener('submit', (e)=>{
+            e.preventDefault();
+
+            // Validar inputs numéricos
+            if (!SQUAT_REPS.value || SQUAT_REPS.value < 1 || SQUAT_REPS.value > 20) {
+                SQUAT_REPS.setCustomValidity('Por favor, introduce un número de repeticiones válido entre 1 y 20');
+                SQUAT_REPS.reportValidity();
+                return;
+            }
+
+            if (!BENCH_PRESS_REPS.value || BENCH_PRESS_REPS.value < 1 || BENCH_PRESS_REPS.value > 20) {
+                BENCH_PRESS_REPS.setCustomValidity('Por favor, introduce un número de repeticiones válido entre 1 y 20');
+                BENCH_PRESS_REPS.reportValidity();
+                return;
+            }
+
+            //Cambiar texto botón
+            CALCULATE_BTN.innerHTML = 'Calculando...';
+
+            //Ocultar resultado anterior
+            RESULT_BOX.style.visibility = 'hidden';
+
+            const squatReps = parseInt(SQUAT_REPS.value);
+            const benchPressReps = parseInt(BENCH_PRESS_REPS.value);
+
+            const CALCULATOR = new FiberTypeCalculator(squatReps, benchPressReps);
+            const result = CALCULATOR.fiberTypes;
+
+            setTimeout(()=>{
+
+                //Scroll smooth hasta el resultado
+                RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+                //Volver a poner el texto en el boton
+                CALCULATE_BTN.innerHTML = 'Ver resultados';
+
+                //Mostrar el resultado
+                RESULT_BOX.style.visibility = 'visible';
+
+                RESULT_BOX.innerHTML = `
+                    <span><strong>Tren inferior:</strong> ${result.lowerBody}</span><br><br>
+                    <span><strong>Tren superior:</strong> ${result.upperBody}</span>
+                `;
+
+            }, 500)
+
+        })
+
+    })();
+
+    class FiberTypeCalculator {
+        _squatReps;
+        _benchPressReps;
+
+        constructor(squatReps, benchPressReps) {
+            this._squatReps = squatReps;
+            this._benchPressReps = benchPressReps;
+        }
+
+        classifyFiberType(reps) {
+            if (reps < 8) {
+                return 'más predominancia de fibras rápidas tipo II.';
+            } else if (reps >= 8 && reps <= 12) {
+                return 'sin predominancia clara de uno u otro tipo de fibras.';
+            } else {
+                return 'más predominancia de fibras lentas tipo I.';
+            }
+        }
+
+        get fiberTypes() {
+            return {
+                lowerBody: this.classifyFiberType(this._squatReps),
+                upperBody: this.classifyFiberType(this._benchPressReps),
+                squatReps: this._squatReps,
+                benchPressReps: this._benchPressReps
+            };
+        }
+    }
+</script>
