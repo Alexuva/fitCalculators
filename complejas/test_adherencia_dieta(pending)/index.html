@@ -1,0 +1,320 @@
+<h1>Test de Adherencia a la Dieta</h1>
+
+<form class="form-container">
+    <p style="margin-bottom: 20px; text-align: center; font-style: italic;">
+        Responde con sinceridad a estas preguntas para evaluar tu nivel de adherencia a tu plan alimentario.
+    </p>
+
+    <div class="flex">
+        <div>
+            <label><span>1. ¿Con qué frecuencia sigues tu plan de alimentación sin desviarte?</span></label>
+            <select id="q1" type="select" name="q1-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="4">Siempre (7 días a la semana)</option>
+                <option value="3">Casi siempre (5-6 días a la semana)</option>
+                <option value="2">A menudo (3-4 días a la semana)</option>
+                <option value="1">A veces (1-2 días a la semana)</option>
+                <option value="0">Rara vez o nunca</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>2. Cuando tienes un "día libre" o cheat meal, ¿cómo suele ser?</span></label>
+            <select id="q2" type="select" name="q2-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="4">Controlado: una comida planificada sin excesos</option>
+                <option value="3">Moderado: como más pero sin exagerar</option>
+                <option value="2">Descontrolado: como todo lo que se me antoja</option>
+                <option value="1">Muy descontrolado: como en exceso y me siento mal después</option>
+                <option value="0">No tengo días libres planificados, como mal constantemente</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>3. ¿Planificas tus comidas con antelación?</span></label>
+            <select id="q3" type="select" name="q3-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="4">Sí, siempre planico toda la semana</option>
+                <option value="3">Casi siempre, planico varios días</option>
+                <option value="2">A veces, planico con 1 día de antelación</option>
+                <option value="1">Rara vez, decido sobre la marcha</option>
+                <option value="0">Nunca planico, como lo primero que encuentro</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>4. ¿Cómo gestionas las tentaciones (dulces, snacks, comida rápida)?</span></label>
+            <select id="q4" type="select" name="q4-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="4">Las resisto fácilmente o no las tengo cerca</option>
+                <option value="3">Las resisto la mayoría de las veces</option>
+                <option value="2">Cedo ocasionalmente</option>
+                <option value="1">Cedo frecuentemente</option>
+                <option value="0">No puedo resistirme</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>5. Cuando comes fuera de casa, ¿cómo eliges?</span></label>
+            <select id="q5" type="select" name="q5-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="4">Siempre busco opciones saludables alineadas con mi plan</option>
+                <option value="3">Generalmente elijo bien, pero con alguna excepción</option>
+                <option value="2">Depende del sitio, a veces como bien, a veces mal</option>
+                <option value="1">Suelo elegir opciones poco saludables</option>
+                <option value="0">Siempre como mal cuando salgo</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>6. ¿Cómo manejas las emociones (estrés, ansiedad, tristeza) en relación con la comida?</span></label>
+            <select id="q6" type="select" name="q6-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="4">No como emocionalmente, gestiono mis emociones de otra forma</option>
+                <option value="3">Rara vez como por emociones</option>
+                <option value="2">A veces recurro a la comida cuando estoy mal</option>
+                <option value="1">Frecuentemente como por emociones</option>
+                <option value="0">Siempre recurro a la comida para gestionar emociones</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>7. ¿Cómo controlas las porciones?</span></label>
+            <select id="q7" type="select" name="q7-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="4">Siempre controlo cantidades (peso, mido o tengo muy claro)</option>
+                <option value="3">Casi siempre controlo, aunque a veces me paso</option>
+                <option value="2">A veces controlo, otras veces como hasta saciarme</option>
+                <option value="1">Rara vez controlo, como lo que me apetece</option>
+                <option value="0">Nunca controlo, como hasta estar muy lleno</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>8. ¿Cómo te sientes con tu dieta actual?</span></label>
+            <select id="q8" type="select" name="q8-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="4">Muy satisfecho, es sostenible y me siento bien</option>
+                <option value="3">Satisfecho, aunque a veces me cuesta</option>
+                <option value="2">Neutral, no me entusiasma pero la llevo</option>
+                <option value="1">Insatisfecho, me cuesta mucho seguirla</option>
+                <option value="0">Muy insatisfecho, no puedo mantenerla</option>
+            </select>
+        </div>
+    </div>
+
+    <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+        Ver mi nivel de adherencia
+    </button>
+</form>
+
+<p class="result" style="visibility: hidden;"></p>
+
+<script type="text/javascript">
+    (function() {
+
+        class DietAdherenceCalculator {
+            _q1;
+            _q2;
+            _q3;
+            _q4;
+            _q5;
+            _q6;
+            _q7;
+            _q8;
+
+            constructor(q1, q2, q3, q4, q5, q6, q7, q8) {
+                this._q1 = q1;
+                this._q2 = q2;
+                this._q3 = q3;
+                this._q4 = q4;
+                this._q5 = q5;
+                this._q6 = q6;
+                this._q7 = q7;
+                this._q8 = q8;
+            }
+
+            get totalScore() {
+                return this._q1 + this._q2 + this._q3 + this._q4 + this._q5 + this._q6 + this._q7 + this._q8;
+            }
+
+            get adherencePercentage() {
+                const maxScore = 32;
+                return Math.round((this.totalScore / maxScore) * 100);
+            }
+
+            get category() {
+                const percentage = this.adherencePercentage;
+
+                if (percentage >= 85) {
+                    return {
+                        name: 'Adherencia Excelente',
+                        description: 'Enhorabuena. Tienes una adherencia excelente a tu dieta. Sigues tu plan de forma consistente y sostenible.',
+                        color: '#4CAF50',
+                        recommendations: [
+                            'Mantén lo que estás haciendo, funciona muy bien',
+                            'Comparte tus estrategias con otros',
+                            'Sigue monitorizando para mantener este nivel'
+                        ]
+                    };
+                } else if (percentage >= 70) {
+                    return {
+                        name: 'Adherencia Buena',
+                        description: 'Bien. Tu adherencia es buena. Sigues tu plan la mayor parte del tiempo con algunas desviaciones ocasionales.',
+                        color: '#8BC34A',
+                        recommendations: [
+                            'Identifica los momentos donde te cuesta más adherirte',
+                            'Trabaja en planificación para situaciones difíciles',
+                            'Considera ajustar tu plan si es demasiado restrictivo'
+                        ]
+                    };
+                } else if (percentage >= 50) {
+                    return {
+                        name: 'Adherencia Moderada',
+                        description: 'Regular. Tu adherencia es moderada. Te cuesta mantener la consistencia en tu plan alimentario.',
+                        color: '#FFC107',
+                        recommendations: [
+                            'Revisa si tu dieta es demasiado restrictiva o poco realista',
+                            'Mejora la planificación de comidas',
+                            'Trabaja en gestionar las tentaciones y emociones',
+                            'Considera buscar apoyo de un nutricionista'
+                        ]
+                    };
+                } else if (percentage >= 30) {
+                    return {
+                        name: 'Adherencia Baja',
+                        description: 'Preocupante. Tu adherencia es baja. Te resulta muy difícil mantener tu plan alimentario.',
+                        color: '#FF9800',
+                        recommendations: [
+                            'Tu dieta actual probablemente no es sostenible',
+                            'Necesitas un plan más flexible y realista',
+                            'Trabaja en los factores emocionales de la alimentación',
+                            'Busca apoyo profesional (nutricionista o psicólogo)',
+                            'Empieza con pequeños cambios graduales'
+                        ]
+                    };
+                } else {
+                    return {
+                        name: 'Adherencia Muy Baja',
+                        description: 'Alerta. Tu adherencia es muy baja. No estás siguiendo un plan estructurado.',
+                        color: '#F44336',
+                        recommendations: [
+                            'Necesitas replantear completamente tu enfoque',
+                            'No intentes cambios drásticos, ve paso a paso',
+                            'Busca ayuda profesional urgente',
+                            'Trabaja primero en la relación emocional con la comida',
+                            'Establece hábitos simples antes de una dieta estricta'
+                        ]
+                    };
+                }
+            }
+
+            get weakestAreas() {
+                const questions = [
+                    { id: 1, score: this._q1, area: 'Consistencia diaria' },
+                    { id: 2, score: this._q2, area: 'Control en días libres' },
+                    { id: 3, score: this._q3, area: 'Planificación de comidas' },
+                    { id: 4, score: this._q4, area: 'Gestión de tentaciones' },
+                    { id: 5, score: this._q5, area: 'Elecciones fuera de casa' },
+                    { id: 6, score: this._q6, area: 'Alimentación emocional' },
+                    { id: 7, score: this._q7, area: 'Control de porciones' },
+                    { id: 8, score: this._q8, area: 'Satisfacción con la dieta' }
+                ];
+
+                return questions
+                    .sort((a, b) => a.score - b.score)
+                    .slice(0, 3);
+            }
+        }
+
+        const FORM = document.querySelector('.form-container');
+        const RESULT_BOX = document.querySelector('.result');
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+
+        // Comprobar que ha introducido valor en los select
+        const SELECTS = document.querySelectorAll('select');
+        SELECTS.forEach(select => {
+            select.addEventListener('change', () => {
+                if (select.value !== "" && select.selectedIndex !== 0) {
+                    select.setCustomValidity('');
+                }
+            });
+        });
+
+        FORM.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const selects = document.querySelectorAll('select');
+            let isValid = true;
+
+            selects.forEach(select => {
+                if (select.value === "" || select.selectedIndex === 0) {
+                    select.setCustomValidity('Por favor, selecciona una opción');
+                    select.reportValidity();
+                    isValid = false;
+                } else {
+                    select.setCustomValidity('');
+                }
+            });
+
+            if (!isValid) {
+                return;
+            }
+
+            CALCULATE_BTN.innerHTML = 'Calculando...';
+            RESULT_BOX.style.visibility = 'hidden';
+
+            const q1 = parseInt(document.getElementById('q1').value);
+            const q2 = parseInt(document.getElementById('q2').value);
+            const q3 = parseInt(document.getElementById('q3').value);
+            const q4 = parseInt(document.getElementById('q4').value);
+            const q5 = parseInt(document.getElementById('q5').value);
+            const q6 = parseInt(document.getElementById('q6').value);
+            const q7 = parseInt(document.getElementById('q7').value);
+            const q8 = parseInt(document.getElementById('q8').value);
+
+            const calculator = new DietAdherenceCalculator(q1, q2, q3, q4, q5, q6, q7, q8);
+            const percentage = calculator.adherencePercentage;
+            const category = calculator.category;
+            const weakAreas = calculator.weakestAreas;
+
+            setTimeout(() => {
+                RESULT_BOX.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                CALCULATE_BTN.innerHTML = 'Ver mi nivel de adherencia';
+                RESULT_BOX.style.visibility = 'visible';
+
+                let html = `<span>Tu nivel de adherencia: <strong>${percentage}%</strong></span><br><br>`;
+                html += `<span style="color: ${category.color};"><strong>${category.name}</strong></span><br>`;
+                html += `<span>${category.description}</span><br><br>`;
+                html += `<span style="font-weight: bold;">Recomendaciones:</span><br>`;
+                category.recommendations.forEach(rec => {
+                    html += `<span>• ${rec}</span><br>`;
+                });
+
+                html += `<br><span style="font-weight: bold;">Áreas a mejorar:</span><br>`;
+                weakAreas.forEach(area => {
+                    html += `<span>• ${area.area}</span><br>`;
+                });
+
+                html += `<br><span style="font-style: italic; font-size: 0.9em;">Nota: Una buena adherencia es más importante que una dieta "perfecta". Busca un plan sostenible a largo plazo.</span>`;
+
+                RESULT_BOX.innerHTML = html;
+            }, 500);
+        });
+
+    })();
+</script>

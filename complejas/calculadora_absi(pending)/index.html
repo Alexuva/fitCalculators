@@ -1,0 +1,290 @@
+<h1>Calculadora ABSI (A Body Shape Index)</h1>
+
+<form class="form-container">
+    <p style="margin-bottom: 20px; text-align: center; font-style: italic;">
+        El ABSI es un indicador de riesgo de mortalidad basado en la forma corporal. Considera cintura, altura y peso.
+    </p>
+
+    <div class="flex">
+        <div>
+            <label><span>Sexo</span></label>
+            <select id="sexo" type="select" name="sexo-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="hombre">Hombre</option>
+                <option value="mujer">Mujer</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Edad (años)</span></label>
+            <input type="number" id="edad" min="18" max="100" step="1" placeholder="0" required>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Peso (kg)</span></label>
+            <input type="number" id="peso" min="30" max="300" step="0.1" placeholder="0" required>
+        </div>
+        <div>
+            <label><span>Altura (cm)</span></label>
+            <input type="number" id="altura" min="100" max="250" step="0.1" placeholder="0" required>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Perímetro de cintura (cm)</span></label>
+            <input type="number" id="cintura" min="40" max="200" step="0.1" placeholder="0" required>
+            <span style="font-size: 0.85em; color: #666; display: block; margin-top: 5px;">
+                Mide a la altura del ombligo, en espiración normal
+            </span>
+        </div>
+    </div>
+
+    <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+        Calcular ABSI
+    </button>
+</form>
+
+<p class="result" style="visibility: hidden;"></p>
+
+<script type="text/javascript">
+    (function() {
+
+        class ABSICalculator {
+            _sex;
+            _age;
+            _weight;
+            _height;
+            _waist;
+
+            constructor(sex, age, weight, height, waist) {
+                this._sex = sex;
+                this._age = age;
+                this._weight = weight;
+                this._height = height / 100; // convertir a metros
+                this._waist = waist / 100; // convertir a metros
+            }
+
+            get bmi() {
+                return this._weight / (this._height * this._height);
+            }
+
+            get absi() {
+                // Fórmula ABSI: WC / (BMI^(2/3) * height^(1/2))
+                // WC = waist circumference
+                const absi = this._waist / (Math.pow(this.bmi, 2/3) * Math.pow(this._height, 1/2));
+                return Math.round(absi * 100000) / 100000;
+            }
+
+            get absiZ() {
+                // ABSI z-score basado en edad y sexo
+                // Valores aproximados de referencia poblacional
+                let meanABSI, sdABSI;
+
+                if (this._sex === 'hombre') {
+                    if (this._age < 30) {
+                        meanABSI = 0.0748;
+                        sdABSI = 0.0052;
+                    } else if (this._age < 40) {
+                        meanABSI = 0.0763;
+                        sdABSI = 0.0053;
+                    } else if (this._age < 50) {
+                        meanABSI = 0.0776;
+                        sdABSI = 0.0054;
+                    } else if (this._age < 60) {
+                        meanABSI = 0.0787;
+                        sdABSI = 0.0055;
+                    } else if (this._age < 70) {
+                        meanABSI = 0.0795;
+                        sdABSI = 0.0056;
+                    } else {
+                        meanABSI = 0.0800;
+                        sdABSI = 0.0057;
+                    }
+                } else {
+                    if (this._age < 30) {
+                        meanABSI = 0.0731;
+                        sdABSI = 0.0054;
+                    } else if (this._age < 40) {
+                        meanABSI = 0.0745;
+                        sdABSI = 0.0056;
+                    } else if (this._age < 50) {
+                        meanABSI = 0.0761;
+                        sdABSI = 0.0058;
+                    } else if (this._age < 60) {
+                        meanABSI = 0.0775;
+                        sdABSI = 0.0060;
+                    } else if (this._age < 70) {
+                        meanABSI = 0.0786;
+                        sdABSI = 0.0062;
+                    } else {
+                        meanABSI = 0.0793;
+                        sdABSI = 0.0063;
+                    }
+                }
+
+                const zScore = (this.absi - meanABSI) / sdABSI;
+                return Math.round(zScore * 100) / 100;
+            }
+
+            get category() {
+                const z = this.absiZ;
+
+                if (z < -0.868) {
+                    return {
+                        name: 'Riesgo muy bajo',
+                        description: 'Excelente. Tu forma corporal indica un riesgo muy bajo de mortalidad. Forma corporal muy favorable.',
+                        color: '#4CAF50',
+                        riskLevel: 'Muy bajo (20% inferior)',
+                        recommendation: 'Mantén tus hábitos saludables actuales'
+                    };
+                } else if (z < -0.272) {
+                    return {
+                        name: 'Riesgo bajo',
+                        description: 'Muy bien. Tu forma corporal indica un riesgo bajo. Mejor que la media poblacional.',
+                        color: '#8BC34A',
+                        riskLevel: 'Bajo (20-40% inferior)',
+                        recommendation: 'Continúa con tu estilo de vida saludable'
+                    };
+                } else if (z < 0.229) {
+                    return {
+                        name: 'Riesgo promedio',
+                        description: 'Normal. Tu forma corporal está dentro del promedio poblacional.',
+                        color: '#FFC107',
+                        riskLevel: 'Promedio (40-60%)',
+                        recommendation: 'Considera mejorar tu composición corporal y reducir grasa abdominal'
+                    };
+                } else if (z < 0.798) {
+                    return {
+                        name: 'Riesgo moderado',
+                        description: 'Atención. Tu forma corporal indica un riesgo moderadamente elevado.',
+                        color: '#FF9800',
+                        riskLevel: 'Moderado (60-80%)',
+                        recommendation: 'Trabaja en reducir grasa abdominal mediante ejercicio y dieta'
+                    };
+                } else {
+                    return {
+                        name: 'Riesgo alto',
+                        description: 'Alerta. Tu forma corporal indica un riesgo elevado de mortalidad. La grasa abdominal es excesiva.',
+                        color: '#F44336',
+                        riskLevel: 'Alto (20% superior)',
+                        recommendation: 'Consulta con un médico. Necesitas reducir urgentemente la grasa abdominal'
+                    };
+                }
+            }
+
+            get waistToHeight() {
+                return this._waist / this._height;
+            }
+
+            get interpretation() {
+                const whr = this.waistToHeight;
+
+                if (whr < 0.4) {
+                    return 'Perímetro de cintura muy bajo (puede ser insuficiente)';
+                } else if (whr < 0.5) {
+                    return 'Perímetro de cintura saludable';
+                } else if (whr < 0.6) {
+                    return 'Perímetro de cintura aumentado (precaución)';
+                } else {
+                    return 'Perímetro de cintura excesivo (obesidad abdominal)';
+                }
+            }
+        }
+
+        const FORM = document.querySelector('.form-container');
+        const RESULT_BOX = document.querySelector('.result');
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+        const SELECTS = document.querySelectorAll('select');
+
+        SELECTS.forEach(select => {
+            select.addEventListener('change', () => {
+                if (select.value !== "" && select.selectedIndex !== 0) {
+                    select.setCustomValidity('');
+                }
+            });
+        });
+
+        FORM.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            let isValid = true;
+            SELECTS.forEach(select => {
+                if (select.value === "" || select.selectedIndex === 0) {
+                    select.setCustomValidity('Por favor, selecciona una opción');
+                    select.reportValidity();
+                    isValid = false;
+                } else {
+                    select.setCustomValidity('');
+                }
+            });
+
+            const sex = document.getElementById('sexo').value;
+            const age = parseInt(document.getElementById('edad').value);
+            const weight = parseFloat(document.getElementById('peso').value);
+            const height = parseFloat(document.getElementById('altura').value);
+            const waist = parseFloat(document.getElementById('cintura').value);
+
+            if (!age || age < 18 || age > 100) {
+                alert('Por favor, introduce una edad válida entre 18 y 100 años.');
+                return;
+            }
+
+            if (!weight || weight < 30 || weight > 300) {
+                alert('Por favor, introduce un peso válido.');
+                return;
+            }
+
+            if (!height || height < 100 || height > 250) {
+                alert('Por favor, introduce una altura válida.');
+                return;
+            }
+
+            if (!waist || waist < 40 || waist > 200) {
+                alert('Por favor, introduce un perímetro de cintura válido.');
+                return;
+            }
+
+            if (!isValid) return;
+
+            CALCULATE_BTN.innerHTML = 'Calculando...';
+            RESULT_BOX.style.visibility = 'hidden';
+
+            const calculator = new ABSICalculator(sex, age, weight, height, waist);
+            const absi = calculator.absi;
+            const absiZ = calculator.absiZ;
+            const bmi = calculator.bmi;
+            const category = calculator.category;
+            const waistToHeight = calculator.waistToHeight;
+            const interpretation = calculator.interpretation;
+
+            setTimeout(() => {
+                RESULT_BOX.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                CALCULATE_BTN.innerHTML = 'Calcular ABSI';
+                RESULT_BOX.style.visibility = 'visible';
+
+                let html = `<span>Tu ABSI: <strong>${absi.toFixed(5)}</strong></span><br>`;
+                html += `<span>ABSI z-score: <strong>${absiZ}</strong></span><br>`;
+                html += `<span>IMC: <strong>${bmi.toFixed(1)}</strong></span><br>`;
+                html += `<span>Ratio cintura/altura: <strong>${waistToHeight.toFixed(2)}</strong></span><br><br>`;
+
+                html += `<span style="color: ${category.color};"><strong>${category.name}</strong></span><br>`;
+                html += `<span>${category.description}</span><br><br>`;
+                html += `<span>Nivel de riesgo: <strong>${category.riskLevel}</strong></span><br>`;
+                html += `<span>${interpretation}</span><br><br>`;
+
+                html += `<span style="font-weight: bold;">Recomendación:</span><br>`;
+                html += `<span>${category.recommendation}</span><br><br>`;
+
+                html += `<span style="font-style: italic; font-size: 0.9em;">Nota: El ABSI es un predictor de riesgo de mortalidad independiente del IMC. Valores elevados indican exceso de grasa abdominal, que aumenta el riesgo cardiovascular y metabólico.</span>`;
+
+                RESULT_BOX.innerHTML = html;
+            }, 500);
+        });
+
+    })();
+</script>

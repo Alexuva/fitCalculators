@@ -1,0 +1,325 @@
+<h1>Test de Relación Emocional con la Comida</h1>
+
+<form class="form-container">
+    <p style="margin-bottom: 20px; text-align: center; font-style: italic;">
+        Responde con sinceridad para evaluar tu relación emocional con la comida y detectar posibles patrones poco saludables.
+    </p>
+
+    <div class="flex">
+        <div>
+            <label><span>1. ¿Con qué frecuencia piensas en comida durante el día?</span></label>
+            <select id="q1" type="select" name="q1-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Solo cuando tengo hambre o toca comer</option>
+                <option value="1">Ocasionalmente, pero no me obsesiona</option>
+                <option value="2">Bastante a menudo, incluso sin hambre</option>
+                <option value="3">Constantemente, es algo que domina mis pensamientos</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>2. ¿Cómo te sientes después de comer algo "prohibido" o fuera de tu dieta?</span></label>
+            <select id="q2" type="select" name="q2-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Normal, sin culpa. Disfruto y sigo adelante</option>
+                <option value="1">Un poco culpable, pero lo supero rápido</option>
+                <option value="2">Muy culpable, me castigo mentalmente</option>
+                <option value="3">Extremadamente culpable, arruina mi día y me siento fatal</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>3. ¿Usas la comida como recompensa o consuelo?</span></label>
+            <select id="q3" type="select" name="q3-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Rara vez o nunca</option>
+                <option value="1">Ocasionalmente, en situaciones especiales</option>
+                <option value="2">Frecuentemente, es mi forma de sentirme mejor</option>
+                <option value="3">Siempre, no sé gestionar emociones sin comida</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>4. ¿Has tenido episodios de atracones (comer mucho en poco tiempo, sin control)?</span></label>
+            <select id="q4" type="select" name="q4-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Nunca</option>
+                <option value="1">Rara vez (1-2 veces al año)</option>
+                <option value="2">Ocasionalmente (1 vez al mes o menos)</option>
+                <option value="3">Frecuentemente (varias veces al mes o semanalmente)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>5. ¿Comes a escondidas o te avergüenza que otros vean lo que comes?</span></label>
+            <select id="q5" type="select" name="q5-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Nunca, como abiertamente</option>
+                <option value="1">Rara vez, solo en alguna ocasión</option>
+                <option value="2">A veces, me da vergüenza</option>
+                <option value="3">Frecuentemente, escondo lo que como</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>6. ¿Clasificas los alimentos como "buenos" o "malos" de forma rígida?</span></label>
+            <select id="q6" type="select" name="q6-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">No, todos los alimentos pueden tener un lugar</option>
+                <option value="1">Un poco, pero soy flexible</option>
+                <option value="2">Bastante, divido claramente entre buenos y malos</option>
+                <option value="3">Totalmente, tengo listas mentales muy estrictas</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>7. ¿Cómo afecta tu peso o imagen corporal a tu estado de ánimo?</span></label>
+            <select id="q7" type="select" name="q7-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Poco o nada, mi autoestima no depende de eso</option>
+                <option value="1">Un poco, a veces me afecta</option>
+                <option value="2">Bastante, condiciona mi día a día</option>
+                <option value="3">Totalmente, define mi valía personal</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>8. ¿Has usado purgas, laxantes, ejercicio excesivo o vómitos para compensar?</span></label>
+            <select id="q8" type="select" name="q8-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Nunca</option>
+                <option value="1">Lo he pensado, pero nunca lo he hecho</option>
+                <option value="2">Lo he hecho alguna vez</option>
+                <option value="3">Lo hago con cierta frecuencia</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>9. ¿Tienes reglas alimentarias muy estrictas que te generan ansiedad si las rompes?</span></label>
+            <select id="q9" type="select" name="q9-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">No, soy flexible</option>
+                <option value="1">Tengo algunas pautas, pero no me estresan</option>
+                <option value="2">Sí, tengo reglas estrictas que me causan ansiedad</option>
+                <option value="3">Sí, son extremadamente rígidas y me controlan</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>10. ¿Evitas situaciones sociales (comidas, eventos) por miedo a comer?</span></label>
+            <select id="q10" type="select" name="q10-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Nunca, disfruto de eventos sociales</option>
+                <option value="1">Rara vez, solo en casos excepcionales</option>
+                <option value="2">A menudo, me genera ansiedad</option>
+                <option value="3">Casi siempre, evito activamente estas situaciones</option>
+            </select>
+        </div>
+    </div>
+
+    <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+        Ver mi resultado
+    </button>
+</form>
+
+<p class="result" style="visibility: hidden;"></p>
+
+<script type="text/javascript">
+    (function() {
+
+        class EmotionalFoodRelationshipCalculator {
+            _q1; _q2; _q3; _q4; _q5; _q6; _q7; _q8; _q9; _q10;
+
+            constructor(q1, q2, q3, q4, q5, q6, q7, q8, q9, q10) {
+                this._q1 = q1; this._q2 = q2; this._q3 = q3; this._q4 = q4; this._q5 = q5;
+                this._q6 = q6; this._q7 = q7; this._q8 = q8; this._q9 = q9; this._q10 = q10;
+            }
+
+            get totalScore() {
+                return this._q1 + this._q2 + this._q3 + this._q4 + this._q5 + this._q6 + this._q7 + this._q8 + this._q9 + this._q10;
+            }
+
+            get category() {
+                const score = this.totalScore;
+
+                if (score <= 5) {
+                    return {
+                        name: 'Relación saludable con la comida',
+                        description: 'Excelente. Tienes una relación equilibrada y saludable con la comida. No la usas para gestionar emociones y disfrutas sin culpa.',
+                        color: '#4CAF50',
+                        risk: 'Riesgo bajo',
+                        recommendations: [
+                            'Mantén esta relación positiva con la comida',
+                            'Sigue practicando alimentación consciente',
+                            'Comparte tu enfoque equilibrado con otros'
+                        ]
+                    };
+                } else if (score <= 12) {
+                    return {
+                        name: 'Relación mayormente saludable',
+                        description: 'Bien. Tu relación con la comida es generalmente saludable, aunque hay algunos aspectos emocionales leves.',
+                        color: '#8BC34A',
+                        risk: 'Riesgo bajo-moderado',
+                        recommendations: [
+                            'Identifica los momentos donde la comida se vuelve emocional',
+                            'Trabaja en flexibilidad mental con los alimentos',
+                            'Practica mindful eating regularmente',
+                            'No te obsesiones con la "perfección"'
+                        ]
+                    };
+                } else if (score <= 20) {
+                    return {
+                        name: 'Relación emocional significativa',
+                        description: 'Atención. Tienes una relación emocional notable con la comida. Hay patrones que deberías trabajar.',
+                        color: '#FFC107',
+                        risk: 'Riesgo moderado',
+                        recommendations: [
+                            'Busca apoyo de un psicólogo especializado en alimentación',
+                            'Trabaja en desligar emociones de la comida',
+                            'Elimina la clasificación rígida de alimentos',
+                            'Practica autocompasión, no autocrítica',
+                            'Considera terapia cognitivo-conductual',
+                            'Busca formas alternativas de gestionar emociones'
+                        ]
+                    };
+                } else if (score <= 25) {
+                    return {
+                        name: 'Relación problemática con la comida',
+                        description: 'Preocupante. Tu relación con la comida es problemática y afecta tu bienestar emocional.',
+                        color: '#FF9800',
+                        risk: 'Riesgo alto',
+                        recommendations: [
+                            'Busca ayuda profesional urgente (psicólogo + nutricionista)',
+                            'Posible inicio de trastorno de la conducta alimentaria',
+                            'No hagas dietas restrictivas por tu cuenta',
+                            'Trabaja en tu autoestima independientemente del peso',
+                            'Considera grupos de apoyo',
+                            'Pide ayuda a familiares y amigos cercanos'
+                        ]
+                    };
+                } else {
+                    return {
+                        name: 'Posible trastorno de la conducta alimentaria',
+                        description: 'Alerta. Muestras señales graves de un posible TCA. Necesitas ayuda profesional inmediata.',
+                        color: '#F44336',
+                        risk: 'Riesgo muy alto',
+                        recommendations: [
+                            'URGENTE: Consulta con un psiquiatra/psicólogo especializado en TCA',
+                            'Necesitas tratamiento multidisciplinar (médico, psicólogo, nutricionista)',
+                            'Informa a tu familia o personas cercanas',
+                            'No estás solo/a, los TCA tienen tratamiento efectivo',
+                            'Llama a líneas de ayuda especializadas en TCA',
+                            'No esperes, busca ayuda HOY'
+                        ]
+                    };
+                }
+            }
+
+            get warningSignals() {
+                const signals = [];
+
+                if (this._q4 >= 2) signals.push('Episodios de atracones');
+                if (this._q5 >= 2) signals.push('Comer a escondidas');
+                if (this._q8 >= 2) signals.push('Conductas compensatorias (purgas, ejercicio excesivo)');
+                if (this._q7 === 3) signals.push('Autoestima completamente dependiente del peso');
+                if (this._q10 >= 2) signals.push('Evitación social relacionada con comida');
+                if (this._q2 === 3) signals.push('Culpa extrema tras comer');
+                if (this._q9 === 3) signals.push('Reglas alimentarias rígidas y controladoras');
+
+                return signals.length > 0 ? signals : ['No se detectaron señales de alarma graves'];
+            }
+        }
+
+        const FORM = document.querySelector('.form-container');
+        const RESULT_BOX = document.querySelector('.result');
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+        const SELECTS = document.querySelectorAll('select');
+
+        SELECTS.forEach(select => {
+            select.addEventListener('change', () => {
+                if (select.value !== "" && select.selectedIndex !== 0) {
+                    select.setCustomValidity('');
+                }
+            });
+        });
+
+        FORM.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            let isValid = true;
+            SELECTS.forEach(select => {
+                if (select.value === "" || select.selectedIndex === 0) {
+                    select.setCustomValidity('Por favor, selecciona una opción');
+                    select.reportValidity();
+                    isValid = false;
+                } else {
+                    select.setCustomValidity('');
+                }
+            });
+
+            if (!isValid) return;
+
+            CALCULATE_BTN.innerHTML = 'Calculando...';
+            RESULT_BOX.style.visibility = 'hidden';
+
+            const calculator = new EmotionalFoodRelationshipCalculator(
+                parseInt(document.getElementById('q1').value),
+                parseInt(document.getElementById('q2').value),
+                parseInt(document.getElementById('q3').value),
+                parseInt(document.getElementById('q4').value),
+                parseInt(document.getElementById('q5').value),
+                parseInt(document.getElementById('q6').value),
+                parseInt(document.getElementById('q7').value),
+                parseInt(document.getElementById('q8').value),
+                parseInt(document.getElementById('q9').value),
+                parseInt(document.getElementById('q10').value)
+            );
+
+            const category = calculator.category;
+            const signals = calculator.warningSignals;
+
+            setTimeout(() => {
+                RESULT_BOX.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                CALCULATE_BTN.innerHTML = 'Ver mi resultado';
+                RESULT_BOX.style.visibility = 'visible';
+
+                let html = `<span style="color: ${category.color};"><strong>${category.name}</strong></span><br>`;
+                html += `<span>${category.description}</span><br><br>`;
+                html += `<span>Nivel de riesgo: <strong>${category.risk}</strong></span><br><br>`;
+
+                html += `<span style="font-weight: bold;">Señales de alarma detectadas:</span><br>`;
+                signals.forEach(signal => {
+                    html += `<span>• ${signal}</span><br>`;
+                });
+
+                html += `<br><span style="font-weight: bold;">Recomendaciones:</span><br>`;
+                category.recommendations.forEach(rec => {
+                    html += `<span>• ${rec}</span><br>`;
+                });
+
+                html += `<br><span style="font-style: italic; font-size: 0.9em;">Nota: Este test NO sustituye un diagnóstico profesional. Si tienes puntuaciones altas, busca ayuda especializada. Los TCA son tratables.</span>`;
+
+                RESULT_BOX.innerHTML = html;
+            }, 500);
+        });
+
+    })();
+</script>

@@ -1,0 +1,338 @@
+<h1>Test de Hambre: Real vs Emocional</h1>
+
+<form class="form-container">
+    <p style="margin-bottom: 20px; text-align: center; font-style: italic;">
+        Responde a estas preguntas para identificar si tu hambre es fisiológica (real) o emocional.
+    </p>
+
+    <div class="flex">
+        <div>
+            <label><span>1. ¿Cuándo aparece tu hambre?</span></label>
+            <select id="q1" type="select" name="q1-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">De forma gradual, varias horas después de comer</option>
+                <option value="3">De repente, sin previo aviso</option>
+                <option value="2">Depende del día y mi estado de ánimo</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>2. ¿Qué tipo de alimentos te apetecen?</span></label>
+            <select id="q2" type="select" name="q2-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Cualquier alimento nutritivo me satisface</option>
+                <option value="3">Solo antojos específicos (dulces, salados, comida reconfortante)</option>
+                <option value="2">Generalmente saludables, pero a veces tengo antojos fuertes</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>3. ¿Dónde sientes el hambre?</span></label>
+            <select id="q3" type="select" name="q3-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">En el estómago (vacío, ruidos, sensación física)</option>
+                <option value="3">En la cabeza/boca (pensamientos, ganas de saborear)</option>
+                <option value="1">No estoy seguro, simplemente "necesito" comer</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>4. ¿Con qué urgencia necesitas comer?</span></label>
+            <select id="q4" type="select" name="q4-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Puedo esperar sin problema</option>
+                <option value="3">Necesito comer AHORA, es urgente</option>
+                <option value="2">Prefiero comer pronto pero puedo esperar un poco</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>5. ¿En qué momento del día o situación aparece más?</span></label>
+            <select id="q5" type="select" name="q5-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">A horas regulares cuando toca comer</option>
+                <option value="3">Cuando estoy aburrido, estresado, triste o ansioso</option>
+                <option value="2">Varía, no tengo un patrón claro</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>6. Después de comer, ¿cómo te sientes?</span></label>
+            <select id="q6" type="select" name="q6-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Satisfecho y con energía</option>
+                <option value="3">Culpable, avergonzado o arrepentido</option>
+                <option value="1">Lleno físicamente pero no del todo satisfecho</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>7. ¿Cuándo paras de comer?</span></label>
+            <select id="q7" type="select" name="q7-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Cuando me siento satisfecho (80% lleno)</option>
+                <option value="3">Cuando se acaba la comida o me siento muy lleno</option>
+                <option value="2">Intento parar cuando estoy satisfecho, pero a veces me paso</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>8. ¿Cómo es tu nivel de conciencia al comer?</span></label>
+            <select id="q8" type="select" name="q8-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Como con atención, disfrutando cada bocado</option>
+                <option value="3">Como de forma automática, casi sin darme cuenta</option>
+                <option value="1">A veces presto atención, otras veces como distraído</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>9. ¿Hay una emoción o situación que dispara tu hambre?</span></label>
+            <select id="q9" type="select" name="q9-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">No, solo como cuando tengo hambre física</option>
+                <option value="3">Sí, claramente: estrés, ansiedad, tristeza, aburrimiento</option>
+                <option value="2">A veces ciertas emociones me dan ganas de comer</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>10. ¿Cómo describes tu relación con la comida?</span></label>
+            <select id="q10" type="select" name="q10-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">Como para nutrir mi cuerpo y disfrutar</option>
+                <option value="3">Uso la comida para sentirme mejor emocionalmente</option>
+                <option value="2">Es complicada, a veces nutro, a veces busco consuelo</option>
+            </select>
+        </div>
+    </div>
+
+    <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+        Ver mi resultado
+    </button>
+</form>
+
+<p class="result" style="visibility: hidden;"></p>
+
+<script type="text/javascript">
+    (function() {
+
+        class HungerTypeCalculator {
+            _q1;
+            _q2;
+            _q3;
+            _q4;
+            _q5;
+            _q6;
+            _q7;
+            _q8;
+            _q9;
+            _q10;
+
+            constructor(q1, q2, q3, q4, q5, q6, q7, q8, q9, q10) {
+                this._q1 = q1;
+                this._q2 = q2;
+                this._q3 = q3;
+                this._q4 = q4;
+                this._q5 = q5;
+                this._q6 = q6;
+                this._q7 = q7;
+                this._q8 = q8;
+                this._q9 = q9;
+                this._q10 = q10;
+            }
+
+            get totalScore() {
+                return this._q1 + this._q2 + this._q3 + this._q4 + this._q5 +
+                       this._q6 + this._q7 + this._q8 + this._q9 + this._q10;
+            }
+
+            get emotionalHungerPercentage() {
+                const maxScore = 30;
+                return Math.round((this.totalScore / maxScore) * 100);
+            }
+
+            get category() {
+                const score = this.totalScore;
+
+                if (score <= 5) {
+                    return {
+                        name: 'Hambre mayormente física',
+                        description: 'Excelente. Tu hambre es principalmente fisiológica. Comes por necesidad física, no emocional.',
+                        color: '#4CAF50',
+                        type: 'physical',
+                        recommendations: [
+                            'Mantén esta buena conexión con tu cuerpo',
+                            'Sigue escuchando tus señales de hambre y saciedad',
+                            'Continúa con alimentación consciente'
+                        ]
+                    };
+                } else if (score <= 12) {
+                    return {
+                        name: 'Hambre mixta con predominio físico',
+                        description: 'Bien. Tu hambre es mayormente física, con algunos episodios de hambre emocional ocasionales.',
+                        color: '#8BC34A',
+                        type: 'mixed-physical',
+                        recommendations: [
+                            'Identifica los desencadenantes emocionales ocasionales',
+                            'Desarrolla estrategias alternativas para esas emociones',
+                            'Sigue practicando mindful eating'
+                        ]
+                    };
+                } else if (score <= 20) {
+                    return {
+                        name: 'Hambre mixta equilibrada',
+                        description: 'Atención. Mezclas hambre física y emocional de forma significativa.',
+                        color: '#FFC107',
+                        type: 'mixed',
+                        recommendations: [
+                            'Aprende a diferenciar hambre física de emocional',
+                            'Antes de comer, pregúntate: ¿tengo hambre física?',
+                            'Busca alternativas emocionales a la comida',
+                            'Considera un diario emocional de alimentación',
+                            'Trabaja en gestión emocional (respiración, ejercicio, hobbies)'
+                        ]
+                    };
+                } else if (score <= 25) {
+                    return {
+                        name: 'Hambre predominantemente emocional',
+                        description: 'Preocupante. Gran parte de tu hambre es emocional. Usas la comida para gestionar emociones.',
+                        color: '#FF9800',
+                        type: 'emotional',
+                        recommendations: [
+                            'Necesitas trabajar la relación emocional con la comida',
+                            'Identifica tus triggers emocionales principales',
+                            'Desarrolla un toolkit de gestión emocional sin comida',
+                            'Practica mindfulness y meditación',
+                            'Considera terapia con psicólogo especializado en alimentación'
+                        ]
+                    };
+                } else {
+                    return {
+                        name: 'Hambre emocional severa',
+                        description: 'Alerta. Tu alimentación está dominada por las emociones, no por hambre física.',
+                        color: '#F44336',
+                        type: 'emotional-severe',
+                        recommendations: [
+                            'Busca ayuda profesional urgente (psicólogo)',
+                            'Posible trastorno de la conducta alimentaria',
+                            'No sigas dietas restrictivas ahora',
+                            'Trabaja primero la relación emocional con la comida',
+                            'Aprende a reconectar con señales físicas de hambre',
+                            'Considera terapia cognitivo-conductual'
+                        ]
+                    };
+                }
+            }
+
+            get mainTriggers() {
+                const triggers = [];
+
+                if (this._q5 === 3) triggers.push('Estrés, aburrimiento o ansiedad');
+                if (this._q9 === 3) triggers.push('Emociones negativas claras');
+                if (this._q2 === 3) triggers.push('Antojos específicos');
+                if (this._q4 === 3) triggers.push('Urgencia compulsiva');
+                if (this._q6 === 3) triggers.push('Culpa post-ingesta');
+
+                return triggers.length > 0 ? triggers : ['No se identificaron triggers emocionales significativos'];
+            }
+        }
+
+        const FORM = document.querySelector('.form-container');
+        const RESULT_BOX = document.querySelector('.result');
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+
+        // Comprobar que ha introducido valor en los select
+        const SELECTS = document.querySelectorAll('select');
+        SELECTS.forEach(select => {
+            select.addEventListener('change', () => {
+                if (select.value !== "" && select.selectedIndex !== 0) {
+                    select.setCustomValidity('');
+                }
+            });
+        });
+
+        FORM.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const selects = document.querySelectorAll('select');
+            let isValid = true;
+
+            selects.forEach(select => {
+                if (select.value === "" || select.selectedIndex === 0) {
+                    select.setCustomValidity('Por favor, selecciona una opción');
+                    select.reportValidity();
+                    isValid = false;
+                } else {
+                    select.setCustomValidity('');
+                }
+            });
+
+            if (!isValid) {
+                return;
+            }
+
+            CALCULATE_BTN.innerHTML = 'Calculando...';
+            RESULT_BOX.style.visibility = 'hidden';
+
+            const q1 = parseInt(document.getElementById('q1').value);
+            const q2 = parseInt(document.getElementById('q2').value);
+            const q3 = parseInt(document.getElementById('q3').value);
+            const q4 = parseInt(document.getElementById('q4').value);
+            const q5 = parseInt(document.getElementById('q5').value);
+            const q6 = parseInt(document.getElementById('q6').value);
+            const q7 = parseInt(document.getElementById('q7').value);
+            const q8 = parseInt(document.getElementById('q8').value);
+            const q9 = parseInt(document.getElementById('q9').value);
+            const q10 = parseInt(document.getElementById('q10').value);
+
+            const calculator = new HungerTypeCalculator(q1, q2, q3, q4, q5, q6, q7, q8, q9, q10);
+            const percentage = calculator.emotionalHungerPercentage;
+            const category = calculator.category;
+            const triggers = calculator.mainTriggers;
+
+            setTimeout(() => {
+                RESULT_BOX.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                CALCULATE_BTN.innerHTML = 'Ver mi resultado';
+                RESULT_BOX.style.visibility = 'visible';
+
+                let html = `<span>Tu hambre emocional: <strong>${percentage}%</strong></span><br><br>`;
+                html += `<span style="color: ${category.color};"><strong>${category.name}</strong></span><br>`;
+                html += `<span>${category.description}</span><br><br>`;
+
+                html += `<span style="font-weight: bold;">Desencadenantes identificados:</span><br>`;
+                triggers.forEach(trigger => {
+                    html += `<span>• ${trigger}</span><br>`;
+                });
+
+                html += `<br><span style="font-weight: bold;">Recomendaciones:</span><br>`;
+                category.recommendations.forEach(rec => {
+                    html += `<span>• ${rec}</span><br>`;
+                });
+
+                html += `<br><span style="font-style: italic; font-size: 0.9em;">Nota: El hambre emocional es muy común. Lo importante es reconocerla y trabajar en alternativas saludables.</span>`;
+
+                RESULT_BOX.innerHTML = html;
+            }, 500);
+        });
+
+    })();
+</script>

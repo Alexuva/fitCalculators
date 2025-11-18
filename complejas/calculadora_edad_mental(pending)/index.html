@@ -1,0 +1,337 @@
+<h1>Calculadora de Edad Mental</h1>
+
+<form class="form-container">
+    <p style="margin-bottom: 20px; text-align: center; font-style: italic;">
+        Calcula tu edad mental basándote en tu edad cronológica y factores de estilo de vida que impactan en la salud cerebral.
+    </p>
+
+    <div class="flex">
+        <div>
+            <label><span>Edad cronológica (años)</span></label>
+            <input type="number" id="edad" min="18" max="100" step="1" placeholder="0" required>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>¿Haces ejercicio físico regular?</span></label>
+            <select id="ejercicio" type="select" name="ejercicio-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="-5">Sí, más de 4 veces por semana</option>
+                <option value="-3">Sí, 2-4 veces por semana</option>
+                <option value="0">Ocasionalmente (1 vez por semana o menos)</option>
+                <option value="3">No hago ejercicio</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>¿Cómo es tu alimentación?</span></label>
+            <select id="alimentacion" type="select" name="alimentacion-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="-4">Muy saludable (muchas frutas, verduras, pescado, sin procesados)</option>
+                <option value="-2">Saludable (equilibrada, algunos procesados)</option>
+                <option value="0">Normal (mitad saludable, mitad procesados)</option>
+                <option value="3">Poco saludable (muchos procesados, pocos vegetales)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>¿Cuántas horas duermes de media?</span></label>
+            <select id="sueno" type="select" name="sueno-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="-3">7-9 horas de calidad</option>
+                <option value="0">6-7 horas</option>
+                <option value="2">5-6 horas</option>
+                <option value="4">Menos de 5 horas</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>¿Fumas?</span></label>
+            <select id="tabaco" type="select" name="tabaco-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">No, nunca he fumado</option>
+                <option value="2">Ex-fumador (dejé hace más de 5 años)</option>
+                <option value="4">Ex-fumador (dejé hace menos de 5 años)</option>
+                <option value="7">Sí, fumo actualmente</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>¿Consumes alcohol?</span></label>
+            <select id="alcohol" type="select" name="alcohol-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">No bebo o muy ocasionalmente</option>
+                <option value="1">Moderado (1-2 copas, 1-2 veces por semana)</option>
+                <option value="3">Regular (3-5 copas por semana)</option>
+                <option value="5">Frecuente o excesivo</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>¿Cómo gestionas el estrés?</span></label>
+            <select id="estres" type="select" name="estres-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="-3">Muy bien, practico técnicas de relajación</option>
+                <option value="-1">Bien, lo gestiono sin problemas</option>
+                <option value="2">Regular, me cuesta manejarlo</option>
+                <option value="4">Mal, estoy constantemente estresado/a</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>¿Realizas actividades de estimulación mental?</span></label>
+            <select id="mental" type="select" name="mental-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="-4">Sí, frecuentemente (lectura, aprendizaje, puzzles, idiomas)</option>
+                <option value="-2">Ocasionalmente</option>
+                <option value="0">Rara vez</option>
+                <option value="2">Nunca, rutina muy repetitiva</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>¿Tienes buenas relaciones sociales?</span></label>
+            <select id="social" type="select" name="social-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="-3">Sí, tengo buena red social y contacto frecuente</option>
+                <option value="-1">Sí, tengo contactos pero no muy frecuentes</option>
+                <option value="1">Limitadas, poca interacción social</option>
+                <option value="3">Muy aislado/a socialmente</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>¿Tienes alguna condición de salud crónica?</span></label>
+            <select id="salud" type="select" name="salud-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="0">No, estoy sano/a</option>
+                <option value="2">Sí, una condición controlada</option>
+                <option value="4">Sí, múltiples condiciones</option>
+                <option value="6">Sí, condiciones no controladas</option>
+            </select>
+        </div>
+    </div>
+
+    <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+        Calcular mi edad mental
+    </button>
+</form>
+
+<p class="result" style="visibility: hidden;"></p>
+
+<script type="text/javascript">
+    (function() {
+
+        class MentalAgeCalculator {
+            _chronologicalAge;
+            _exercise;
+            _diet;
+            _sleep;
+            _tobacco;
+            _alcohol;
+            _stress;
+            _mentalActivity;
+            _social;
+            _health;
+
+            constructor(chronologicalAge, exercise, diet, sleep, tobacco, alcohol, stress, mentalActivity, social, health) {
+                this._chronologicalAge = chronologicalAge;
+                this._exercise = exercise;
+                this._diet = diet;
+                this._sleep = sleep;
+                this._tobacco = tobacco;
+                this._alcohol = alcohol;
+                this._stress = stress;
+                this._mentalActivity = mentalActivity;
+                this._social = social;
+                this._health = health;
+            }
+
+            get mentalAge() {
+                const adjustment = this._exercise + this._diet + this._sleep + this._tobacco +
+                                 this._alcohol + this._stress + this._mentalActivity + this._social + this._health;
+
+                const calculatedAge = this._chronologicalAge + adjustment;
+                return Math.max(18, Math.round(calculatedAge));
+            }
+
+            get difference() {
+                return this.mentalAge - this._chronologicalAge;
+            }
+
+            get category() {
+                const diff = this.difference;
+
+                if (diff <= -10) {
+                    return {
+                        name: 'Edad mental muy inferior',
+                        description: 'Excelente. Tu edad mental es significativamente menor que tu edad cronológica. Mantienes hábitos muy saludables.',
+                        color: '#4CAF50',
+                        emoji: '🎉',
+                        message: `Tu cerebro está ${Math.abs(diff)} años más joven de lo que corresponde.`
+                    };
+                } else if (diff <= -5) {
+                    return {
+                        name: 'Edad mental menor',
+                        description: 'Muy bien. Tu edad mental es menor que tu edad real. Tienes buenos hábitos de salud cerebral.',
+                        color: '#8BC34A',
+                        emoji: '😊',
+                        message: `Tu cerebro está ${Math.abs(diff)} años más joven.`
+                    };
+                } else if (diff <= -1) {
+                    return {
+                        name: 'Edad mental ligeramente menor',
+                        description: 'Bien. Tu edad mental es algo menor que tu edad cronológica.',
+                        color: '#9CCC65',
+                        emoji: '👍',
+                        message: `Tu cerebro está ${Math.abs(diff)} años más joven.`
+                    };
+                } else if (diff <= 1) {
+                    return {
+                        name: 'Edad mental acorde',
+                        description: 'Tu edad mental coincide con tu edad cronológica. Estás en la media.',
+                        color: '#FFC107',
+                        emoji: '😐',
+                        message: 'Tu edad mental coincide con tu edad real.'
+                    };
+                } else if (diff <= 5) {
+                    return {
+                        name: 'Edad mental ligeramente mayor',
+                        description: 'Atención. Tu edad mental es algo mayor que tu edad real. Hay margen de mejora.',
+                        color: '#FF9800',
+                        emoji: '😟',
+                        message: `Tu cerebro está ${diff} años más envejecido.`
+                    };
+                } else if (diff <= 10) {
+                    return {
+                        name: 'Edad mental mayor',
+                        description: 'Preocupante. Tu edad mental es bastante mayor que tu edad cronológica. Debes mejorar tus hábitos.',
+                        color: '#FF5722',
+                        emoji: '😰',
+                        message: `Tu cerebro está ${diff} años más envejecido de lo que corresponde.`
+                    };
+                } else {
+                    return {
+                        name: 'Edad mental muy superior',
+                        description: 'Alerta. Tu edad mental es mucho mayor que tu edad real. Necesitas cambios urgentes en tu estilo de vida.',
+                        color: '#F44336',
+                        emoji: '🚨',
+                        message: `Tu cerebro está ${diff} años más envejecido. Acción inmediata necesaria.`
+                    };
+                }
+            }
+
+            get recommendations() {
+                const recs = [];
+
+                if (this._exercise >= 0) recs.push('Aumenta tu actividad física (mínimo 150 min/semana)');
+                if (this._diet >= 0) recs.push('Mejora tu alimentación (más omega-3, antioxidantes, menos procesados)');
+                if (this._sleep >= 0) recs.push('Optimiza tu sueño (7-9 horas de calidad)');
+                if (this._tobacco >= 2) recs.push('Deja de fumar (acelera envejecimiento cerebral)');
+                if (this._alcohol >= 3) recs.push('Reduce el consumo de alcohol');
+                if (this._stress >= 2) recs.push('Gestiona mejor el estrés (meditación, yoga, terapia)');
+                if (this._mentalActivity >= 0) recs.push('Estimula tu mente (aprende cosas nuevas, lee, puzzles)');
+                if (this._social >= 1) recs.push('Aumenta tu interacción social (previene deterioro cognitivo)');
+                if (this._health >= 2) recs.push('Controla mejor tus condiciones de salud');
+
+                return recs.length > 0 ? recs : ['Mantén tus excelentes hábitos actuales'];
+            }
+        }
+
+        const FORM = document.querySelector('.form-container');
+        const RESULT_BOX = document.querySelector('.result');
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+        const SELECTS = document.querySelectorAll('select');
+
+        SELECTS.forEach(select => {
+            select.addEventListener('change', () => {
+                if (select.value !== "" && select.selectedIndex !== 0) {
+                    select.setCustomValidity('');
+                }
+            });
+        });
+
+        FORM.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            let isValid = true;
+            SELECTS.forEach(select => {
+                if (select.value === "" || select.selectedIndex === 0) {
+                    select.setCustomValidity('Por favor, selecciona una opción');
+                    select.reportValidity();
+                    isValid = false;
+                } else {
+                    select.setCustomValidity('');
+                }
+            });
+
+            const age = parseInt(document.getElementById('edad').value);
+            if (!age || age < 18 || age > 100) {
+                alert('Por favor, introduce una edad válida entre 18 y 100 años.');
+                return;
+            }
+
+            if (!isValid) return;
+
+            CALCULATE_BTN.innerHTML = 'Calculando...';
+            RESULT_BOX.style.visibility = 'hidden';
+
+            const calculator = new MentalAgeCalculator(
+                age,
+                parseInt(document.getElementById('ejercicio').value),
+                parseInt(document.getElementById('alimentacion').value),
+                parseInt(document.getElementById('sueno').value),
+                parseInt(document.getElementById('tabaco').value),
+                parseInt(document.getElementById('alcohol').value),
+                parseInt(document.getElementById('estres').value),
+                parseInt(document.getElementById('mental').value),
+                parseInt(document.getElementById('social').value),
+                parseInt(document.getElementById('salud').value)
+            );
+
+            const mentalAge = calculator.mentalAge;
+            const category = calculator.category;
+            const recommendations = calculator.recommendations;
+
+            setTimeout(() => {
+                RESULT_BOX.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                CALCULATE_BTN.innerHTML = 'Calcular mi edad mental';
+                RESULT_BOX.style.visibility = 'visible';
+
+                let html = `<span style="font-size: 1.2em;">${category.emoji}</span><br>`;
+                html += `<span>Tu edad cronológica: <strong>${age} años</strong></span><br>`;
+                html += `<span>Tu edad mental: <strong>${mentalAge} años</strong></span><br><br>`;
+                html += `<span style="color: ${category.color};"><strong>${category.name}</strong></span><br>`;
+                html += `<span>${category.description}</span><br>`;
+                html += `<span><em>${category.message}</em></span><br><br>`;
+
+                html += `<span style="font-weight: bold;">Recomendaciones para mejorar:</span><br>`;
+                recommendations.forEach(rec => {
+                    html += `<span>• ${rec}</span><br>`;
+                });
+
+                html += `<br><span style="font-style: italic; font-size: 0.9em;">Nota: Este cálculo es orientativo y se basa en factores de estilo de vida que impactan la salud cerebral. No sustituye una evaluación médica.</span>`;
+
+                RESULT_BOX.innerHTML = html;
+            }, 500);
+        });
+
+    })();
+</script>

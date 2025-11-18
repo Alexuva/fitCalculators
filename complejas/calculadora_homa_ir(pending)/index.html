@@ -1,0 +1,209 @@
+<h1>Calculadora HOMA-IR</h1>
+
+<form class="form-container">
+    <p style="margin-bottom: 20px; text-align: center; font-style: italic;">
+        Calcula tu índice de resistencia a la insulina (HOMA-IR) a partir de tus valores de glucosa e insulina en ayunas.
+    </p>
+
+    <div class="flex">
+        <div>
+            <label><span>Glucosa en ayunas</span></label>
+            <input type="number" id="glucosa" min="0" step="0.1" placeholder="0" required>
+        </div>
+        <div>
+            <label><span>Unidad de glucosa</span></label>
+            <select id="unidadGlucosa" type="select" name="unidadGlucosa-input" required>
+                <option disabled selected>Selecciona</option>
+                <option value="mg/dL">mg/dL</option>
+                <option value="mmol/L">mmol/L</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Insulina en ayunas (μU/mL o mUI/L)</span></label>
+            <input type="number" id="insulina" min="0" step="0.1" placeholder="0" required>
+        </div>
+    </div>
+
+    <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+        Calcular HOMA-IR
+    </button>
+</form>
+
+<p class="result" style="visibility: hidden;"></p>
+
+<script type="text/javascript">
+    (function() {
+
+        class HomaIRCalculator {
+            _glucose;
+            _insulin;
+            _glucoseUnit;
+
+            constructor(glucose, insulin, glucoseUnit) {
+                this._glucose = glucose;
+                this._insulin = insulin;
+                this._glucoseUnit = glucoseUnit;
+            }
+
+            get homaIR() {
+                let glucoseInMgDL = this._glucose;
+
+                // Convertir a mg/dL si está en mmol/L
+                if (this._glucoseUnit === 'mmol/L') {
+                    glucoseInMgDL = this._glucose * 18.018;
+                }
+
+                // Fórmula HOMA-IR: (Glucosa en mg/dL × Insulina en μU/mL) / 405
+                const homa = (glucoseInMgDL * this._insulin) / 405;
+
+                return Math.round(homa * 100) / 100;
+            }
+
+            get category() {
+                const homa = this.homaIR;
+
+                if (homa < 1) {
+                    return {
+                        name: 'Sensibilidad óptima a la insulina',
+                        description: 'Excelente. Tu cuerpo responde muy bien a la insulina.',
+                        color: '#4CAF50',
+                        recommendation: 'Mantén tus hábitos saludables: dieta equilibrada, ejercicio regular y buen descanso.'
+                    };
+                } else if (homa < 2) {
+                    return {
+                        name: 'Sensibilidad normal a la insulina',
+                        description: 'Bien. Tu sensibilidad a la insulina está dentro de lo normal.',
+                        color: '#8BC34A',
+                        recommendation: 'Mantén un estilo de vida saludable para prevenir la resistencia a la insulina.'
+                    };
+                } else if (homa < 3) {
+                    return {
+                        name: 'Resistencia leve a la insulina',
+                        description: 'Atención. Comienzas a mostrar signos de resistencia a la insulina.',
+                        color: '#FFC107',
+                        recommendation: 'Considera mejorar tu dieta (reducir azúcares y harinas refinadas), aumentar la actividad física y controlar el estrés.'
+                    };
+                } else if (homa < 5) {
+                    return {
+                        name: 'Resistencia moderada a la insulina',
+                        description: 'Preocupante. Tienes resistencia moderada a la insulina.',
+                        color: '#FF9800',
+                        recommendation: 'Consulta con un endocrino. Necesitas cambios significativos en dieta y ejercicio. Considera ayuno intermitente y ejercicio de fuerza.'
+                    };
+                } else {
+                    return {
+                        name: 'Resistencia alta a la insulina',
+                        description: 'Alerta. Resistencia elevada a la insulina. Riesgo de diabetes tipo 2.',
+                        color: '#F44336',
+                        recommendation: 'Urgente: Consulta con un endocrinólogo. Requiere intervención médica y cambios drásticos en el estilo de vida.'
+                    };
+                }
+            }
+
+            get insulinSensitivity() {
+                // Índice de sensibilidad a la insulina (inverso de HOMA-IR)
+                const sensitivity = 1 / this.homaIR;
+                return Math.round(sensitivity * 1000) / 1000;
+            }
+
+            get betaCellFunction() {
+                let glucoseInMgDL = this._glucose;
+
+                if (this._glucoseUnit === 'mmol/L') {
+                    glucoseInMgDL = this._glucose * 18.018;
+                }
+
+                // Función de célula beta HOMA-B: (360 × Insulina) / (Glucosa - 63)
+                if (glucoseInMgDL <= 63) {
+                    return null; // No se puede calcular con glucosa muy baja
+                }
+
+                const homaB = (360 * this._insulin) / (glucoseInMgDL - 63);
+                return Math.round(homaB * 10) / 10;
+            }
+        }
+
+        const FORM = document.querySelector('.form-container');
+        const RESULT_BOX = document.querySelector('.result');
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+
+        // Comprobar que ha introducido valor en los select
+        const SELECTS = document.querySelectorAll('select');
+        SELECTS.forEach(select => {
+            select.addEventListener('change', () => {
+                if (select.value !== "" && select.selectedIndex !== 0) {
+                    select.setCustomValidity('');
+                }
+            });
+        });
+
+        FORM.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const selects = document.querySelectorAll('select');
+            let isValid = true;
+
+            selects.forEach(select => {
+                if (select.value === "" || select.selectedIndex === 0) {
+                    select.setCustomValidity('Por favor, selecciona una opción');
+                    select.reportValidity();
+                    isValid = false;
+                } else {
+                    select.setCustomValidity('');
+                }
+            });
+
+            if (!isValid) {
+                return;
+            }
+
+            const glucose = parseFloat(document.getElementById('glucosa').value);
+            const insulin = parseFloat(document.getElementById('insulina').value);
+            const glucoseUnit = document.getElementById('unidadGlucosa').value;
+
+            if (!glucose || glucose <= 0) {
+                alert('Por favor, introduce un valor válido de glucosa.');
+                return;
+            }
+
+            if (!insulin || insulin <= 0) {
+                alert('Por favor, introduce un valor válido de insulina.');
+                return;
+            }
+
+            CALCULATE_BTN.innerHTML = 'Calculando...';
+            RESULT_BOX.style.visibility = 'hidden';
+
+            const calculator = new HomaIRCalculator(glucose, insulin, glucoseUnit);
+            const homaIR = calculator.homaIR;
+            const category = calculator.category;
+            const sensitivity = calculator.insulinSensitivity;
+            const betaCell = calculator.betaCellFunction;
+
+            setTimeout(() => {
+                RESULT_BOX.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                CALCULATE_BTN.innerHTML = 'Calcular HOMA-IR';
+                RESULT_BOX.style.visibility = 'visible';
+
+                let html = `<span>Tu índice HOMA-IR es: <strong>${homaIR}</strong></span><br><br>`;
+                html += `<span style="color: ${category.color};"><strong>${category.name}</strong></span><br>`;
+                html += `<span>${category.description}</span><br><br>`;
+                html += `<span style="font-weight: bold;">Recomendación:</span><br>`;
+                html += `<span>${category.recommendation}</span><br><br>`;
+                html += `<span>Índice de sensibilidad a la insulina: <strong>${sensitivity}</strong></span><br>`;
+
+                if (betaCell !== null) {
+                    html += `<span>Función de célula beta (HOMA-B): <strong>${betaCell}%</strong></span><br>`;
+                }
+
+                html += `<br><span style="font-style: italic; font-size: 0.9em;">Nota: Estos valores deben obtenerse en ayunas (8-12 horas). Consulta con tu médico para interpretación clínica.</span>`;
+
+                RESULT_BOX.innerHTML = html;
+            }, 500);
+        });
+
+    })();
+</script>

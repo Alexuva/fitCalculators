@@ -1,0 +1,184 @@
+<h1>Calculadora de Carbohidratos para Diabéticos</h1>
+
+<form class="form-container">
+    <p style="margin-bottom: 20px; text-align: center; font-style: italic;">
+        Calcula las unidades de insulina rápida necesarias según tu ratio de insulina:carbohidratos y el impacto glucémico estimado.
+    </p>
+
+    <div class="flex">
+        <div>
+            <label><span>Carbohidratos totales (g)</span></label>
+            <input type="number" id="carbohidratos" min="0" step="0.1" placeholder="0" required>
+        </div>
+        <div>
+            <label><span>Fibra (g)</span></label>
+            <input type="number" id="fibra" min="0" step="0.1" value="0">
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Proteína (g)</span></label>
+            <input type="number" id="proteina" min="0" step="0.1" value="0">
+        </div>
+        <div>
+            <label><span>Grasa (g)</span></label>
+            <input type="number" id="grasa" min="0" step="0.1" value="0">
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Ratio insulina:carbohidratos (1:X)</span></label>
+            <input type="number" id="ratio" min="1" step="1" placeholder="Ej: 10 (1 unidad por cada 10g)" required>
+            <span style="font-size: 0.85em; color: #666; display: block; margin-top: 5px;">
+                Introduce el número de gramos de carbohidratos que cubre 1 unidad de insulina
+            </span>
+        </div>
+    </div>
+
+    <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+        Calcular dosis de insulina
+    </button>
+</form>
+
+<p class="result" style="visibility: hidden;"></p>
+
+<script type="text/javascript">
+    (function() {
+
+        class DiabetesCalculator {
+            _totalCarbs;
+            _fiber;
+            _protein;
+            _fat;
+            _ratio;
+
+            constructor(totalCarbs, fiber, protein, fat, ratio) {
+                this._totalCarbs = totalCarbs;
+                this._fiber = fiber;
+                this._protein = protein;
+                this._fat = fat;
+                this._ratio = ratio;
+            }
+
+            get availableCarbs() {
+                return Math.max(0, this._totalCarbs - this._fiber);
+            }
+
+            get insulinUnits() {
+                const baseUnits = this.availableCarbs / this._ratio;
+
+                // Ajuste por proteína (58% se convierte a glucosa)
+                const proteinEffect = (this._protein * 0.58) / this._ratio;
+
+                // Ajuste por grasa (10% se convierte a glucosa)
+                const fatEffect = (this._fat * 0.1) / this._ratio;
+
+                const totalUnits = baseUnits + proteinEffect + fatEffect;
+
+                return Math.round(totalUnits * 10) / 10;
+            }
+
+            get immediateInsulin() {
+                const baseUnits = this.availableCarbs / this._ratio;
+                return Math.round(baseUnits * 10) / 10;
+            }
+
+            get delayedInsulin() {
+                return Math.round((this.insulinUnits - this.immediateInsulin) * 10) / 10;
+            }
+
+            get glycemicImpact() {
+                const availableCarbs = this.availableCarbs;
+
+                // Estimación del impacto glucémico
+                let impact = availableCarbs * 3; // mg/dL aproximados por gramo de CHO
+
+                // Reducción por grasa (ralentiza absorción)
+                if (this._fat > 15) {
+                    impact *= 0.8;
+                } else if (this._fat > 10) {
+                    impact *= 0.9;
+                }
+
+                // Reducción por proteína
+                if (this._protein > 20) {
+                    impact *= 0.9;
+                }
+
+                return Math.round(impact);
+            }
+
+            get absorptionSpeed() {
+                const fatRatio = this._fat / Math.max(1, this.availableCarbs);
+                const proteinRatio = this._protein / Math.max(1, this.availableCarbs);
+
+                if (fatRatio > 1 || proteinRatio > 1.5) {
+                    return 'Lenta (3-4 horas)';
+                } else if (fatRatio > 0.5 || proteinRatio > 0.8) {
+                    return 'Media (2-3 horas)';
+                } else {
+                    return 'Rápida (1-2 horas)';
+                }
+            }
+        }
+
+        const FORM = document.querySelector('.form-container');
+        const RESULT_BOX = document.querySelector('.result');
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+
+        FORM.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const totalCarbs = parseFloat(document.getElementById('carbohidratos').value);
+            const fiber = parseFloat(document.getElementById('fibra').value) || 0;
+            const protein = parseFloat(document.getElementById('proteina').value) || 0;
+            const fat = parseFloat(document.getElementById('grasa').value) || 0;
+            const ratio = parseFloat(document.getElementById('ratio').value);
+
+            if (!totalCarbs && totalCarbs !== 0) {
+                alert('Por favor, introduce los carbohidratos totales.');
+                return;
+            }
+
+            if (!ratio || ratio <= 0) {
+                alert('Por favor, introduce tu ratio de insulina:carbohidratos.');
+                return;
+            }
+
+            if (totalCarbs < 0 || fiber < 0 || protein < 0 || fat < 0) {
+                alert('Los valores deben ser mayores o iguales a 0.');
+                return;
+            }
+
+            CALCULATE_BTN.innerHTML = 'Calculando...';
+            RESULT_BOX.style.visibility = 'hidden';
+
+            const calculator = new DiabetesCalculator(totalCarbs, fiber, protein, fat, ratio);
+
+            setTimeout(() => {
+                RESULT_BOX.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                CALCULATE_BTN.innerHTML = 'Calcular dosis de insulina';
+                RESULT_BOX.style.visibility = 'visible';
+
+                let html = `<span>Carbohidratos disponibles: <strong>${calculator.availableCarbs} g</strong></span><br><br>`;
+                html += `<span>Insulina rápida inmediata: <strong>${calculator.immediateInsulin} unidades</strong></span><br>`;
+
+                if (calculator.delayedInsulin > 0) {
+                    html += `<span>Insulina adicional (por proteína/grasa): <strong>${calculator.delayedInsulin} unidades</strong></span><br>`;
+                    html += `<span>Total estimado: <strong>${calculator.insulinUnits} unidades</strong></span><br><br>`;
+                } else {
+                    html += `<br>`;
+                }
+
+                html += `<span>Impacto glucémico estimado: <strong>+${calculator.glycemicImpact} mg/dL</strong></span><br>`;
+                html += `<span>Velocidad de absorción: <strong>${calculator.absorptionSpeed}</strong></span><br><br>`;
+                html += `<span style="font-style: italic; font-size: 0.9em;">Nota: Estos cálculos son estimaciones. Consulta con tu endocrino y ajusta según tu experiencia personal y monitorización continua.</span>`;
+
+                RESULT_BOX.innerHTML = html;
+            }, 500);
+        });
+
+    })();
+</script>
