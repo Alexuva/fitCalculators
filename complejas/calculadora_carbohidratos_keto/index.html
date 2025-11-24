@@ -1,0 +1,216 @@
+<form class="form-container">
+    <p style="margin-bottom: 20px; text-align: center; font-style: italic;">
+        Calcula los carbohidratos netos de tu comida o alimento para saber si te mantienes en cetosis.
+    </p>
+
+    <div class="flex">
+        <div>
+            <label><span>Carbohidratos totales</span><sup>g</sup></label>
+            <input type="text" id="carbs" name="carbs_input" min="0" maxlength="6" placeholder="Ej: 30" required>
+            <span id="invalid_carbs" style="display: none;"></span>
+        </div>
+        <div>
+            <label><span>Fibra</span><sup>g</sup></label>
+            <input type="text" id="fiber" name="fiber_input" min="0" maxlength="6" placeholder="Ej: 5">
+            <span id="invalid_fiber" style="display: none;"></span>
+        </div>
+    </div>
+    <div class="flex">
+        <div>
+            <label><span>Polialcoholes (eritritol, xilitol, etc.)</span><sup>g</sup></label>
+            <input type="text" id="sugarAlcohols" name="sugarAlcohols_input" min="0" maxlength="6" placeholder="Ej: 2">
+            <span id="invalid_sugarAlcohols" style="display: none;"></span>
+        </div>
+    </div>
+
+    <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+        Calcular carbohidratos netos
+    </button>
+</form>
+
+<p class="result" style="visibility: hidden;"></p>
+
+<style>
+    input:not(:placeholder-shown):invalid,
+    select:invalid:not(:focus) {
+        border: 1px solid red !important;
+    }
+</style>
+
+<script type="text/javascript">
+    (function() {
+
+        class KetoCalculator {
+            _totalCarbs;
+            _fiber;
+            _sugarAlcohols;
+
+            constructor(totalCarbs, fiber, sugarAlcohols) {
+                this._totalCarbs = totalCarbs;
+                this._fiber = fiber;
+                this._sugarAlcohols = sugarAlcohols;
+            }
+
+            get netCarbs() {
+                const netCarbs = this._totalCarbs - this._fiber - (this._sugarAlcohols * 0.5);
+                return Math.max(0, Math.round(netCarbs * 10) / 10);
+            }
+
+            get category() {
+                const net = this.netCarbs;
+
+                if (net < 20) {
+                    return {
+                        name: 'Cetosis profunda',
+                        description: 'Te encuentras en cetosis profunda. Ideal para máxima quema de grasa.'
+                    };
+                } else if (net <= 50) {
+                    return {
+                        name: 'Zona keto',
+                        description: 'Te mantienes en zona cetogénica. La mayoría de personas permanecen en cetosis con este nivel.'
+                    };
+                } else if (net <= 100) {
+                    return {
+                        name: 'Salida de cetosis',
+                        description: 'Probablemente estés saliendo de cetosis. Considera reducir los carbohidratos.'
+                    };
+                } else {
+                    return {
+                        name: 'No cetogénico',
+                        description: 'No estás en cetosis con este nivel de carbohidratos netos.'
+                    };
+                }
+            }
+        }
+
+        //Numeric inputs
+        const CARBS_INPUT = document.querySelector('#carbs');
+        const FIBER_INPUT = document.querySelector('#fiber');
+        const SUGAR_ALCOHOLS_INPUT = document.querySelector('#sugarAlcohols');
+
+        const FORM = document.querySelector('.form-container');
+        const RESULT_BOX = document.querySelector('.result');
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+
+        //Regex to validate decimal numbers
+        const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+\.\d{1,2})$/);
+
+        //Validate carbs input
+        CARBS_INPUT.addEventListener('input', () => {
+            if (CARBS_INPUT.value === '') {
+                CARBS_INPUT.setCustomValidity('');
+                return;
+            }
+
+            if (!DECIMALS_REGEX.test(CARBS_INPUT.value)) {
+                CARBS_INPUT.setCustomValidity('Introduce un número válido (máximo 2 decimales)');
+                CARBS_INPUT.reportValidity();
+                return;
+            }
+
+            const value = parseFloat(CARBS_INPUT.value.replace(',', '.'));
+            if (value < 0 || isNaN(value)) {
+                CARBS_INPUT.setCustomValidity('El valor debe ser mayor o igual a 0');
+                CARBS_INPUT.reportValidity();
+            } else {
+                CARBS_INPUT.setCustomValidity('');
+            }
+        });
+
+        //Validate fiber input
+        FIBER_INPUT.addEventListener('input', () => {
+            if (FIBER_INPUT.value === '') {
+                FIBER_INPUT.setCustomValidity('');
+                return;
+            }
+
+            if (!DECIMALS_REGEX.test(FIBER_INPUT.value)) {
+                FIBER_INPUT.setCustomValidity('Introduce un número válido (máximo 2 decimales)');
+                FIBER_INPUT.reportValidity();
+                return;
+            }
+
+            const value = parseFloat(FIBER_INPUT.value.replace(',', '.'));
+            if (value < 0 || isNaN(value)) {
+                FIBER_INPUT.setCustomValidity('El valor debe ser mayor o igual a 0');
+                FIBER_INPUT.reportValidity();
+            } else {
+                FIBER_INPUT.setCustomValidity('');
+            }
+        });
+
+        //Validate sugar alcohols input
+        SUGAR_ALCOHOLS_INPUT.addEventListener('input', () => {
+            if (SUGAR_ALCOHOLS_INPUT.value === '') {
+                SUGAR_ALCOHOLS_INPUT.setCustomValidity('');
+                return;
+            }
+
+            if (!DECIMALS_REGEX.test(SUGAR_ALCOHOLS_INPUT.value)) {
+                SUGAR_ALCOHOLS_INPUT.setCustomValidity('Introduce un número válido (máximo 2 decimales)');
+                SUGAR_ALCOHOLS_INPUT.reportValidity();
+                return;
+            }
+
+            const value = parseFloat(SUGAR_ALCOHOLS_INPUT.value.replace(',', '.'));
+            if (value < 0 || isNaN(value)) {
+                SUGAR_ALCOHOLS_INPUT.setCustomValidity('El valor debe ser mayor o igual a 0');
+                SUGAR_ALCOHOLS_INPUT.reportValidity();
+            } else {
+                SUGAR_ALCOHOLS_INPUT.setCustomValidity('');
+            }
+        });
+
+        FORM.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            //Validate carbs (required)
+            if (!CARBS_INPUT.value || CARBS_INPUT.value.trim() === '') {
+                CARBS_INPUT.setCustomValidity('Por favor, introduce los carbohidratos totales');
+                CARBS_INPUT.reportValidity();
+                return;
+            }
+
+            if (!DECIMALS_REGEX.test(CARBS_INPUT.value)) {
+                CARBS_INPUT.setCustomValidity('Introduce un número válido (máximo 2 decimales)');
+                CARBS_INPUT.reportValidity();
+                return;
+            }
+
+            const totalCarbs = parseFloat(CARBS_INPUT.value.replace(',', '.'));
+            if (totalCarbs < 0 || isNaN(totalCarbs)) {
+                CARBS_INPUT.setCustomValidity('El valor debe ser mayor o igual a 0');
+                CARBS_INPUT.reportValidity();
+                return;
+            }
+
+            //Parse other values with validation
+            const fiber = FIBER_INPUT.value && FIBER_INPUT.value.trim() !== ''
+                ? parseFloat(FIBER_INPUT.value.replace(',', '.')) || 0
+                : 0;
+            const sugarAlcohols = SUGAR_ALCOHOLS_INPUT.value && SUGAR_ALCOHOLS_INPUT.value.trim() !== ''
+                ? parseFloat(SUGAR_ALCOHOLS_INPUT.value.replace(',', '.')) || 0
+                : 0;
+
+            CALCULATE_BTN.innerHTML = 'Calculando...';
+            RESULT_BOX.style.visibility = 'hidden';
+
+            const calculator = new KetoCalculator(totalCarbs, fiber, sugarAlcohols);
+            const netCarbs = calculator.netCarbs;
+            const category = calculator.category;
+
+            setTimeout(() => {
+                RESULT_BOX.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                CALCULATE_BTN.innerHTML = 'Calcular carbohidratos netos';
+                RESULT_BOX.style.visibility = 'visible';
+
+                RESULT_BOX.innerHTML = `
+                    <span>Carbohidratos netos: <strong>${netCarbs} g</strong></span><br><br>
+                    <span><strong>${category.name}</strong></span><br>
+                    <span>${category.description}</span>
+                `;
+            }, 500);
+        });
+
+    })();
+</script>
