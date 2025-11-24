@@ -1,0 +1,507 @@
+<div class="form-container">
+    <p style="margin-bottom: 20px; text-align: center; font-style: italic;">
+        Añade los alimentos de tu comida uno por uno. El resultado mostrará la carga glucémica total.
+    </p>
+
+    <div class="flex">
+        <div>
+            <label><span>Nombre del alimento</span></label>
+            <input type="text" id="name" name="name_input" placeholder="Ej: Arroz integral">
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Carbohidratos totales por porción</span><sup>g</sup></label>
+            <input type="text" id="carbs" name="carbs_input" placeholder="Ej: 30" maxlength="6">
+            <span id="invalid_carbs" style="display: none;"></span>
+        </div>
+    </div>
+    <div class="flex">
+        <div>
+            <label><span>Fibra por porción</span><sup>g</sup></label>
+            <input type="text" id="fiber" name="fiber_input" placeholder="Ej: 2.5" maxlength="6">
+            <span id="invalid_fiber" style="display: none;"></span>
+        </div>
+        <div>
+            <label><span>Azúcares libres por porción</span><sup>g</sup></label>
+            <input type="text" id="sugars" name="sugars_input" placeholder="Ej: 1" maxlength="6">
+            <span id="invalid_sugars" style="display: none;"></span>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Grasa por porción</span><sup>g</sup></label>
+            <input type="text" id="fat" name="fat_input" placeholder="Ej: 5" maxlength="6">
+            <span id="invalid_fat" style="display: none;"></span>
+        </div>
+        <div>
+            <label><span>Proteína por porción</span><sup>g</sup></label>
+            <input type="text" id="protein" name="protein_input" placeholder="Ej: 8" maxlength="6">
+            <span id="invalid_protein" style="display: none;"></span>
+        </div>
+    </div>
+
+    <div class="checkbox-section">
+        <label class="checkbox-title"><span>Señales de forma/procesado (marcar las que apliquen):</span></label>
+        <div class="checkbox-group">
+            <label class="checkbox-label">
+                <input type="checkbox" id="liquid" name="liquid_input">
+                Líquido/bebida
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="juice" name="juice_input">
+                Zumo/bebida azucarada
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="grinding" name="grinding_input">
+                Molienda/extrusión fina
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="intactStructure" name="intactStructure_input">
+                Estructura intacta/al dente
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="cookedChilled" name="cookedChilled_input">
+                Cocinado y enfriado ≥12h
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="ripe" name="ripe_input">
+                Madura/sobre-madura
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="acidic" name="acidic_input">
+                Con ácido (vinagre/limón)
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="dairyMatrix" name="dairyMatrix_input">
+                Matriz láctea predominante
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="legume" name="legume_input">
+                Legumbre predominante
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="wholeFruit" name="wholeFruit_input">
+                Fruta entera (no zumo)
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="viscousFiber" name="viscousFiber_input">
+                Fibra viscosa añadida
+            </label>
+        </div>
+    </div>
+
+    <button type="button" id="add-btn" class="btn-calculate btn-add">
+        Añadir alimento a la comida
+    </button>
+
+    <div id="food-list" style="margin-top: 20px; display: none;">
+        <h3>Alimentos añadidos (<span id="num-foods">0</span>):</h3>
+        <div id="foods-container" style="margin-bottom: 15px;"></div>
+        <button type="button" id="calculate-btn" class="btn-calculate">
+            Calcular Carga Glucémica Total
+        </button>
+    </div>
+</div>
+
+<p class="result" style="visibility: hidden;"></p>
+
+<style>
+    input:not(:placeholder-shown):invalid,
+    select:invalid:not(:focus) {
+        border: 1px solid red !important;
+    }
+
+    input[type="checkbox"] {
+        width: 1em !important;
+        height: 1em !important;
+        margin-top: unset !important;
+        accent-color: #FFE636;
+    }
+
+    input[type="checkbox"]:checked {
+        appearance: auto !important;
+    }
+
+    .checkbox-section {
+        margin-top: 20px;
+        margin-bottom: 15px;
+    }
+
+    .checkbox-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .checkbox-group {
+        margin-top: 0.5em;
+        gap: 0.5em;
+        display: flex;
+        flex-direction: column !important;
+        justify-content: space-between;
+    }
+
+    .checkbox-label {
+        display: flex;
+        gap: 0.5em;
+        cursor: pointer;
+        align-items: center;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+        cursor: pointer;
+    }
+
+    #calculate-btn {
+        width: 100% !important;
+    }
+</style>
+
+<script type="text/javascript">
+    (function() {
+
+        class GlycemicLoadCalculator {
+            constructor() {
+                this.foods = [];
+            }
+
+            addFood(food) {
+                const availableCho = Math.max(0, food.totalCarbs - food.fiber);
+                const estimatedGI = this.calculateEstimatedGI(food, availableCho);
+                const individualGL = (estimatedGI * availableCho) / 100;
+
+                this.foods.push({
+                    ...food,
+                    availableCho,
+                    estimatedGI,
+                    individualGL
+                });
+            }
+
+            calculateEstimatedGI(food, availableCho) {
+                let baseGI = 70;
+
+                if (food.signals.liquid) baseGI += 20;
+                if (food.signals.juice) baseGI += 10;
+                if (food.signals.grinding) baseGI += 10;
+                if (food.signals.intactStructure) baseGI -= 10;
+                if (food.signals.cookedChilled) baseGI -= 10;
+                if (food.signals.ripe) baseGI += 5;
+                if (food.signals.acidic) baseGI -= 5;
+                if (food.signals.dairyMatrix) baseGI -= 10;
+                if (food.signals.legume) baseGI -= 10;
+                if (food.signals.wholeFruit) baseGI -= 5;
+                if (food.signals.viscousFiber) baseGI -= 10;
+
+                const ratio = food.freeSugars / Math.max(1, availableCho);
+                if (ratio >= 0.60) {
+                    baseGI += 10;
+                } else if (ratio >= 0.30) {
+                    baseGI += 5;
+                }
+
+                const fatAdjustment = Math.min(10, Math.floor(food.fat / 10) * 5);
+                baseGI -= fatAdjustment;
+
+                const proteinAdjustment = Math.min(10, Math.floor(food.protein / 15) * 5);
+                baseGI -= proteinAdjustment;
+
+                return Math.max(0, Math.min(100, Math.round(baseGI)));
+            }
+
+            calculateResult() {
+                if (this.foods.length === 0) {
+                    return { error: 'No hay alimentos añadidos' };
+                }
+
+                const totalGL = this.foods.reduce((sum, f) => sum + f.individualGL, 0);
+                const totalAvailableCho = this.foods.reduce((sum, f) => sum + f.availableCho, 0);
+
+                let averageGI = null;
+                if (totalAvailableCho > 0) {
+                    const sumGIxCho = this.foods.reduce((sum, f) => sum + (f.estimatedGI * f.availableCho), 0);
+                    averageGI = Math.round(sumGIxCho / totalAvailableCho);
+                }
+
+                let category;
+                if (totalGL < 10) {
+                    category = 'baja';
+                } else if (totalGL <= 20) {
+                    category = 'media';
+                } else {
+                    category = 'alta';
+                }
+
+                return {
+                    totalGL: Math.round(totalGL * 10) / 10,
+                    averageGI,
+                    category
+                };
+            }
+
+            clear() {
+                this.foods = [];
+            }
+        }
+
+        const calculator = new GlycemicLoadCalculator();
+
+        //Numeric inputs
+        const CARBS_INPUT = document.querySelector('#carbs');
+        const INVALID_CARBS = document.querySelector('#invalid_carbs');
+        const FIBER_INPUT = document.querySelector('#fiber');
+        const INVALID_FIBER = document.querySelector('#invalid_fiber');
+        const SUGARS_INPUT = document.querySelector('#sugars');
+        const INVALID_SUGARS = document.querySelector('#invalid_sugars');
+        const FAT_INPUT = document.querySelector('#fat');
+        const INVALID_FAT = document.querySelector('#invalid_fat');
+        const PROTEIN_INPUT = document.querySelector('#protein');
+        const INVALID_PROTEIN = document.querySelector('#invalid_protein');
+
+        const ADD_BTN = document.querySelector('#add-btn');
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+        const RESULT_BOX = document.querySelector('.result');
+        const FOOD_LIST = document.querySelector('#food-list');
+        const NUM_FOODS = document.querySelector('#num-foods');
+        const FOODS_CONTAINER = document.querySelector('#foods-container');
+
+        //Regex to validate decimal numbers
+        const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+\.\d{1,2})$/);
+
+        function clearForm() {
+            document.getElementById('name').value = '';
+            CARBS_INPUT.value = '';
+            CARBS_INPUT.setCustomValidity('');
+            FIBER_INPUT.value = '';
+            FIBER_INPUT.setCustomValidity('');
+            SUGARS_INPUT.value = '';
+            SUGARS_INPUT.setCustomValidity('');
+            FAT_INPUT.value = '';
+            FAT_INPUT.setCustomValidity('');
+            PROTEIN_INPUT.value = '';
+            PROTEIN_INPUT.setCustomValidity('');
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+        }
+
+        function updateList() {
+            if (calculator.foods.length === 0) {
+                FOOD_LIST.style.display = 'none';
+                return;
+            }
+
+            FOOD_LIST.style.display = 'block';
+            NUM_FOODS.textContent = calculator.foods.length;
+
+            FOODS_CONTAINER.innerHTML = calculator.foods.map((f, i) =>
+                `<div style="background: #f5f5f5; padding: 10px; margin-bottom: 8px; border-radius: 4px;">
+                    <strong>${i + 1}. ${f.name}</strong> -
+                    CHO: ${f.totalCarbs}g, Fibra: ${f.fiber}g |
+                    IG estimado: ${f.estimatedGI} | CG: ${f.individualGL.toFixed(1)}
+                </div>`
+            ).join('');
+        }
+
+        //Validate carbohydrates input
+        CARBS_INPUT.addEventListener('input', () => {
+            if (CARBS_INPUT.value === '') {
+                CARBS_INPUT.setCustomValidity('');
+                return;
+            }
+
+            if (!DECIMALS_REGEX.test(CARBS_INPUT.value)) {
+                CARBS_INPUT.setCustomValidity('Introduce un número válido (máximo 2 decimales)');
+                CARBS_INPUT.reportValidity();
+                return;
+            }
+
+            const value = parseFloat(CARBS_INPUT.value.replace(',', '.'));
+            if (value < 0 || isNaN(value)) {
+                CARBS_INPUT.setCustomValidity('El valor debe ser mayor o igual a 0');
+                CARBS_INPUT.reportValidity();
+            } else {
+                CARBS_INPUT.setCustomValidity('');
+            }
+        });
+
+        //Validate fiber input
+        FIBER_INPUT.addEventListener('input', () => {
+            if (FIBER_INPUT.value === '') {
+                FIBER_INPUT.setCustomValidity('');
+                return;
+            }
+
+            if (!DECIMALS_REGEX.test(FIBER_INPUT.value)) {
+                FIBER_INPUT.setCustomValidity('Introduce un número válido (máximo 2 decimales)');
+                FIBER_INPUT.reportValidity();
+                return;
+            }
+
+            const value = parseFloat(FIBER_INPUT.value.replace(',', '.'));
+            if (value < 0 || isNaN(value)) {
+                FIBER_INPUT.setCustomValidity('El valor debe ser mayor o igual a 0');
+                FIBER_INPUT.reportValidity();
+            } else {
+                FIBER_INPUT.setCustomValidity('');
+            }
+        });
+
+        //Validate sugars input
+        SUGARS_INPUT.addEventListener('input', () => {
+            if (SUGARS_INPUT.value === '') {
+                SUGARS_INPUT.setCustomValidity('');
+                return;
+            }
+
+            if (!DECIMALS_REGEX.test(SUGARS_INPUT.value)) {
+                SUGARS_INPUT.setCustomValidity('Introduce un número válido (máximo 2 decimales)');
+                SUGARS_INPUT.reportValidity();
+                return;
+            }
+
+            const value = parseFloat(SUGARS_INPUT.value.replace(',', '.'));
+            if (value < 0 || isNaN(value)) {
+                SUGARS_INPUT.setCustomValidity('El valor debe ser mayor o igual a 0');
+                SUGARS_INPUT.reportValidity();
+            } else {
+                SUGARS_INPUT.setCustomValidity('');
+            }
+        });
+
+        //Validate fat input
+        FAT_INPUT.addEventListener('input', () => {
+            if (FAT_INPUT.value === '') {
+                FAT_INPUT.setCustomValidity('');
+                return;
+            }
+
+            if (!DECIMALS_REGEX.test(FAT_INPUT.value)) {
+                FAT_INPUT.setCustomValidity('Introduce un número válido (máximo 2 decimales)');
+                FAT_INPUT.reportValidity();
+                return;
+            }
+
+            const value = parseFloat(FAT_INPUT.value.replace(',', '.'));
+            if (value < 0 || isNaN(value)) {
+                FAT_INPUT.setCustomValidity('El valor debe ser mayor o igual a 0');
+                FAT_INPUT.reportValidity();
+            } else {
+                FAT_INPUT.setCustomValidity('');
+            }
+        });
+
+        //Validate protein input
+        PROTEIN_INPUT.addEventListener('input', () => {
+            if (PROTEIN_INPUT.value === '') {
+                PROTEIN_INPUT.setCustomValidity('');
+                return;
+            }
+
+            if (!DECIMALS_REGEX.test(PROTEIN_INPUT.value)) {
+                PROTEIN_INPUT.setCustomValidity('Introduce un número válido (máximo 2 decimales)');
+                PROTEIN_INPUT.reportValidity();
+                return;
+            }
+
+            const value = parseFloat(PROTEIN_INPUT.value.replace(',', '.'));
+            if (value < 0 || isNaN(value)) {
+                PROTEIN_INPUT.setCustomValidity('El valor debe ser mayor o igual a 0');
+                PROTEIN_INPUT.reportValidity();
+            } else {
+                PROTEIN_INPUT.setCustomValidity('');
+            }
+        });
+
+        ADD_BTN.addEventListener('click', () => {
+            //Validate carbohydrates input (required)
+            if (!CARBS_INPUT.value || CARBS_INPUT.value.trim() === '') {
+                CARBS_INPUT.setCustomValidity('Por favor, introduce los carbohidratos totales del alimento');
+                CARBS_INPUT.reportValidity();
+                return;
+            }
+
+            if (!DECIMALS_REGEX.test(CARBS_INPUT.value)) {
+                CARBS_INPUT.setCustomValidity('Introduce un número válido (máximo 2 decimales)');
+                CARBS_INPUT.reportValidity();
+                return;
+            }
+
+            const carbs = parseFloat(CARBS_INPUT.value.replace(',', '.'));
+            if (carbs < 0 || isNaN(carbs)) {
+                CARBS_INPUT.setCustomValidity('El valor debe ser mayor o igual a 0');
+                CARBS_INPUT.reportValidity();
+                return;
+            }
+
+            //Parse other values with validation
+            const fiber = FIBER_INPUT.value && FIBER_INPUT.value.trim() !== ''
+                ? parseFloat(FIBER_INPUT.value.replace(',', '.')) || 0
+                : 0;
+            const sugars = SUGARS_INPUT.value && SUGARS_INPUT.value.trim() !== ''
+                ? parseFloat(SUGARS_INPUT.value.replace(',', '.')) || 0
+                : 0;
+            const fat = FAT_INPUT.value && FAT_INPUT.value.trim() !== ''
+                ? parseFloat(FAT_INPUT.value.replace(',', '.')) || 0
+                : 0;
+            const protein = PROTEIN_INPUT.value && PROTEIN_INPUT.value.trim() !== ''
+                ? parseFloat(PROTEIN_INPUT.value.replace(',', '.')) || 0
+                : 0;
+
+            const food = {
+                name: document.getElementById('name').value || 'Alimento sin nombre',
+                totalCarbs: carbs,
+                fiber: fiber,
+                freeSugars: sugars,
+                fat: fat,
+                protein: protein,
+                signals: {
+                    liquid: document.getElementById('liquid').checked,
+                    juice: document.getElementById('juice').checked,
+                    grinding: document.getElementById('grinding').checked,
+                    intactStructure: document.getElementById('intactStructure').checked,
+                    cookedChilled: document.getElementById('cookedChilled').checked,
+                    ripe: document.getElementById('ripe').checked,
+                    acidic: document.getElementById('acidic').checked,
+                    dairyMatrix: document.getElementById('dairyMatrix').checked,
+                    legume: document.getElementById('legume').checked,
+                    wholeFruit: document.getElementById('wholeFruit').checked,
+                    viscousFiber: document.getElementById('viscousFiber').checked
+                }
+            };
+
+            calculator.addFood(food);
+            updateList();
+            clearForm();
+            RESULT_BOX.style.visibility = 'hidden';
+        });
+
+        CALCULATE_BTN.addEventListener('click', () => {
+            const result = calculator.calculateResult();
+
+            if (result.error) {
+                alert(result.error);
+                return;
+            }
+
+            const categoryText = result.category.charAt(0).toUpperCase() + result.category.slice(1);
+
+            let html = `<strong>La carga glucémica total de esta comida es ${result.totalGL} (${categoryText}).</strong>`;
+
+            if (result.averageGI !== null) {
+                html += `<br><br>IG medio estimado (ponderado): ${result.averageGI}.`;
+            }
+
+            html += `<br><br><span style="font-style: italic; font-size: 0.9em;">Nota: El IG se ha estimado mediante reglas sin tablas; puede variar según cocción, madurez y marca. El IG medio de comidas mixtas es aproximado.</span>`;
+
+            RESULT_BOX.innerHTML = html;
+
+            setTimeout(() => {
+                RESULT_BOX.style.visibility = 'visible';
+                RESULT_BOX.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        });
+
+    })();
+    </script>
