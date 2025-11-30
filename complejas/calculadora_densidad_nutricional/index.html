@@ -1,0 +1,420 @@
+<h1>Calculadora de Densidad Nutricional</h1>
+
+<form class="form-container">
+    <p style="margin-bottom: 20px; text-align: center; font-style: italic;">
+        Calcula la densidad nutricional de un alimento según su aporte de nutrientes por cada 100 kcal.
+    </p>
+
+    <div class="flex">
+        <div>
+            <label><span>Calorías</span><sup>kcal</sup></label>
+            <input type="text" id="calories" name="calories_input" min="0" maxlength="6" placeholder="Ej: 250" required>
+            <span id="invalid_calories" style="display: none;"></span>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Proteína</span><sup>g</sup></label>
+            <input type="text" id="protein" name="protein_input" min="0" maxlength="6" placeholder="Ej: 25">
+            <span id="invalid_protein" style="display: none;"></span>
+        </div>
+        <div>
+            <label><span>Fibra</span><sup>g</sup></label>
+            <input type="text" id="fiber" name="fiber_input" min="0" maxlength="6" placeholder="Ej: 8">
+            <span id="invalid_fiber" style="display: none;"></span>
+        </div>
+        <div>
+            <label><span>Vitamina C</span><sup>mg</sup></label>
+            <input type="text" id="vitaminC" name="vitaminC_input" min="0" maxlength="6" placeholder="Ej: 50">
+            <span id="invalid_vitaminC" style="display: none;"></span>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Vitamina A</span><sup>µg</sup></label>
+            <input type="text" id="vitaminA" name="vitaminA_input" min="0" maxlength="6" placeholder="Ej: 400">
+            <span id="invalid_vitaminA" style="display: none;"></span>
+        </div>
+        <div>
+            <label><span>Hierro</span><sup>mg</sup></label>
+            <input type="text" id="iron" name="iron_input" min="0" maxlength="6" placeholder="Ej: 5">
+            <span id="invalid_iron" style="display: none;"></span>
+        </div>
+        <div>
+            <label><span>Calcio</span><sup>mg</sup></label>
+            <input type="text" id="calcium" name="calcium_input" min="0" maxlength="6" placeholder="Ej: 300">
+            <span id="invalid_calcium" style="display: none;"></span>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Potasio</span><sup>mg</sup></label>
+            <input type="text" id="potassium" name="potassium_input" min="0" maxlength="6" placeholder="Ej: 500">
+            <span id="invalid_potassium" style="display: none;"></span>
+        </div>
+        <div>
+            <label><span>Magnesio</span><sup>mg</sup></label>
+            <input type="text" id="magnesium" name="magnesium_input" min="0" maxlength="6" placeholder="Ej: 100">
+            <span id="invalid_magnesium" style="display: none;"></span>
+        </div>
+        <div>
+            <label><span>Vitamina E</span><sup>mg</sup></label>
+            <input type="text" id="vitaminE" name="vitaminE_input" min="0" maxlength="6" placeholder="Ej: 5">
+            <span id="invalid_vitaminE" style="display: none;"></span>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Folato</span><sup>µg</sup></label>
+            <input type="text" id="folate" name="folate_input" min="0" maxlength="6" placeholder="Ej: 100">
+            <span id="invalid_folate" style="display: none;"></span>
+        </div>
+        <div>
+            <label><span>Vitamina B12</span><sup>µg</sup></label>
+            <input type="text" id="vitaminB12" name="vitaminB12_input" min="0" maxlength="6" placeholder="Ej: 1">
+            <span id="invalid_vitaminB12" style="display: none;"></span>
+        </div>
+        <div>
+            <label><span>Zinc</span><sup>mg</sup></label>
+            <input type="text" id="zinc" name="zinc_input" min="0" maxlength="6" placeholder="Ej: 3">
+            <span id="invalid_zinc" style="display: none;"></span>
+        </div>
+    </div>
+
+    <button id="calculate-btn" type="submit" value="Calcular" class="btn-calculate">
+        Calcular densidad nutricional
+    </button>
+</form>
+
+<p class="result" style="visibility: hidden;"></p>
+
+<style>
+    input:not(:placeholder-shown):invalid,
+    select:invalid:not(:focus) {
+        border: 1px solid red !important;
+    }
+</style>
+
+<script type="text/javascript">
+    (function() {
+
+        class NutritionalDensityCalculator {
+            _calories;
+            _protein;
+            _fiber;
+            _vitaminC;
+            _vitaminA;
+            _iron;
+            _calcium;
+            _potassium;
+            _magnesium;
+            _vitaminE;
+            _folate;
+            _vitaminB12;
+            _zinc;
+
+            constructor(calories, protein, fiber, vitaminC, vitaminA, iron, calcium, potassium, magnesium, vitaminE, folate, vitaminB12, zinc) {
+                this._calories = calories;
+                this._protein = protein;
+                this._fiber = fiber;
+                this._vitaminC = vitaminC;
+                this._vitaminA = vitaminA;
+                this._iron = iron;
+                this._calcium = calcium;
+                this._potassium = potassium;
+                this._magnesium = magnesium;
+                this._vitaminE = vitaminE;
+                this._folate = folate;
+                this._vitaminB12 = vitaminB12;
+                this._zinc = zinc;
+            }
+
+            get densityScore() {
+                if (this._calories === 0) return 0;
+
+                // Valores de referencia diarios (RDA)
+                const RDA = {
+                    protein: 50,        // g
+                    fiber: 25,          // g
+                    vitaminC: 80,       // mg
+                    vitaminA: 800,      // µg
+                    iron: 14,           // mg
+                    calcium: 800,       // mg
+                    potassium: 2000,    // mg
+                    magnesium: 375,     // mg
+                    vitaminE: 12,       // mg
+                    folate: 200,        // µg
+                    vitaminB12: 2.5,    // µg
+                    zinc: 10            // mg
+                };
+
+                // Calcular % RDA por cada 100 kcal
+                const factor = 100 / this._calories;
+
+                const percentages = {
+                    protein: (this._protein * factor / RDA.protein) * 100,
+                    fiber: (this._fiber * factor / RDA.fiber) * 100,
+                    vitaminC: (this._vitaminC * factor / RDA.vitaminC) * 100,
+                    vitaminA: (this._vitaminA * factor / RDA.vitaminA) * 100,
+                    iron: (this._iron * factor / RDA.iron) * 100,
+                    calcium: (this._calcium * factor / RDA.calcium) * 100,
+                    potassium: (this._potassium * factor / RDA.potassium) * 100,
+                    magnesium: (this._magnesium * factor / RDA.magnesium) * 100,
+                    vitaminE: (this._vitaminE * factor / RDA.vitaminE) * 100,
+                    folate: (this._folate * factor / RDA.folate) * 100,
+                    vitaminB12: (this._vitaminB12 * factor / RDA.vitaminB12) * 100,
+                    zinc: (this._zinc * factor / RDA.zinc) * 100
+                };
+
+                // Promedio de todos los porcentajes
+                const values = Object.values(percentages);
+                const sum = values.reduce((acc, val) => acc + val, 0);
+                const average = sum / values.length;
+
+                return Math.round(average * 10) / 10;
+            }
+
+            get category() {
+                const score = this.densityScore;
+
+                if (score >= 50) {
+                    return {
+                        name: 'Muy alta densidad nutricional',
+                        description: 'Excelente alimento. Aporta muchos nutrientes con pocas calorías.',
+                        color: '#4CAF50'
+                    };
+                } else if (score >= 25) {
+                    return {
+                        name: 'Alta densidad nutricional',
+                        description: 'Buen alimento. Tiene un buen equilibrio entre nutrientes y calorías.',
+                        color: '#8BC34A'
+                    };
+                } else if (score >= 10) {
+                    return {
+                        name: 'Densidad nutricional moderada',
+                        description: 'Alimento aceptable, pero podría ser más nutritivo.',
+                        color: '#FFC107'
+                    };
+                } else {
+                    return {
+                        name: 'Baja densidad nutricional',
+                        description: 'Alimento poco nutritivo. Aporta pocas vitaminas y minerales.',
+                        color: '#FF5722'
+                    };
+                }
+            }
+
+            get topNutrients() {
+                if (this._calories === 0) return [];
+
+                const factor = 100 / this._calories;
+
+                const RDA = {
+                    protein: 50,
+                    fiber: 25,
+                    vitaminC: 80,
+                    vitaminA: 800,
+                    iron: 14,
+                    calcium: 800,
+                    potassium: 2000,
+                    magnesium: 375,
+                    vitaminE: 12,
+                    folate: 200,
+                    vitaminB12: 2.5,
+                    zinc: 10
+                };
+
+                const nutrients = [
+                    { name: 'Proteína', percent: (this._protein * factor / RDA.protein) * 100 },
+                    { name: 'Fibra', percent: (this._fiber * factor / RDA.fiber) * 100 },
+                    { name: 'Vitamina C', percent: (this._vitaminC * factor / RDA.vitaminC) * 100 },
+                    { name: 'Vitamina A', percent: (this._vitaminA * factor / RDA.vitaminA) * 100 },
+                    { name: 'Hierro', percent: (this._iron * factor / RDA.iron) * 100 },
+                    { name: 'Calcio', percent: (this._calcium * factor / RDA.calcium) * 100 },
+                    { name: 'Potasio', percent: (this._potassium * factor / RDA.potassium) * 100 },
+                    { name: 'Magnesio', percent: (this._magnesium * factor / RDA.magnesium) * 100 },
+                    { name: 'Vitamina E', percent: (this._vitaminE * factor / RDA.vitaminE) * 100 },
+                    { name: 'Folato', percent: (this._folate * factor / RDA.folate) * 100 },
+                    { name: 'Vitamina B12', percent: (this._vitaminB12 * factor / RDA.vitaminB12) * 100 },
+                    { name: 'Zinc', percent: (this._zinc * factor / RDA.zinc) * 100 }
+                ];
+
+                return nutrients
+                    .filter(n => n.percent > 0)
+                    .sort((a, b) => b.percent - a.percent)
+                    .slice(0, 3);
+            }
+        }
+
+        //Numeric inputs
+        const CALORIES_INPUT = document.querySelector('#calories');
+        const PROTEIN_INPUT = document.querySelector('#protein');
+        const FIBER_INPUT = document.querySelector('#fiber');
+        const VITAMIN_C_INPUT = document.querySelector('#vitaminC');
+        const VITAMIN_A_INPUT = document.querySelector('#vitaminA');
+        const IRON_INPUT = document.querySelector('#iron');
+        const CALCIUM_INPUT = document.querySelector('#calcium');
+        const POTASSIUM_INPUT = document.querySelector('#potassium');
+        const MAGNESIUM_INPUT = document.querySelector('#magnesium');
+        const VITAMIN_E_INPUT = document.querySelector('#vitaminE');
+        const FOLATE_INPUT = document.querySelector('#folate');
+        const VITAMIN_B12_INPUT = document.querySelector('#vitaminB12');
+        const ZINC_INPUT = document.querySelector('#zinc');
+
+        const FORM = document.querySelector('.form-container');
+        const RESULT_BOX = document.querySelector('.result');
+        const CALCULATE_BTN = document.querySelector('#calculate-btn');
+
+        //Regex to validate decimal numbers
+        const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+\.\d{1,2})$/);
+
+        //Helper function to add validation to inputs
+        function addInputValidation(input) {
+            input.addEventListener('input', () => {
+                if (input.value === '') {
+                    input.setCustomValidity('');
+                    return;
+                }
+
+                if (!DECIMALS_REGEX.test(input.value)) {
+                    input.setCustomValidity('Introduce un número válido (máximo 2 decimales)');
+                    input.reportValidity();
+                    return;
+                }
+
+                const value = parseFloat(input.value.replace(',', '.'));
+                if (value < 0 || isNaN(value)) {
+                    input.setCustomValidity('El valor debe ser mayor o igual a 0');
+                    input.reportValidity();
+                } else {
+                    input.setCustomValidity('');
+                }
+            });
+        }
+
+        //Add validation to all inputs
+        addInputValidation(CALORIES_INPUT);
+        addInputValidation(PROTEIN_INPUT);
+        addInputValidation(FIBER_INPUT);
+        addInputValidation(VITAMIN_C_INPUT);
+        addInputValidation(VITAMIN_A_INPUT);
+        addInputValidation(IRON_INPUT);
+        addInputValidation(CALCIUM_INPUT);
+        addInputValidation(POTASSIUM_INPUT);
+        addInputValidation(MAGNESIUM_INPUT);
+        addInputValidation(VITAMIN_E_INPUT);
+        addInputValidation(FOLATE_INPUT);
+        addInputValidation(VITAMIN_B12_INPUT);
+        addInputValidation(ZINC_INPUT);
+
+        FORM.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            //Validate calories (required)
+            if (!CALORIES_INPUT.value || CALORIES_INPUT.value.trim() === '') {
+                CALORIES_INPUT.setCustomValidity('Por favor, introduce las calorías del alimento');
+                CALORIES_INPUT.reportValidity();
+                return;
+            }
+
+            if (!DECIMALS_REGEX.test(CALORIES_INPUT.value)) {
+                CALORIES_INPUT.setCustomValidity('Introduce un número válido (máximo 2 decimales)');
+                CALORIES_INPUT.reportValidity();
+                return;
+            }
+
+            const calories = parseFloat(CALORIES_INPUT.value.replace(',', '.'));
+            if (calories <= 0 || isNaN(calories)) {
+                CALORIES_INPUT.setCustomValidity('El valor debe ser mayor a 0');
+                CALORIES_INPUT.reportValidity();
+                return;
+            }
+
+            //Parse other values with validation
+            const protein = PROTEIN_INPUT.value && PROTEIN_INPUT.value.trim() !== ''
+                ? parseFloat(PROTEIN_INPUT.value.replace(',', '.')) || 0
+                : 0;
+            const fiber = FIBER_INPUT.value && FIBER_INPUT.value.trim() !== ''
+                ? parseFloat(FIBER_INPUT.value.replace(',', '.')) || 0
+                : 0;
+            const vitaminC = VITAMIN_C_INPUT.value && VITAMIN_C_INPUT.value.trim() !== ''
+                ? parseFloat(VITAMIN_C_INPUT.value.replace(',', '.')) || 0
+                : 0;
+            const vitaminA = VITAMIN_A_INPUT.value && VITAMIN_A_INPUT.value.trim() !== ''
+                ? parseFloat(VITAMIN_A_INPUT.value.replace(',', '.')) || 0
+                : 0;
+            const iron = IRON_INPUT.value && IRON_INPUT.value.trim() !== ''
+                ? parseFloat(IRON_INPUT.value.replace(',', '.')) || 0
+                : 0;
+            const calcium = CALCIUM_INPUT.value && CALCIUM_INPUT.value.trim() !== ''
+                ? parseFloat(CALCIUM_INPUT.value.replace(',', '.')) || 0
+                : 0;
+            const potassium = POTASSIUM_INPUT.value && POTASSIUM_INPUT.value.trim() !== ''
+                ? parseFloat(POTASSIUM_INPUT.value.replace(',', '.')) || 0
+                : 0;
+            const magnesium = MAGNESIUM_INPUT.value && MAGNESIUM_INPUT.value.trim() !== ''
+                ? parseFloat(MAGNESIUM_INPUT.value.replace(',', '.')) || 0
+                : 0;
+            const vitaminE = VITAMIN_E_INPUT.value && VITAMIN_E_INPUT.value.trim() !== ''
+                ? parseFloat(VITAMIN_E_INPUT.value.replace(',', '.')) || 0
+                : 0;
+            const folate = FOLATE_INPUT.value && FOLATE_INPUT.value.trim() !== ''
+                ? parseFloat(FOLATE_INPUT.value.replace(',', '.')) || 0
+                : 0;
+            const vitaminB12 = VITAMIN_B12_INPUT.value && VITAMIN_B12_INPUT.value.trim() !== ''
+                ? parseFloat(VITAMIN_B12_INPUT.value.replace(',', '.')) || 0
+                : 0;
+            const zinc = ZINC_INPUT.value && ZINC_INPUT.value.trim() !== ''
+                ? parseFloat(ZINC_INPUT.value.replace(',', '.')) || 0
+                : 0;
+
+            CALCULATE_BTN.innerHTML = 'Calculando...';
+            RESULT_BOX.style.visibility = 'hidden';
+
+            const calculator = new NutritionalDensityCalculator(
+                calories, protein, fiber, vitaminC, vitaminA, iron, calcium,
+                potassium, magnesium, vitaminE, folate, vitaminB12, zinc
+            );
+
+            const score = calculator.densityScore;
+            const category = calculator.category;
+            const topNutrients = calculator.topNutrients;
+
+            setTimeout(() => {
+                RESULT_BOX.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                CALCULATE_BTN.innerHTML = 'Calcular densidad nutricional';
+                RESULT_BOX.style.visibility = 'visible';
+
+                let categoryText = '';
+                if (score >= 50) {
+                    categoryText = 'muy alto';
+                } else if (score >= 25) {
+                    categoryText = 'alto';
+                } else if (score >= 10) {
+                    categoryText = 'moderado';
+                } else {
+                    categoryText = 'bajo';
+                }
+
+                let html = `<span>El índice de densidad nutricional (IDN) por 100 kcal es <strong>${Math.round(score)}</strong> (${categoryText}).</span><br><br>`;
+                html += `<span>${category.description}</span>`;
+
+                if (topNutrients.length > 0) {
+                    html += `<br><br><span style="font-weight: bold;">Nutrientes destacados (por 100 kcal):</span><br>`;
+                    topNutrients.forEach(nutrient => {
+                        html += `<span>• ${nutrient.name}: ${Math.round(nutrient.percent)}% RDA</span><br>`;
+                    });
+                }
+
+                html += `<br><span style="font-style: italic; font-size: 0.9em;">Nota: El cálculo se basa en % de RDA por cada 100 kcal. Cuanto mayor, más nutritivo es el alimento.</span>`;
+
+                RESULT_BOX.innerHTML = html;
+            }, 500);
+        });
+
+    })();
+</script>
