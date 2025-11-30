@@ -8,11 +8,12 @@
     <div class="flex">
         <div>
             <label><span>Glucosa en ayunas</span></label>
-            <input type="number" id="glucosa" min="0" step="0.1" placeholder="0" required>
+            <input type="text" id="glucose" name="glucose_input" min="0" maxlength="6" placeholder="Ej: 95" required>
+            <span id="invalid_glucose" style="display: none;"></span>
         </div>
         <div>
             <label><span>Unidad de glucosa</span></label>
-            <select id="unidadGlucosa" type="select" name="unidadGlucosa-input" required>
+            <select id="glucoseUnit" type="select" name="glucoseUnit_input" required>
                 <option disabled selected>Selecciona</option>
                 <option value="mg/dL">mg/dL</option>
                 <option value="mmol/L">mmol/L</option>
@@ -22,8 +23,9 @@
 
     <div class="flex">
         <div>
-            <label><span>Insulina en ayunas (μU/mL o mUI/L)</span></label>
-            <input type="number" id="insulina" min="0" step="0.1" placeholder="0" required>
+            <label><span>Insulina en ayunas</span><sup>μU/mL o mUI/L</sup></label>
+            <input type="text" id="insulin" name="insulin_input" min="0" maxlength="6" placeholder="Ej: 8" required>
+            <span id="invalid_insulin" style="display: none;"></span>
         </div>
     </div>
 
@@ -33,6 +35,13 @@
 </form>
 
 <p class="result" style="visibility: hidden;"></p>
+
+<style>
+    input:not(:placeholder-shown):invalid,
+    select:invalid:not(:focus) {
+        border: 1px solid red !important;
+    }
+</style>
 
 <script type="text/javascript">
     (function() {
@@ -126,53 +135,120 @@
             }
         }
 
+        //Numeric inputs
+        const GLUCOSE_INPUT = document.querySelector('#glucose');
+        const INSULIN_INPUT = document.querySelector('#insulin');
+        const GLUCOSE_UNIT_SELECT = document.querySelector('#glucoseUnit');
+
         const FORM = document.querySelector('.form-container');
         const RESULT_BOX = document.querySelector('.result');
         const CALCULATE_BTN = document.querySelector('#calculate-btn');
 
-        // Comprobar que ha introducido valor en los select
-        const SELECTS = document.querySelectorAll('select');
-        SELECTS.forEach(select => {
-            select.addEventListener('change', () => {
-                if (select.value !== "" && select.selectedIndex !== 0) {
-                    select.setCustomValidity('');
-                }
-            });
+        //Regex to validate decimal numbers
+        const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+\.\d{1,2})$/);
+
+        //Validate glucose input
+        GLUCOSE_INPUT.addEventListener('input', () => {
+            if (GLUCOSE_INPUT.value === '') {
+                GLUCOSE_INPUT.setCustomValidity('');
+                return;
+            }
+
+            if (!DECIMALS_REGEX.test(GLUCOSE_INPUT.value)) {
+                GLUCOSE_INPUT.setCustomValidity('Introduce un número válido (máximo 2 decimales)');
+                GLUCOSE_INPUT.reportValidity();
+                return;
+            }
+
+            const value = parseFloat(GLUCOSE_INPUT.value.replace(',', '.'));
+            if (value <= 0 || isNaN(value)) {
+                GLUCOSE_INPUT.setCustomValidity('El valor debe ser mayor a 0');
+                GLUCOSE_INPUT.reportValidity();
+            } else {
+                GLUCOSE_INPUT.setCustomValidity('');
+            }
+        });
+
+        //Validate insulin input
+        INSULIN_INPUT.addEventListener('input', () => {
+            if (INSULIN_INPUT.value === '') {
+                INSULIN_INPUT.setCustomValidity('');
+                return;
+            }
+
+            if (!DECIMALS_REGEX.test(INSULIN_INPUT.value)) {
+                INSULIN_INPUT.setCustomValidity('Introduce un número válido (máximo 2 decimales)');
+                INSULIN_INPUT.reportValidity();
+                return;
+            }
+
+            const value = parseFloat(INSULIN_INPUT.value.replace(',', '.'));
+            if (value <= 0 || isNaN(value)) {
+                INSULIN_INPUT.setCustomValidity('El valor debe ser mayor a 0');
+                INSULIN_INPUT.reportValidity();
+            } else {
+                INSULIN_INPUT.setCustomValidity('');
+            }
+        });
+
+        //Validate select
+        GLUCOSE_UNIT_SELECT.addEventListener('change', () => {
+            if (GLUCOSE_UNIT_SELECT.value !== "" && GLUCOSE_UNIT_SELECT.selectedIndex !== 0) {
+                GLUCOSE_UNIT_SELECT.setCustomValidity('');
+            }
         });
 
         FORM.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            const selects = document.querySelectorAll('select');
-            let isValid = true;
-
-            selects.forEach(select => {
-                if (select.value === "" || select.selectedIndex === 0) {
-                    select.setCustomValidity('Por favor, selecciona una opción');
-                    select.reportValidity();
-                    isValid = false;
-                } else {
-                    select.setCustomValidity('');
-                }
-            });
-
-            if (!isValid) {
+            //Validate glucose unit select
+            if (GLUCOSE_UNIT_SELECT.value === "" || GLUCOSE_UNIT_SELECT.selectedIndex === 0) {
+                GLUCOSE_UNIT_SELECT.setCustomValidity('Por favor, selecciona una unidad');
+                GLUCOSE_UNIT_SELECT.reportValidity();
                 return;
             }
 
-            const glucose = parseFloat(document.getElementById('glucosa').value);
-            const insulin = parseFloat(document.getElementById('insulina').value);
-            const glucoseUnit = document.getElementById('unidadGlucosa').value;
-
-            if (!glucose || glucose <= 0) {
-                alert('Por favor, introduce un valor válido de glucosa.');
+            //Validate glucose (required)
+            if (!GLUCOSE_INPUT.value || GLUCOSE_INPUT.value.trim() === '') {
+                GLUCOSE_INPUT.setCustomValidity('Por favor, introduce el valor de glucosa');
+                GLUCOSE_INPUT.reportValidity();
                 return;
             }
 
-            if (!insulin || insulin <= 0) {
-                alert('Por favor, introduce un valor válido de insulina.');
+            if (!DECIMALS_REGEX.test(GLUCOSE_INPUT.value)) {
+                GLUCOSE_INPUT.setCustomValidity('Introduce un número válido (máximo 2 decimales)');
+                GLUCOSE_INPUT.reportValidity();
                 return;
             }
+
+            const glucose = parseFloat(GLUCOSE_INPUT.value.replace(',', '.'));
+            if (glucose <= 0 || isNaN(glucose)) {
+                GLUCOSE_INPUT.setCustomValidity('El valor debe ser mayor a 0');
+                GLUCOSE_INPUT.reportValidity();
+                return;
+            }
+
+            //Validate insulin (required)
+            if (!INSULIN_INPUT.value || INSULIN_INPUT.value.trim() === '') {
+                INSULIN_INPUT.setCustomValidity('Por favor, introduce el valor de insulina');
+                INSULIN_INPUT.reportValidity();
+                return;
+            }
+
+            if (!DECIMALS_REGEX.test(INSULIN_INPUT.value)) {
+                INSULIN_INPUT.setCustomValidity('Introduce un número válido (máximo 2 decimales)');
+                INSULIN_INPUT.reportValidity();
+                return;
+            }
+
+            const insulin = parseFloat(INSULIN_INPUT.value.replace(',', '.'));
+            if (insulin <= 0 || isNaN(insulin)) {
+                INSULIN_INPUT.setCustomValidity('El valor debe ser mayor a 0');
+                INSULIN_INPUT.reportValidity();
+                return;
+            }
+
+            const glucoseUnit = GLUCOSE_UNIT_SELECT.value;
 
             CALCULATE_BTN.innerHTML = 'Calculando...';
             RESULT_BOX.style.visibility = 'hidden';
@@ -188,18 +264,9 @@
                 CALCULATE_BTN.innerHTML = 'Calcular HOMA-IR';
                 RESULT_BOX.style.visibility = 'visible';
 
-                let html = `<span>Tu índice HOMA-IR es: <strong>${homaIR}</strong></span><br><br>`;
-                html += `<span style="color: ${category.color};"><strong>${category.name}</strong></span><br>`;
-                html += `<span>${category.description}</span><br><br>`;
-                html += `<span style="font-weight: bold;">Recomendación:</span><br>`;
-                html += `<span>${category.recommendation}</span><br><br>`;
-                html += `<span>Índice de sensibilidad a la insulina: <strong>${sensitivity}</strong></span><br>`;
-
-                if (betaCell !== null) {
-                    html += `<span>Función de célula beta (HOMA-B): <strong>${betaCell}%</strong></span><br>`;
-                }
-
-                html += `<br><span style="font-style: italic; font-size: 0.9em;">Nota: Estos valores deben obtenerse en ayunas (8-12 horas). Consulta con tu médico para interpretación clínica.</span>`;
+                let html = `<span>El índice HOMA-IR es <strong>${homaIR}</strong>.</span><br><br>`;
+                html += `<span>Clasificación: <strong>${category.name}</strong>.</span><br><br>`;
+                html += `<span style="font-style: italic; font-size: 0.9em;">Solo orientativo; no sustituye la valoración médica.</span>`;
 
                 RESULT_BOX.innerHTML = html;
             }, 500);
