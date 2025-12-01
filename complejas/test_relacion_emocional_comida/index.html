@@ -1,3 +1,10 @@
+<style>
+    input:not(:placeholder-shown):invalid,
+    select:invalid:not(:focus) {
+        border: 1px solid red !important;
+    }
+</style>
+
 <h1>Test de Relación Emocional con la Comida</h1>
 
 <form class="form-container">
@@ -157,94 +164,37 @@
                 return this._q1 + this._q2 + this._q3 + this._q4 + this._q5 + this._q6 + this._q7 + this._q8 + this._q9 + this._q10;
             }
 
-            get category() {
-                const score = this.totalScore;
+            get emotionalityScore() {
+                const maxScore = 30;
+                return Math.round((this.totalScore / maxScore) * 100);
+            }
 
-                if (score <= 5) {
-                    return {
-                        name: 'Relación saludable con la comida',
-                        description: 'Excelente. Tienes una relación equilibrada y saludable con la comida. No la usas para gestionar emociones y disfrutas sin culpa.',
-                        color: '#4CAF50',
-                        risk: 'Riesgo bajo',
-                        recommendations: [
-                            'Mantén esta relación positiva con la comida',
-                            'Sigue practicando alimentación consciente',
-                            'Comparte tu enfoque equilibrado con otros'
-                        ]
-                    };
-                } else if (score <= 12) {
-                    return {
-                        name: 'Relación mayormente saludable',
-                        description: 'Bien. Tu relación con la comida es generalmente saludable, aunque hay algunos aspectos emocionales leves.',
-                        color: '#8BC34A',
-                        risk: 'Riesgo bajo-moderado',
-                        recommendations: [
-                            'Identifica los momentos donde la comida se vuelve emocional',
-                            'Trabaja en flexibilidad mental con los alimentos',
-                            'Practica mindful eating regularmente',
-                            'No te obsesiones con la "perfección"'
-                        ]
-                    };
-                } else if (score <= 20) {
-                    return {
-                        name: 'Relación emocional significativa',
-                        description: 'Atención. Tienes una relación emocional notable con la comida. Hay patrones que deberías trabajar.',
-                        color: '#FFC107',
-                        risk: 'Riesgo moderado',
-                        recommendations: [
-                            'Busca apoyo de un psicólogo especializado en alimentación',
-                            'Trabaja en desligar emociones de la comida',
-                            'Elimina la clasificación rígida de alimentos',
-                            'Practica autocompasión, no autocrítica',
-                            'Considera terapia cognitivo-conductual',
-                            'Busca formas alternativas de gestionar emociones'
-                        ]
-                    };
-                } else if (score <= 25) {
-                    return {
-                        name: 'Relación problemática con la comida',
-                        description: 'Preocupante. Tu relación con la comida es problemática y afecta tu bienestar emocional.',
-                        color: '#FF9800',
-                        risk: 'Riesgo alto',
-                        recommendations: [
-                            'Busca ayuda profesional urgente (psicólogo + nutricionista)',
-                            'Posible inicio de trastorno de la conducta alimentaria',
-                            'No hagas dietas restrictivas por tu cuenta',
-                            'Trabaja en tu autoestima independientemente del peso',
-                            'Considera grupos de apoyo',
-                            'Pide ayuda a familiares y amigos cercanos'
-                        ]
-                    };
+            get classification() {
+                const score = this.emotionalityScore;
+
+                if (score <= 25) {
+                    return 'Predomina control consciente';
+                } else if (score <= 50) {
+                    return 'Equilibrio emocional/físico';
+                } else if (score <= 75) {
+                    return 'Alta influencia emocional';
                 } else {
-                    return {
-                        name: 'Posible trastorno de la conducta alimentaria',
-                        description: 'Alerta. Muestras señales graves de un posible TCA. Necesitas ayuda profesional inmediata.',
-                        color: '#F44336',
-                        risk: 'Riesgo muy alto',
-                        recommendations: [
-                            'URGENTE: Consulta con un psiquiatra/psicólogo especializado en TCA',
-                            'Necesitas tratamiento multidisciplinar (médico, psicólogo, nutricionista)',
-                            'Informa a tu familia o personas cercanas',
-                            'No estás solo/a, los TCA tienen tratamiento efectivo',
-                            'Llama a líneas de ayuda especializadas en TCA',
-                            'No esperes, busca ayuda HOY'
-                        ]
-                    };
+                    return 'Relación emocional intensa';
                 }
             }
 
-            get warningSignals() {
-                const signals = [];
+            get interpretiveMessage() {
+                const classification = this.classification;
 
-                if (this._q4 >= 2) signals.push('Episodios de atracones');
-                if (this._q5 >= 2) signals.push('Comer a escondidas');
-                if (this._q8 >= 2) signals.push('Conductas compensatorias (purgas, ejercicio excesivo)');
-                if (this._q7 === 3) signals.push('Autoestima completamente dependiente del peso');
-                if (this._q10 >= 2) signals.push('Evitación social relacionada con comida');
-                if (this._q2 === 3) signals.push('Culpa extrema tras comer');
-                if (this._q9 === 3) signals.push('Reglas alimentarias rígidas y controladoras');
-
-                return signals.length > 0 ? signals : ['No se detectaron señales de alarma graves'];
+                if (classification === 'Predomina control consciente') {
+                    return 'Tu alimentación parece responder principalmente a señales físicas. Mantén la atención plena para conservar este equilibrio.';
+                } else if (classification === 'Equilibrio emocional/físico') {
+                    return 'Usas la comida de forma flexible; ocasionalmente influida por emociones, pero con buena autorregulación.';
+                } else if (classification === 'Alta influencia emocional') {
+                    return 'Tus emociones afectan con frecuencia tu forma de comer. Identificar los detonantes emocionales puede ayudarte a reducir la impulsividad.';
+                } else {
+                    return 'La comida parece una vía de alivio emocional. Practicar técnicas de gestión emocional o mindfulness alimentario puede ayudarte.';
+                }
             }
         }
 
@@ -293,29 +243,19 @@
                 parseInt(document.getElementById('q10').value)
             );
 
-            const category = calculator.category;
-            const signals = calculator.warningSignals;
+            const emotionalityScore = calculator.emotionalityScore;
+            const classification = calculator.classification;
+            const message = calculator.interpretiveMessage;
 
             setTimeout(() => {
                 RESULT_BOX.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 CALCULATE_BTN.innerHTML = 'Ver mi resultado';
                 RESULT_BOX.style.visibility = 'visible';
 
-                let html = `<span style="color: ${category.color};"><strong>${category.name}</strong></span><br>`;
-                html += `<span>${category.description}</span><br><br>`;
-                html += `<span>Nivel de riesgo: <strong>${category.risk}</strong></span><br><br>`;
-
-                html += `<span style="font-weight: bold;">Señales de alarma detectadas:</span><br>`;
-                signals.forEach(signal => {
-                    html += `<span>• ${signal}</span><br>`;
-                });
-
-                html += `<br><span style="font-weight: bold;">Recomendaciones:</span><br>`;
-                category.recommendations.forEach(rec => {
-                    html += `<span>• ${rec}</span><br>`;
-                });
-
-                html += `<br><span style="font-style: italic; font-size: 0.9em;">Nota: Este test NO sustituye un diagnóstico profesional. Si tienes puntuaciones altas, busca ayuda especializada. Los TCA son tratables.</span>`;
+                let html = `<span>Tu puntuación de relación emocional con la comida es <strong>${emotionalityScore}/100</strong>.</span><br><br>`;
+                html += `<span>Clasificación: <strong>${classification}</strong>.</span><br><br>`;
+                html += `<span>${message}</span><br><br>`;
+                html += `<span style="font-style: italic; font-size: 0.9em;">Este test es orientativo; no sustituye la evaluación de un profesional. Evita interpretarlo como diagnóstico clínico.</span>`;
 
                 RESULT_BOX.innerHTML = html;
             }, 500);
