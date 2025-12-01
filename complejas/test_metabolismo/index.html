@@ -1,3 +1,10 @@
+<style>
+    input:not(:placeholder-shown):invalid,
+    select:invalid:not(:focus) {
+        border: 1px solid red !important;
+    }
+</style>
+
 <h1>Test de Metabolismo: Rápido o Lento</h1>
 
 <form class="form-container">
@@ -165,49 +172,53 @@
                 return this._q1 + this._q2 + this._q3 + this._q4 + this._q5 + this._q6 + this._q7 + this._q8 + this._q9 + this._q10;
             }
 
-            get category() {
-                const score = this.totalScore;
+            get fastMetabolismScore() {
+                const maxScore = 40;
+                const invertedScore = maxScore - this.totalScore;
+                return Math.round((invertedScore / maxScore) * 100);
+            }
 
-                if (score <= 10) {
-                    return {
-                        name: 'Metabolismo muy rápido',
-                        description: 'Tienes un metabolismo muy activo. Quemas calorías rápidamente y te cuesta ganar peso.',
-                        color: '#4CAF50',
-                        bmr: 'Por encima del promedio (+10-20%)',
-                        recommendations: ['Necesitas comer frecuentemente (5-6 comidas al día)', 'Aumenta la ingesta calórica si quieres ganar peso', 'Prioriza carbohidratos complejos y proteínas', 'Evita cardio excesivo si quieres ganar masa', 'Considera batidos hipercalóricos entre comidas']
-                    };
-                } else if (score <= 18) {
-                    return {
-                        name: 'Metabolismo rápido',
-                        description: 'Tu metabolismo es rápido. Tienes facilidad para mantenerte delgado pero puede costarte ganar músculo.',
-                        color: '#8BC34A',
-                        bmr: 'Ligeramente por encima del promedio (+5-10%)',
-                        recommendations: ['Come 4-5 veces al día para mantener energía', 'Puedes permitirte más carbohidratos', 'Enfócate en proteína para ganar músculo', 'El entrenamiento de fuerza es clave para ti', 'No temas a las grasas saludables']
-                    };
-                } else if (score <= 26) {
-                    return {
-                        name: 'Metabolismo normal/moderado',
-                        description: 'Tienes un metabolismo equilibrado. Puedes ganar o perder peso con relativa facilidad si te lo propones.',
-                        color: '#FFC107',
-                        bmr: 'En el promedio',
-                        recommendations: ['Mantén una dieta equilibrada en macronutrientes', '3-4 comidas al día suele ser suficiente', 'Combina cardio y fuerza para mejores resultados', 'Controla las porciones sin ser muy estricto', 'Ajusta calorías según tus objetivos']
-                    };
-                } else if (score <= 34) {
-                    return {
-                        name: 'Metabolismo lento',
-                        description: 'Tu metabolismo es lento. Ganas peso con facilidad y te cuesta perderlo.',
-                        color: '#FF9800',
-                        bmr: 'Ligeramente por debajo del promedio (-5-10%)',
-                        recommendations: ['Controla bien las porciones y calorías', 'Reduce carbohidratos, especialmente refinados', 'Aumenta proteína (acelera metabolismo)', 'Entrena con pesas para aumentar masa muscular', 'Considera ayuno intermitente', 'Prioriza alimentos con alta densidad nutricional']
-                    };
+            get slowMetabolismScore() {
+                const maxScore = 40;
+                return Math.round((this.totalScore / maxScore) * 100);
+            }
+
+            get classification() {
+                const fast = this.fastMetabolismScore;
+                const slow = this.slowMetabolismScore;
+
+                if (fast >= 60) {
+                    return 'rápido';
+                } else if (slow >= 60) {
+                    return 'lento';
                 } else {
-                    return {
-                        name: 'Metabolismo muy lento',
-                        description: 'Tu metabolismo es muy lento. Te cuesta mucho perder peso y ganas con gran facilidad.',
-                        color: '#F44336',
-                        bmr: 'Por debajo del promedio (-10-20%)',
-                        recommendations: ['Consulta con un endocrino (posible hipotiroidismo)', 'Dieta baja en carbohidratos puede ayudarte', 'Aumenta masa muscular (acelera metabolismo basal)', 'HIIT y entrenamiento de fuerza son esenciales', 'Revisa calidad del sueño y estrés', 'Considera suplementación (con supervisión médica)', 'Evita dietas muy restrictivas (empeoran metabolismo)']
-                    };
+                    return 'intermedio';
+                }
+            }
+
+            get confidence() {
+                const fast = this.fastMetabolismScore;
+                const slow = this.slowMetabolismScore;
+                const diff = Math.abs(fast - slow);
+
+                if (diff >= 40) {
+                    return 'alta';
+                } else if (diff >= 20) {
+                    return 'media';
+                } else {
+                    return 'baja';
+                }
+            }
+
+            get interpretiveMessage() {
+                const classification = this.classification;
+
+                if (classification === 'rápido') {
+                    return 'Tu organismo parece funcionar con alta eficiencia y gasto energético; prioriza suficiente ingesta calórica y proteínas.';
+                } else if (classification === 'lento') {
+                    return 'Tu metabolismo parece más conservador; prioriza descanso, ejercicio regular y comidas ligeras pero frecuentes.';
+                } else {
+                    return 'Tienes un metabolismo equilibrado y adaptable; ajusta tu alimentación según tu nivel de actividad.';
                 }
             }
         }
@@ -257,21 +268,23 @@
                 parseInt(document.getElementById('q10').value)
             );
 
-            const category = calculator.category;
+            const classification = calculator.classification;
+            const fastScore = calculator.fastMetabolismScore;
+            const slowScore = calculator.slowMetabolismScore;
+            const confidence = calculator.confidence;
+            const message = calculator.interpretiveMessage;
 
             setTimeout(() => {
                 RESULT_BOX.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 CALCULATE_BTN.innerHTML = 'Ver mi tipo de metabolismo';
                 RESULT_BOX.style.visibility = 'visible';
 
-                let html = `<span style="color: ${category.color};"><strong>${category.name}</strong></span><br>`;
-                html += `<span>${category.description}</span><br><br>`;
-                html += `<span>Tu TMB estimada: <strong>${category.bmr}</strong></span><br><br>`;
-                html += `<span style="font-weight: bold;">Recomendaciones para ti:</span><br>`;
-                category.recommendations.forEach(rec => {
-                    html += `<span>• ${rec}</span><br>`;
-                });
-                html += `<br><span style="font-style: italic; font-size: 0.9em;">Nota: Este test es orientativo. El metabolismo depende de múltiples factores (genética, masa muscular, hormonas, edad). Consulta con un profesional para un análisis preciso.</span>`;
+                let html = `<span>Tu metabolismo estimado es <strong>${classification}</strong>.</span><br><br>`;
+                html += `<span>Puntuación metabolismo rápido: <strong>${fastScore}/100</strong>.<br>`;
+                html += `Puntuación metabolismo lento: <strong>${slowScore}/100</strong>.<br>`;
+                html += `Nivel de confianza: <strong>${confidence}</strong>.</span><br><br>`;
+                html += `<span>${message}</span><br><br>`;
+                html += `<span style="font-style: italic; font-size: 0.9em;">Los valores fisiológicos son orientativos; no sustituyen una valoración médica. El test refleja patrones generales, no el gasto energético exacto.</span>`;
 
                 RESULT_BOX.innerHTML = html;
             }, 500);
