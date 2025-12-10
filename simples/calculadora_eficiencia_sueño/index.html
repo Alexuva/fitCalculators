@@ -21,7 +21,7 @@
             <label><span>¿Te despiertas alguna vez durante la noche?</span></label>
             <select id="interruptedSleep" type="select" name="interruptedSleep_input">
                 <option disabled selected>Selecciona una opción</option>
-                <option value="y">Si</option>
+                <option value="y">Sí</option>
                 <option value="n">No</option>
             </select>
         </div>
@@ -111,7 +111,7 @@
             const MIN = parseInt(FALL_ASLEEP_TIME.getAttribute('min'));
             const MAX = parseInt(FALL_ASLEEP_TIME.getAttribute('max'));
 
-            //Comprobar si el numero es entre los min y max
+            //Comprobar si el número es entre los min y max
             if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
                 FALL_ASLEEP_TIME.setCustomValidity(`Los minutos mínimos son ${MIN} y los máximos son ${MAX}`);
                 FALL_ASLEEP_TIME.reportValidity();
@@ -134,7 +134,7 @@
             const MIN = parseInt(WAKE_UPS.getAttribute('min'));
             const MAX = parseInt(WAKE_UPS.getAttribute('max'));
 
-            //Comprobar si el numero es entre los min y max
+            //Comprobar si el número es entre los min y max
             if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
                 WAKE_UPS.setCustomValidity(`El mínimo son ${MIN} y el máximo son ${MAX}`);
                 WAKE_UPS.reportValidity();
@@ -196,7 +196,7 @@
                 //Mostrar el resultado
                 RESULT_BOX.style.visibility = 'visible';
 
-                RESULT_BOX.innerHTML = `<span>Tu eficiencia de sueño es de <strong>${result.efficiency}%,</strong></span><br><span> Lo que corresponde a una eficiencia <strong>${result.message}</strong></span>`
+                RESULT_BOX.innerHTML = `<span>Tu eficiencia de sueño es de <strong>${result.efficiency} %,</strong></span><br><span> Lo que corresponde a una eficiencia <strong>${result.message}</strong></span>`
 
             }, 500)
 

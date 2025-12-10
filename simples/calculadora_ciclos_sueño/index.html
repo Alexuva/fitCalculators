@@ -38,7 +38,7 @@
             <label><span>¿Te despiertas alguna vez durante la noche?</span></label>
             <select id="interruptedSleep" type="select" name="interruptedSleep_input">
                 <option disabled selected>Selecciona una opción</option>
-                <option value="y">Si</option>
+                <option value="y">Sí</option>
                 <option value="n">No</option>
             </select>
         </div>
@@ -184,7 +184,7 @@
             }
         })
 
-        //Comprobar si ha introducido correctamente el numero de veces que te despiertas
+        //Comprobar si ha introducido correctamente el número de veces que te despiertas
         INTERRUPTED_TIMES.addEventListener('input', ()=>{
 
             //Comprobar si el numero es un entero
@@ -198,7 +198,7 @@
             const MIN = parseInt(INTERRUPTED_TIMES.getAttribute('min'));
             const MAX = parseInt(INTERRUPTED_TIMES.getAttribute('max'));
 
-            //Comprobar si el numero es entre los min y max
+            //Comprobar si el número es entre los min y max
             if(VALUE < MIN || VALUE > MAX || isNaN(VALUE)){
                 INTERRUPTED_TIMES.setCustomValidity(`El mínimo son ${MIN} y el máximo son ${MAX}`);
                 INTERRUPTED_TIMES.reportValidity();
@@ -258,7 +258,7 @@
                 RESULT_BOX.style.visibility = 'visible';
 
                 if (type === 'a'){
-                    RESULT_BOX.innerHTML = `<span>Cumplirías con <strong>${result.totalCicles}</strong> ciclos de sueño.</span><br><span><strong>${result.isRecommended ? 'Sí' : 'No'}</strong> cumples con el mínimo recomendado (4 ciclos)</span>`
+                    RESULT_BOX.innerHTML = `<span>Cumplirías con <strong>${result.totalCicles.replace('.',',')}</strong> ciclos de sueño.</span><br><span><strong>${result.isRecommended ? 'Sí' : 'No'}</strong> cumples con el mínimo recomendado (4 ciclos)</span>`
                 } else {
                     RESULT_BOX.innerHTML = `<span>Deberías irte a dormir a las  <strong>${result.bedTime}</strong> h.</span><br><span><strong>${result.isRecommended ? 'Sí' : 'No'}</strong> cumples con el mínimo recomendado (7 horas)</span>`
                 }
