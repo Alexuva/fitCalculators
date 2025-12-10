@@ -1,6 +1,4 @@
 <form class="form-container">
-    <p style="margin-bottom: 20px; text-align: center; font-style: italic;">El Índice de Masa Muscular Esquelética (SMI) es un indicador mucho más preciso que el IMC para evaluar tu composición corporal y potencial atlético. Esta calculadora, basada en resultados de bioimpedancia o DXA, te ayudará a saber si tu nivel de masa muscular es bajo, normal o alto en comparación con la población general y los atletas.</p>
-
     <div class="flex">
         <div>
             <label><span>Sexo</span></label>
@@ -14,7 +12,7 @@
 
     <div class="flex">
         <div>
-            <label><span>Altura (cm)</span></label>
+            <label><span>Altura</span><sup>cm</sup></label>
             <input id="height" type="number" name="height-input" min="100" max="250" step="0.1" placeholder="Ej: 175" required>
             <span id="invalid_height" style="display: none;"></span>
         </div>
@@ -22,8 +20,9 @@
 
     <div class="flex">
         <div>
-            <label><span>Masa muscular esquelética (kg)</span><sup>resultados de bioimpedancia o DXA</sup></label>
-            <input id="muscularMass" type="number" name="muscularMass-input" min="1" max="100" step="0.1" placeholder="Ej: 30.5" required>
+            <label><span>Masa muscular esquelética</span><sup>kg</sup></label>
+            <small style="display: block; margin-top: -5px; margin-bottom: 5px; font-size: 0.85em; color: #666;">Resultados de bioimpedancia o DXA</small>
+            <input id="muscularMass" type="number" name="muscularMass-input" min="1" max="100" step="0.1" placeholder="Ej: 30,5" required>
             <span id="invalid_muscularMass" style="display: none;"></span>
         </div>
     </div>
@@ -122,7 +121,7 @@
 
                 // Calcular SMI para mostrarlo
                 const heightInMeters = height / 100;
-                const smi = (muscularMass / Math.pow(heightInMeters, 2)).toFixed(1);
+                const smi = (muscularMass / Math.pow(heightInMeters, 2)).toFixed(1).replace('.', ',');
 
                 RESULT_BOX.innerHTML = `
                     <span>Tu índice de masa muscular esquelética (SMI) es <strong>${smi}</strong></span><br><br>
