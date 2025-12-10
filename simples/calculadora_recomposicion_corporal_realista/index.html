@@ -15,7 +15,7 @@
     <div class="flex">
         <div>
             <label><span>Peso corporal actual (kg)</span></label>
-            <input id="weight" type="number" name="weight-input" min="30" max="200" step="0.1" placeholder="Ej: 75.5" required>
+            <input id="weight" type="number" name="weight-input" min="30" max="200" step="0.1" placeholder="Ej: 75,5" required>
             <span id="invalid_weight" style="display: none;"></span>
         </div>
     </div>
@@ -23,14 +23,15 @@
     <div class="flex">
         <div>
             <label><span>Porcentaje de grasa corporal actual (%)</span></label>
-            <input id="fat" type="number" name="fat-input" min="5" max="60" step="0.1" placeholder="Ej: 20.5" required>
+            <p style="font-size: 0.9em; margin: 5px 0 10px 0; color: #666;">Si no lo sabes, puedes estimarlo o calcularlo <a href="#" target="_blank" style="color: #007bff; text-decoration: underline;">aquí</a>.</p>
+            <input id="fat" type="number" name="fat-input" min="5" max="60" step="0.1" placeholder="Ej: 20,5" required>
             <span id="invalid_fat" style="display: none;"></span>
         </div>
     </div>
 
     <div class="flex">
         <div>
-            <label><span>Nivel de experiencia entrenando</span></label>
+            <label><span>Nivel de experiencia (calcúlalo <a href="#" target="_blank" style="color: #007bff; text-decoration: underline;">aquí</a>):</span></label>
             <select id="experience" type="select" name="experience-input" required>
                 <option disabled selected>Selecciona</option>
                 <option value="beginner">Principiante</option>
@@ -151,11 +152,14 @@
                 //Mostrar el resultado
                 RESULT_BOX.style.visibility = 'visible';
 
+                // Función para formatear números con coma decimal
+                const formatNumber = (num) => num.toString().replace('.', ',');
+
                 RESULT_BOX.innerHTML = `
                     <span>En <strong>${weeks} semanas</strong> puedes conseguir:</span><br><br>
-                    <span style="display: block; margin-bottom: 5px;"><strong>Perder</strong>, como máximo, entre <strong>${result.fatLoss.totalMin}</strong> y <strong>${result.fatLoss.totalMax} kg</strong> de grasa corporal (≈ ${result.fatLoss.weeklyMin}–${result.fatLoss.weeklyMax} kg/sem).</span>
+                    <span style="display: block; margin-bottom: 5px;"><strong>Perder</strong>, como máximo, entre <strong>${formatNumber(result.fatLoss.totalMin)}</strong> y <strong>${formatNumber(result.fatLoss.totalMax)} kg</strong> de grasa corporal (≈ ${formatNumber(result.fatLoss.weeklyMin)}–${formatNumber(result.fatLoss.weeklyMax)} kg/sem).</span>
                     <span style="display: block; text-align: center; margin: 10px 0;">o</span>
-                    <span style="display: block;"><strong>Ganar</strong>, como máximo, entre <strong>${result.muscleGain.totalMin}</strong> y <strong>${result.muscleGain.totalMax} kg</strong> de masa muscular (≈ ${result.muscleGain.weeklyMin}–${result.muscleGain.weeklyMax} kg/sem).</span>
+                    <span style="display: block;"><strong>Ganar</strong>, como máximo, entre <strong>${formatNumber(result.muscleGain.totalMin)}</strong> y <strong>${formatNumber(result.muscleGain.totalMax)} kg</strong> de masa muscular (≈ ${formatNumber(result.muscleGain.weeklyMin)}–${formatNumber(result.muscleGain.weeklyMax)} kg/sem).</span>
                 `;
 
             }, 500)
@@ -309,23 +313,23 @@
         get bodyRecomposition() {
             const {fatLoss, muscleGain} = this.getRate(this._gender, this._fat, this._experience);
 
-            // Convertir porcentajes a decimales (dividir entre 100)
-            const minFatLossRate = fatLoss.min / 100;
-            const maxFatLossRate = fatLoss.max / 100;
-            const minMuscleGainRate = muscleGain.min / 100;
-            const maxMuscleGainRate = muscleGain.max / 100;
+            // Los valores ya están expresados como porcentajes del peso corporal
+            const minFatLossRate = fatLoss.min;
+            const maxFatLossRate = fatLoss.max;
+            const minMuscleGainRate = muscleGain.min;
+            const maxMuscleGainRate = muscleGain.max;
 
-            // Pérdida de grasa
-            const m = (this._weeks * minFatLossRate * this._weight).toFixed(2);
-            const n = (this._weeks * maxFatLossRate * this._weight).toFixed(2);
-            const p = (minFatLossRate * this._weight).toFixed(2);
-            const q = (maxFatLossRate * this._weight).toFixed(2);
+            // Pérdida de grasa (total y semanal en kg)
+            const m = (this._weeks * minFatLossRate * this._weight / 100).toFixed(2);
+            const n = (this._weeks * maxFatLossRate * this._weight / 100).toFixed(2);
+            const p = (minFatLossRate * this._weight / 100).toFixed(2);
+            const q = (maxFatLossRate * this._weight / 100).toFixed(2);
 
-            // Ganancia muscular
-            const a = (this._weeks * minMuscleGainRate * this._weight).toFixed(2);
-            const b = (this._weeks * maxMuscleGainRate * this._weight).toFixed(2);
-            const c = (minMuscleGainRate * this._weight).toFixed(2);
-            const d = (maxMuscleGainRate * this._weight).toFixed(2);
+            // Ganancia muscular (total y semanal en kg)
+            const a = (this._weeks * minMuscleGainRate * this._weight / 100).toFixed(2);
+            const b = (this._weeks * maxMuscleGainRate * this._weight / 100).toFixed(2);
+            const c = (minMuscleGainRate * this._weight / 100).toFixed(2);
+            const d = (maxMuscleGainRate * this._weight / 100).toFixed(2);
 
             return {
                 fatLoss: {
