@@ -1,5 +1,5 @@
 <form class="form-container">
-    <p style="margin-bottom: 20px; text-align: center; font-style: italic;">Evalúa tu condición física general a través de 4 indicadores clave: fuerza del tren superior, fuerza del tren inferior, capacidad cardiovascular (VO2 máx.) y flexibilidad.</p>
+    <p style="margin-bottom: 20px; text-align: center; font-style: italic;">Evalúa tu condición física general a través de 4 indicadores clave: fuerza del tren superior, fuerza del tren inferior, capacidad cardiovascular (VO<sub>2</sub> máx.) y flexibilidad.</p>
 
     <div class="flex">
         <div>
@@ -62,7 +62,8 @@
 
     <div class="flex">
         <div>
-            <label><span>Flexibilidad: distancia entre las manos (cm)</span><sup>negativo si no se juntan</sup></label>
+            <label><span>Flexibilidad (<a href="https://clinicalgate.com/wp-content/uploads/2015/03/B9781437716030500079_f04-03-9781437716030.jpg" target="_blank" style="text-decoration: underline;">ejecución</a>): distancia entre las manos (cm) (sin decimales)</span></label>
+            <p style="font-size: 0.9em; margin: 5px 0 10px 0; color: #666;"><strong>⚠️ ¡¡Importante!! ⚠️</strong> Si los dedos de las manos no llegan a juntarse, pon un símbolo "menos" delante del número (número negativo). Ejemplo: "-3" hace referencia a que los dedos no se juntan y hay una distancia de 3 cm entre ellos.</p>
             <input id="flexibility" type="number" name="flexibility-input" min="-20" max="20" step="1" placeholder="Ej: 2 o -3" required>
             <span id="invalid_flexibility" style="display: none;"></span>
         </div>
@@ -168,7 +169,7 @@
                     <span>Tu nivel de condición física general es <strong>${result.level}</strong></span><br><br>
                     <span style="display: block;">• <strong>Fuerza tren superior:</strong> ${result.upperBodyLevel}</span>
                     <span style="display: block;">• <strong>Fuerza tren inferior:</strong> ${result.lowerBodyLevel}</span>
-                    <span style="display: block;">• <strong>VO2 máx.:</strong> ${result.vo2MaxLevel}</span>
+                    <span style="display: block;">• <strong>VO<sub>2</sub> máx.:</strong> ${result.vo2MaxLevel}</span>
                     <span style="display: block;">• <strong>Flexibilidad:</strong> ${result.flexibilityLevel}</span>
                 `;
 
@@ -228,22 +229,22 @@
 
     const FLEXIBILITY_DATA = {
         male: [
-            { ageRange: [15, 19], levels: { 'muy baja': [-999, -5], 'baja': [-4, -2], 'normal': [-1, 1], 'buena': [2, 3], 'excelente': [4, 999] } },
-            { ageRange: [20, 29], levels: { 'muy baja': [-999, -6], 'baja': [-5, -3], 'normal': [-2, 0], 'buena': [1, 2], 'excelente': [3, 999] } },
-            { ageRange: [30, 39], levels: { 'muy baja': [-999, -7], 'baja': [-6, -4], 'normal': [-3, -1], 'buena': [0, 1], 'excelente': [2, 999] } },
-            { ageRange: [40, 49], levels: { 'muy baja': [-999, -8], 'baja': [-7, -5], 'normal': [-4, -2], 'buena': [-1, 0], 'excelente': [1, 999] } },
-            { ageRange: [50, 59], levels: { 'muy baja': [-999, -9], 'baja': [-8, -6], 'normal': [-5, -3], 'buena': [-2, -1], 'excelente': [0, 999] } },
-            { ageRange: [60, 70], levels: { 'muy baja': [-999, -10], 'baja': [-9, -7], 'normal': [-6, -4], 'buena': [-3, -2], 'excelente': [-1, 999] } },
-            { ageRange: [71, 999], levels: { 'muy baja': [-999, -11], 'baja': [-10, -8], 'normal': [-7, -5], 'buena': [-4, -3], 'excelente': [-2, 999] } }
+            { ageRange: [15, 19], levels: { 'muy bajo': [-999, -5], 'bajo': [-4, -2], 'normal': [-1, 1], 'bueno': [2, 3], 'excelente': [4, 999] } },
+            { ageRange: [20, 29], levels: { 'muy bajo': [-999, -6], 'bajo': [-5, -3], 'normal': [-2, 0], 'bueno': [1, 2], 'excelente': [3, 999] } },
+            { ageRange: [30, 39], levels: { 'muy bajo': [-999, -7], 'bajo': [-6, -4], 'normal': [-3, -1], 'bueno': [0, 1], 'excelente': [2, 999] } },
+            { ageRange: [40, 49], levels: { 'muy bajo': [-999, -8], 'bajo': [-7, -5], 'normal': [-4, -2], 'bueno': [-1, 0], 'excelente': [1, 999] } },
+            { ageRange: [50, 59], levels: { 'muy bajo': [-999, -9], 'bajo': [-8, -6], 'normal': [-5, -3], 'bueno': [-2, -1], 'excelente': [0, 999] } },
+            { ageRange: [60, 70], levels: { 'muy bajo': [-999, -10], 'bajo': [-9, -7], 'normal': [-6, -4], 'bueno': [-3, -2], 'excelente': [-1, 999] } },
+            { ageRange: [71, 999], levels: { 'muy bajo': [-999, -11], 'bajo': [-10, -8], 'normal': [-7, -5], 'bueno': [-4, -3], 'excelente': [-2, 999] } }
         ],
         female: [
-            { ageRange: [15, 19], levels: { 'muy baja': [-999, -4], 'baja': [-3, -1], 'normal': [0, 2], 'buena': [3, 4], 'excelente': [5, 999] } },
-            { ageRange: [20, 29], levels: { 'muy baja': [-999, -5], 'baja': [-4, -2], 'normal': [-1, 1], 'buena': [2, 3], 'excelente': [4, 999] } },
-            { ageRange: [30, 39], levels: { 'muy baja': [-999, -6], 'baja': [-5, -3], 'normal': [-2, 0], 'buena': [1, 2], 'excelente': [3, 999] } },
-            { ageRange: [40, 49], levels: { 'muy baja': [-999, -7], 'baja': [-6, -4], 'normal': [-3, -1], 'buena': [0, 1], 'excelente': [2, 999] } },
-            { ageRange: [50, 59], levels: { 'muy baja': [-999, -8], 'baja': [-7, -5], 'normal': [-4, -2], 'buena': [-1, 0], 'excelente': [1, 999] } },
-            { ageRange: [60, 70], levels: { 'muy baja': [-999, -9], 'baja': [-8, -6], 'normal': [-5, -3], 'buena': [-2, -1], 'excelente': [0, 999] } },
-            { ageRange: [71, 999], levels: { 'muy baja': [-999, -10], 'baja': [-9, -7], 'normal': [-6, -4], 'buena': [-3, -2], 'excelente': [-1, 999] } }
+            { ageRange: [15, 19], levels: { 'muy bajo': [-999, -4], 'bajo': [-3, -1], 'normal': [0, 2], 'bueno': [3, 4], 'excelente': [5, 999] } },
+            { ageRange: [20, 29], levels: { 'muy bajo': [-999, -5], 'bajo': [-4, -2], 'normal': [-1, 1], 'bueno': [2, 3], 'excelente': [4, 999] } },
+            { ageRange: [30, 39], levels: { 'muy bajo': [-999, -6], 'bajo': [-5, -3], 'normal': [-2, 0], 'bueno': [1, 2], 'excelente': [3, 999] } },
+            { ageRange: [40, 49], levels: { 'muy bajo': [-999, -7], 'bajo': [-6, -4], 'normal': [-3, -1], 'bueno': [0, 1], 'excelente': [2, 999] } },
+            { ageRange: [50, 59], levels: { 'muy bajo': [-999, -8], 'bajo': [-7, -5], 'normal': [-4, -2], 'bueno': [-1, 0], 'excelente': [1, 999] } },
+            { ageRange: [60, 70], levels: { 'muy bajo': [-999, -9], 'bajo': [-8, -6], 'normal': [-5, -3], 'bueno': [-2, -1], 'excelente': [0, 999] } },
+            { ageRange: [71, 999], levels: { 'muy bajo': [-999, -10], 'bajo': [-9, -7], 'normal': [-6, -4], 'bueno': [-3, -2], 'excelente': [-1, 999] } }
         ]
     };
 
@@ -290,13 +291,10 @@
         getScoreFromLevel(level) {
             const scoreMap = {
                 'muy bajo': 0,
-                'muy baja': 0,
                 'bajo': 1,
-                'baja': 1,
                 'algo bajo': 2,
                 'normal': 2,
                 'bueno': 3,
-                'buena': 3,
                 'muy bueno': 4,
                 'excelente': 4
             };

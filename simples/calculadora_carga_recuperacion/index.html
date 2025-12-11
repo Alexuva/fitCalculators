@@ -66,7 +66,7 @@
     <div class="flex" id="endurance-input" style="display: none;">
         <div>
             <label><span>¿Cuántos kilómetros has acumulado en la última semana?</span></label>
-            <input id="km" type="number" name="km-input" min="0" max="500" step="0.1" placeholder="Ej: 32.5">
+            <input id="km" type="number" name="km-input" min="0" max="500" step="0.1" placeholder="Ej: 32,5">
             <span id="invalid_km" style="display: none;"></span>
         </div>
     </div>
@@ -81,12 +81,12 @@
 
     <div class="flex" id="concurrent-input" style="display: none;">
         <div>
-            <label><span>Resistencia: ¿Cuántos kilómetros has acumulado en la última semana?</span><sup>km</sup></label>
+            <label><span>Resistencia: ¿cuántos kilómetros has acumulado en la última semana?</span><sup>km</sup></label>
             <input id="km-concurrent" type="number" name="km-concurrent-input" min="0" max="500" step="0.1" placeholder="Ej: 20">
             <span id="invalid_km_concurrent" style="display: none;"></span>
         </div>
         <div>
-            <label><span>Fuerza: En promedio, ¿cuántas series efectivas por grupo muscular has acumulado en la última semana?</span></label>
+            <label><span>Fuerza: en promedio, ¿cuántas series efectivas por grupo muscular has acumulado en la última semana?</span></label>
             <input id="sets-concurrent" type="number" name="sets-concurrent-input" min="0" max="50" step="1" placeholder="Ej: 18">
             <span id="invalid_sets_concurrent" style="display: none;"></span>
         </div>
@@ -110,36 +110,36 @@
 <script type="text/javascript">
     (function() {
 
-        //Inputs de las preguntas
+        // Question inputs
         const Q1 = document.querySelector('#q1');
         const Q2 = document.querySelector('#q2');
         const Q3 = document.querySelector('#q3');
         const Q4 = document.querySelector('#q4');
         const SPORT_TYPE = document.querySelector('#sportType');
 
-        // Inputs condicionales
+        // Conditional inputs
         const KM = document.querySelector('#km');
         const SETS = document.querySelector('#sets');
         const KM_CONCURRENT = document.querySelector('#km-concurrent');
         const SETS_CONCURRENT = document.querySelector('#sets-concurrent');
         const MINUTES = document.querySelector('#minutes');
 
-        // Contenedores condicionales
+        // Conditional containers
         const ENDURANCE_INPUT = document.querySelector('#endurance-input');
         const STRENGTH_INPUT = document.querySelector('#strength-input');
         const CONCURRENT_INPUT = document.querySelector('#concurrent-input');
         const MIXED_INPUT = document.querySelector('#mixed-input');
 
-        //Caja con el resultado
+        // Result box
         const RESULT_BOX = document.querySelector('.result');
 
-        //Botón de calcular
+        // Calculate button
         const CALCULATE_BTN = document.querySelector('#calculate-btn');
 
-        //Formulario
+        // Form
         const FORM = document.querySelector('.form-container');
 
-        //Comprobar que ha introducido valor en los select
+        // Check that select has a value
         const SELECTS = document.querySelectorAll('select');
         SELECTS.forEach(select => {
             select.addEventListener('change', () => {
@@ -147,7 +147,7 @@
                     select.setCustomValidity('');
                 }
 
-                // Mostrar/ocultar inputs según tipo de deporte
+                // Show/hide inputs based on sport type
                 if (select.id === 'sportType') {
                     ENDURANCE_INPUT.style.display = 'none';
                     STRENGTH_INPUT.style.display = 'none';
@@ -198,20 +198,20 @@
                 return;
             }
 
-            //Cambiar texto botón
+            // Change button text
             CALCULATE_BTN.innerHTML = 'Calculando...';
 
-            //Ocultar resultado anterior
+            // Hide previous result
             RESULT_BOX.style.visibility = 'hidden';
 
-            // Obtener valores de todas las preguntas
+            // Get values from all questions
             const q1 = parseInt(Q1.value);
             const q2 = parseInt(Q2.value);
             const q3 = parseInt(Q3.value);
             const q4 = parseInt(Q4.value);
             const sportType = SPORT_TYPE.value;
 
-            // Preparar datos según tipo de deporte
+            // Prepare data based on sport type
             const data = {};
             if (sportType === 'endurance') {
                 data.km = parseFloat(KM.value);
@@ -229,14 +229,17 @@
 
             setTimeout(()=>{
 
-                //Scroll smooth hasta el resultado
+                // Smooth scroll to result
                 RESULT_BOX.scrollIntoView({behavior: 'smooth', block: 'center'});
 
-                //Volver a poner el texto en el boton
+                // Restore button text
                 CALCULATE_BTN.innerHTML = 'Calcular carga recomendada';
 
-                //Mostrar el resultado
+                // Show result
                 RESULT_BOX.style.visibility = 'visible';
+
+                // Function to format numbers with comma decimal
+                const formatNumber = (num) => num.toString().replace('.', ',');
 
                 let recommendationText = '';
                 if (result.sportType === 'endurance') {
@@ -245,16 +248,19 @@
                     recommendationText = `<strong>${result.recommendation.message}</strong>`;
                 } else if (result.sportType === 'concurrent') {
                     recommendationText = `
-                        <span style="display: block;">• <strong>Resistencia:</strong> ${result.recommendation.endurance.min}-${result.recommendation.endurance.max} km.</span>
-                        <span style="display: block;">• <strong>Fuerza:</strong> ${result.recommendation.strength.min}-${result.recommendation.strength.max} series por grupo muscular o movimiento.</span>
+                        <span style="display: block;">• <strong>Resistencia:</strong> ${result.recommendation.kmMessage}.</span>
+                        <span style="display: block;">• <strong>Fuerza:</strong> ${result.recommendation.setsMessage} por grupo muscular o movimiento.</span>
                     `;
                 } else {
                     recommendationText = `<strong>${result.recommendation.message}</strong>`;
                 }
 
+                // Adjust fatigue level gender (muy alta -> muy alto)
+                const fatigueLevelDisplay = result.fatigueLevel === 'muy alta' ? 'muy alto' : result.fatigueLevel;
+
                 RESULT_BOX.innerHTML = `
-                    <span style="display: block; margin-bottom: 15px;">Tu nivel de fatiga es <strong>${result.fatigueLevel}</strong></span>
-                    <span style="display: block;">Carga de entrenamiento recomendada para la próxima semana:</span>
+                    <span style="display: block; margin-bottom: 15px;">Nivel de fatiga: <strong>${fatigueLevelDisplay}</strong></span>
+                    <span style="display: block;">Carga de entrenamiento de recuperación:</span>
                     <span style="display: block; margin-top: 10px;">${recommendationText}</span>
                 `;
 
@@ -319,44 +325,79 @@
             };
 
             const mult = multipliers[fatigueLevel];
+            const formatNumber = (num) => num.toString().replace('.', ',');
+            const isVeryHigh = fatigueLevel === 'muy alta';
 
             if (this._sportType === 'endurance') {
                 const minKm = (this._km * mult.min).toFixed(1);
                 const maxKm = (this._km * mult.max).toFixed(1);
+                const minKmFormatted = formatNumber(minKm);
+                const maxKmFormatted = formatNumber(maxKm);
+
+                // For very high fatigue or when min equals max, show single value, otherwise show range
+                const message = (isVeryHigh || minKm === maxKm) ?
+                    `${minKmFormatted} km` :
+                    `${minKmFormatted}-${maxKmFormatted} km`;
+
                 return {
                     type: 'km',
                     min: parseFloat(minKm),
                     max: parseFloat(maxKm),
-                    message: `${minKm}-${maxKm} km`
+                    message: message
                 };
             } else if (this._sportType === 'strength') {
                 const minSets = Math.round(this._sets * mult.min);
                 const maxSets = Math.round(this._sets * mult.max);
+
+                // For very high fatigue or when min equals max, show single value, otherwise show range
+                const message = (isVeryHigh || minSets === maxSets) ?
+                    `${minSets} series por grupo muscular o movimiento` :
+                    `${minSets}-${maxSets} series por grupo muscular o movimiento`;
+
                 return {
                     type: 'series',
                     min: minSets,
                     max: maxSets,
-                    message: `${minSets}-${maxSets} series por grupo muscular o movimiento`
+                    message: message
                 };
             } else if (this._sportType === 'concurrent') {
                 const minKm = (this._km * mult.min).toFixed(1);
                 const maxKm = (this._km * mult.max).toFixed(1);
                 const minSets = Math.round(this._sets * mult.min);
                 const maxSets = Math.round(this._sets * mult.max);
+                const minKmFormatted = formatNumber(minKm);
+                const maxKmFormatted = formatNumber(maxKm);
+
+                // For very high fatigue or when min equals max, show single value, otherwise show range
+                const kmMessage = (isVeryHigh || minKm === maxKm) ?
+                    `${minKmFormatted} km` :
+                    `${minKmFormatted}-${maxKmFormatted} km`;
+                const setsMessage = (isVeryHigh || minSets === maxSets) ?
+                    `${minSets} series` :
+                    `${minSets}-${maxSets} series`;
+
                 return {
                     type: 'concurrent',
                     endurance: { min: parseFloat(minKm), max: parseFloat(maxKm) },
                     strength: { min: minSets, max: maxSets },
-                    message: `Resistencia: ${minKm}-${maxKm} km | Fuerza: ${minSets}-${maxSets} series`
+                    message: `Resistencia: ${kmMessage} | Fuerza: ${setsMessage}`,
+                    kmMessage: kmMessage,
+                    setsMessage: setsMessage
                 };
             } else {
                 const minMin = Math.round(this._minutes * mult.min);
                 const maxMin = Math.round(this._minutes * mult.max);
+
+                // For very high fatigue or when min equals max, show single value, otherwise show range
+                const message = (isVeryHigh || minMin === maxMin) ?
+                    `${minMin} min/sesión` :
+                    `${minMin}-${maxMin} min/sesión`;
+
                 return {
                     type: 'minutos',
                     min: minMin,
                     max: maxMin,
-                    message: `${minMin}-${maxMin} min/sesión`
+                    message: message
                 };
             }
         }
