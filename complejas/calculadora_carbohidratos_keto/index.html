@@ -205,7 +205,7 @@
                 RESULT_BOX.style.visibility = 'visible';
 
                 RESULT_BOX.innerHTML = `
-                    <span>Carbohidratos netos: <strong>${netCarbs} g</strong></span><br><br>
+                    <span>Carbohidratos netos: <strong>${netCarbs.toString().replace('.', ',')} g</strong></span><br><br>
                     <span><strong>${category.name}</strong></span><br>
                     <span>${category.description}</span>
                 `;
