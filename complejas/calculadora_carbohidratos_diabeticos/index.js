@@ -1,76 +1,137 @@
-class DiabetesCalculator {
-    _totalCarbs;
-    _fiber;
-    _protein;
-    _fat;
-    _ratio;
+class FoodItem {
+    name;
+    carbs;
+    fiber;
+    erythritol;
+    allulose;
+    maltitol;
+    xylitol;
+    sorbitol;
+    otherAlcohols;
 
-    constructor(totalCarbs, fiber, protein, fat, ratio) {
-        this._totalCarbs = totalCarbs;
-        this._fiber = fiber;
-        this._protein = protein;
-        this._fat = fat;
-        this._ratio = ratio;
+    constructor(name, carbs, fiber, erythritol, allulose, maltitol, xylitol, sorbitol, otherAlcohols) {
+        this.name = name;
+        this.carbs = carbs;
+        this.fiber = fiber;
+        this.erythritol = erythritol;
+        this.allulose = allulose;
+        this.maltitol = maltitol;
+        this.xylitol = xylitol;
+        this.sorbitol = sorbitol;
+        this.otherAlcohols = otherAlcohols;
+    }
+}
+
+class DiabeticCarbsCalculator {
+    _region;
+    _profile;
+    _foods;
+
+    constructor(region, profile, foods) {
+        this._region = region;
+        this._profile = profile;
+        this._foods = foods;
     }
 
-    get availableCarbs() {
-        return Math.max(0, this._totalCarbs - this._fiber);
-    }
+    calculateFoodEffectiveCarbs(food) {
+        // Step 1: CHO_decl based on region
+        let carbsDecl = food.carbs;
 
-    get insulinUnits() {
-        const baseUnits = this.availableCarbs / this._ratio;
-
-        // Ajuste por proteína (58% se convierte a glucosa)
-        const proteinEffect = (this._protein * 0.58) / this._ratio;
-
-        // Ajuste por grasa (10% se convierte a glucosa)
-        const fatEffect = (this._fat * 0.1) / this._ratio;
-
-        const totalUnits = baseUnits + proteinEffect + fatEffect;
-
-        return Math.round(totalUnits * 10) / 10;
-    }
-
-    get immediateInsulin() {
-        const baseUnits = this.availableCarbs / this._ratio;
-        return Math.round(baseUnits * 10) / 10;
-    }
-
-    get delayedInsulin() {
-        return Math.round((this.insulinUnits - this.immediateInsulin) * 10) / 10;
-    }
-
-    get glycemicImpact() {
-        const availableCarbs = this.availableCarbs;
-
-        // Estimación del impacto glucémico
-        let impact = availableCarbs * 3; // mg/dL aproximados por gramo de CHO
-
-        // Reducción por grasa (ralentiza absorción)
-        if (this._fat > 15) {
-            impact *= 0.8;
-        } else if (this._fat > 10) {
-            impact *= 0.9;
+        // Step 2: Fiber adjustment
+        let fiberAdjustment = 0;
+        if (this._region === 'US' && this._profile === 'ADA' && food.fiber >= 5) {
+            fiberAdjustment = food.fiber * 0.5;
         }
 
-        // Reducción por proteína
-        if (this._protein > 20) {
-            impact *= 0.9;
-        }
+        let carbsPostFiber = Math.max(0, carbsDecl - fiberAdjustment);
 
-        return Math.round(impact);
+        // Step 3: Sugar alcohols factors based on profile
+        let factors = this._getAlcoholFactors();
+
+        // Step 4: Calculate total alcohol discount
+        let alcoholDiscount =
+            (factors.erythritol * food.erythritol) +
+            (factors.allulose * food.allulose) +
+            (factors.maltitol * food.maltitol) +
+            (factors.xylitol * food.xylitol) +
+            (factors.sorbitol * food.sorbitol) +
+            (factors.others * food.otherAlcohols);
+
+        // Step 5: Calculate effective carbs
+        let effective = Math.max(0, carbsPostFiber - alcoholDiscount);
+
+        return {
+            effective: Math.round(effective * 10) / 10,
+            fiberAdjusted: fiberAdjustment,
+            alcoholsDiscounted: Math.round(alcoholDiscount * 10) / 10
+        };
     }
 
-    get absorptionSpeed() {
-        const fatRatio = this._fat / Math.max(1, this.availableCarbs);
-        const proteinRatio = this._protein / Math.max(1, this.availableCarbs);
+    _getAlcoholFactors() {
+        if (this._profile === 'ADA') {
+            return {
+                erythritol: 1.0,
+                allulose: 0.5,
+                maltitol: 0.5,
+                xylitol: 0.5,
+                sorbitol: 0.5,
+                others: 0.5
+            };
+        } else { // Conservador
+            return {
+                erythritol: 1.0,
+                allulose: 0.25,
+                maltitol: 0.25,
+                xylitol: 0.25,
+                sorbitol: 0.25,
+                others: 0.25
+            };
+        }
+    }
 
-        if (fatRatio > 1 || proteinRatio > 1.5) {
-            return 'Lenta (3-4 horas)';
-        } else if (fatRatio > 0.5 || proteinRatio > 0.8) {
-            return 'Media (2-3 horas)';
+    get totalEffectiveCarbs() {
+        let total = 0;
+        this._foods.forEach(food => {
+            const result = this.calculateFoodEffectiveCarbs(food);
+            total += result.effective;
+        });
+        return Math.round(total * 10) / 10;
+    }
+
+    getRations(rationSize, rounding) {
+        const rations = this.totalEffectiveCarbs / rationSize;
+        return this._roundRations(rations, rounding);
+    }
+
+    _roundRations(value, rounding) {
+        const roundingValue = parseFloat(rounding);
+        if (roundingValue === 1) {
+            return Math.round(value);
         } else {
-            return 'Rápida (1-2 horas)';
+            return Math.round(value / roundingValue) * roundingValue;
         }
+    }
+
+    get classification() {
+        const effective = this.totalEffectiveCarbs;
+        if (effective < 20) {
+            return 'baja';
+        } else if (effective <= 40) {
+            return 'moderada';
+        } else {
+            return 'alta';
+        }
+    }
+
+    getFoodsBreakdown() {
+        return this._foods.map(food => {
+            const result = this.calculateFoodEffectiveCarbs(food);
+            return {
+                name: food.name || 'Sin nombre',
+                effective: result.effective,
+                fiberAdjusted: result.fiberAdjusted,
+                alcoholsDiscounted: result.alcoholsDiscounted
+            };
+        });
     }
 }
