@@ -1,151 +1,158 @@
-<style>
-    input:not(:placeholder-shown):invalid,
-    select:invalid:not(:focus) {
-        border: 1px solid red !important;
-    }
-</style>
-
 <h1>Test de Metabolismo: Rápido o Lento</h1>
 
 <form class="form-container">
     <p style="margin-bottom: 20px; text-align: center; font-style: italic;">
-        Responde a estas preguntas para estimar si tu metabolismo tiende a ser rápido o lento.
+        Responde a estas preguntas para estimar si tu metabolismo tiende a ser rápido, intermedio o lento.
     </p>
 
+    <!-- Datos físicos -->
+    <h3 style="margin-top: 25px; margin-bottom: 15px; font-size: 1.1em;">Datos físicos</h3>
+
     <div class="flex">
         <div>
-            <label><span>1. ¿Con qué facilidad ganas peso?</span></label>
-            <select id="q1" type="select" name="q1-input" required>
+            <label><span>Edad</span><sup>años</sup></label>
+            <input type="text" id="age" name="age_input" min="1" max="120" maxlength="3" placeholder="Ej: 32" required>
+            <span id="invalid_age" style="display: none;"></span>
+        </div>
+        <div>
+            <label><span>Sexo biológico</span></label>
+            <select id="sex" type="select" name="sex_input" required>
                 <option disabled selected>Selecciona</option>
-                <option value="0">Muy difícil, como mucho y no engordo</option>
-                <option value="1">Algo difícil, puedo comer bastante sin ganar peso</option>
-                <option value="2">Normal, gano peso si como en exceso</option>
-                <option value="3">Fácil, gano peso con facilidad</option>
-                <option value="4">Muy fácil, engordo solo mirando la comida</option>
+                <option value="male">Hombre</option>
+                <option value="female">Mujer</option>
             </select>
         </div>
     </div>
 
     <div class="flex">
         <div>
-            <label><span>2. ¿Con qué facilidad pierdes peso cuando haces dieta?</span></label>
-            <select id="q2" type="select" name="q2-input" required>
+            <label><span>Peso</span><sup>kg</sup></label>
+            <input type="text" id="weight" name="weight_input" min="1" maxlength="5" placeholder="Ej: 70" required>
+            <span id="invalid_weight" style="display: none;"></span>
+        </div>
+        <div>
+            <label><span>Altura</span><sup>cm</sup></label>
+            <input type="text" id="height" name="height_input" min="1" maxlength="3" placeholder="Ej: 170" required>
+            <span id="invalid_height" style="display: none;"></span>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <label><span>Frecuencia cardíaca en reposo</span><sup>ppm</sup></label>
+            <input type="text" id="heartRate" name="heartRate_input" min="30" max="150" maxlength="3" placeholder="Ej: 70" required>
+            <span id="invalid_heartRate" style="display: none;"></span>
+        </div>
+        <div>
+            <label><span>Temperatura corporal matutina</span><sup>°C</sup></label>
+            <input type="text" id="temperature" name="temperature_input" min="34" max="38" maxlength="4" placeholder="Ej: 36,5" required>
+            <span id="invalid_temperature" style="display: none;"></span>
+        </div>
+    </div>
+
+    <!-- Cuestionario -->
+    <h3 style="margin-top: 25px; margin-bottom: 15px; font-size: 1.1em;">Cuestionario de sensaciones</h3>
+
+    <div class="flex">
+        <div>
+            <label><span>1. Suelo tener energía estable a lo largo del día</span></label>
+            <select id="q1" type="select" name="q1_input" required>
                 <option disabled selected>Selecciona</option>
-                <option value="0">Muy fácil, pierdo peso rápidamente</option>
-                <option value="1">Fácil, veo resultados en pocas semanas</option>
-                <option value="2">Normal, pierdo peso progresivamente</option>
-                <option value="3">Difícil, me cuesta mucho perder peso</option>
-                <option value="4">Muy difícil, apenas pierdo peso aunque haga dieta estricta</option>
+                <option value="0">Nunca</option>
+                <option value="1">A veces</option>
+                <option value="2">A menudo</option>
+                <option value="3">Siempre</option>
             </select>
         </div>
     </div>
 
     <div class="flex">
         <div>
-            <label><span>3. ¿Cómo es tu apetito en general?</span></label>
-            <select id="q3" type="select" name="q3-input" required>
+            <label><span>2. Tengo frío con facilidad, incluso en ambientes templados</span></label>
+            <select id="q2" type="select" name="q2_input" required>
                 <option disabled selected>Selecciona</option>
-                <option value="0">Siempre tengo hambre, necesito comer frecuentemente</option>
-                <option value="1">Tengo buen apetito, como 4-5 veces al día</option>
-                <option value="2">Apetito normal, 3 comidas al día</option>
-                <option value="3">Apetito bajo, a veces se me olvida comer</option>
-                <option value="4">Muy bajo, rara vez tengo hambre real</option>
+                <option value="0">Nunca</option>
+                <option value="1">A veces</option>
+                <option value="2">A menudo</option>
+                <option value="3">Siempre</option>
             </select>
         </div>
     </div>
 
     <div class="flex">
         <div>
-            <label><span>4. ¿Cómo es tu temperatura corporal?</span></label>
-            <select id="q4" type="select" name="q4-input" required>
+            <label><span>3. Tengo hambre o apetito frecuente, especialmente por la mañana</span></label>
+            <select id="q3" type="select" name="q3_input" required>
                 <option disabled selected>Selecciona</option>
-                <option value="0">Siempre tengo calor, sudo fácilmente</option>
-                <option value="1">Tengo más calor que la media</option>
-                <option value="2">Normal, ni mucho frío ni calor</option>
-                <option value="3">Tengo más frío que la media</option>
-                <option value="4">Siempre tengo frío, manos y pies helados</option>
+                <option value="0">Nunca</option>
+                <option value="1">A veces</option>
+                <option value="2">A menudo</option>
+                <option value="3">Siempre</option>
             </select>
         </div>
     </div>
 
     <div class="flex">
         <div>
-            <label><span>5. ¿Cómo son tus niveles de energía durante el día?</span></label>
-            <select id="q5" type="select" name="q5-input" required>
+            <label><span>4. Siento fatiga después de las comidas</span></label>
+            <select id="q4" type="select" name="q4_input" required>
                 <option disabled selected>Selecciona</option>
-                <option value="0">Muy altos, estoy siempre activo</option>
-                <option value="1">Buenos, tengo energía la mayor parte del día</option>
-                <option value="2">Normales, con altibajos</option>
-                <option value="3">Bajos, me canso fácilmente</option>
-                <option value="4">Muy bajos, siempre estoy cansado/a</option>
+                <option value="0">Nunca</option>
+                <option value="1">A veces</option>
+                <option value="2">A menudo</option>
+                <option value="3">Siempre</option>
             </select>
         </div>
     </div>
 
     <div class="flex">
         <div>
-            <label><span>6. ¿Cómo es tu constitución física natural?</span></label>
-            <select id="q6" type="select" name="q6-input" required>
+            <label><span>5. Mi digestión suele ser rápida y ligera</span></label>
+            <select id="q5" type="select" name="q5_input" required>
                 <option disabled selected>Selecciona</option>
-                <option value="0">Ectomorfo: delgado, difícil ganar músculo y grasa</option>
-                <option value="2">Mesomorfo: atlético, gano músculo fácilmente</option>
-                <option value="4">Endomorfo: tendencia a acumular grasa, difícil perderla</option>
+                <option value="0">Nunca</option>
+                <option value="1">A veces</option>
+                <option value="2">A menudo</option>
+                <option value="3">Siempre</option>
             </select>
         </div>
     </div>
 
     <div class="flex">
         <div>
-            <label><span>7. ¿Cómo toleras los carbohidratos?</span></label>
-            <select id="q7" type="select" name="q7-input" required>
+            <label><span>6. Duermo muchas horas, pero me cuesta activarme al despertar</span></label>
+            <select id="q6" type="select" name="q6_input" required>
                 <option disabled selected>Selecciona</option>
-                <option value="0">Muy bien, puedo comer carbohidratos sin engordar</option>
-                <option value="1">Bien, los tolero sin problema</option>
-                <option value="2">Normal, debo moderarlos</option>
-                <option value="3">Mal, engordo fácilmente con carbohidratos</option>
-                <option value="4">Muy mal, los carbohidratos me hacen ganar peso inmediatamente</option>
+                <option value="0">Nunca</option>
+                <option value="1">A veces</option>
+                <option value="2">A menudo</option>
+                <option value="3">Siempre</option>
             </select>
         </div>
     </div>
 
     <div class="flex">
         <div>
-            <label><span>8. ¿Cuántas horas de sueño necesitas para sentirte descansado/a?</span></label>
-            <select id="q8" type="select" name="q8-input" required>
+            <label><span>7. Mantengo peso estable aunque coma más de lo habitual</span></label>
+            <select id="q7" type="select" name="q7_input" required>
                 <option disabled selected>Selecciona</option>
-                <option value="0">Menos de 6 horas</option>
-                <option value="1">6-7 horas</option>
-                <option value="2">7-8 horas</option>
-                <option value="3">8-9 horas</option>
-                <option value="4">Más de 9 horas</option>
+                <option value="0">Nunca</option>
+                <option value="1">A veces</option>
+                <option value="2">A menudo</option>
+                <option value="3">Siempre</option>
             </select>
         </div>
     </div>
 
     <div class="flex">
         <div>
-            <label><span>9. ¿Cómo respondes al ejercicio físico?</span></label>
-            <select id="q9" type="select" name="q9-input" required>
+            <label><span>8. Tengo tendencia a aumentar de peso fácilmente</span></label>
+            <select id="q8" type="select" name="q8_input" required>
                 <option disabled selected>Selecciona</option>
-                <option value="0">Me recupero rápido y tengo mucha resistencia</option>
-                <option value="1">Me recupero bien</option>
-                <option value="2">Normal, me recupero en 1-2 días</option>
-                <option value="3">Me cuesta recuperarme</option>
-                <option value="4">Muy lento, tardo días en recuperarme</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="flex">
-        <div>
-            <label><span>10. ¿Cómo es tu digestión?</span></label>
-            <select id="q10" type="select" name="q10-input" required>
-                <option disabled selected>Selecciona</option>
-                <option value="0">Muy rápida, voy al baño varias veces al día</option>
-                <option value="1">Rápida y regular</option>
-                <option value="2">Normal, una vez al día</option>
-                <option value="3">Lenta, a veces tengo estreñimiento</option>
-                <option value="4">Muy lenta, estreñimiento frecuente</option>
+                <option value="0">Nunca</option>
+                <option value="1">A veces</option>
+                <option value="2">A menudo</option>
+                <option value="3">Siempre</option>
             </select>
         </div>
     </div>
@@ -157,53 +164,119 @@
 
 <p class="result" style="visibility: hidden;"></p>
 
+<style>
+    input:not(:placeholder-shown):invalid,
+    select:invalid:not(:focus) {
+        border: 1px solid red !important;
+    }
+</style>
+
 <script type="text/javascript">
     (function() {
 
         class MetabolismCalculator {
-            _q1; _q2; _q3; _q4; _q5; _q6; _q7; _q8; _q9; _q10;
+            _age;
+            _sex;
+            _weight;
+            _height;
+            _heartRate;
+            _temperature;
+            _q1; _q2; _q3; _q4; _q5; _q6; _q7; _q8;
 
-            constructor(q1, q2, q3, q4, q5, q6, q7, q8, q9, q10) {
-                this._q1 = q1; this._q2 = q2; this._q3 = q3; this._q4 = q4; this._q5 = q5;
-                this._q6 = q6; this._q7 = q7; this._q8 = q8; this._q9 = q9; this._q10 = q10;
+            constructor(age, sex, weight, height, heartRate, temperature, q1, q2, q3, q4, q5, q6, q7, q8) {
+                this._age = age;
+                this._sex = sex;
+                this._weight = weight;
+                this._height = height;
+                this._heartRate = heartRate;
+                this._temperature = temperature;
+                this._q1 = q1; this._q2 = q2; this._q3 = q3; this._q4 = q4;
+                this._q5 = q5; this._q6 = q6; this._q7 = q7; this._q8 = q8;
             }
 
-            get totalScore() {
-                return this._q1 + this._q2 + this._q3 + this._q4 + this._q5 + this._q6 + this._q7 + this._q8 + this._q9 + this._q10;
+            get bmi() {
+                const heightM = this._height / 100;
+                return this._weight / (heightM * heightM);
             }
 
-            get fastMetabolismScore() {
-                const maxScore = 40;
-                const invertedScore = maxScore - this.totalScore;
-                return Math.round((invertedScore / maxScore) * 100);
-            }
+            get scores() {
+                // Base scores from questionnaire
+                // Fast metabolism items: 1, 3, 5, 7
+                const fastBase = (this._q1 + this._q3 + this._q5 + this._q7) * 3.3;
 
-            get slowMetabolismScore() {
-                const maxScore = 40;
-                return Math.round((this.totalScore / maxScore) * 100);
+                // Slow metabolism items: 2, 4, 6, 8
+                const slowBase = (this._q2 + this._q4 + this._q6 + this._q8) * 3.3;
+
+                // Calculate adjustments
+                let fastAdjustments = 0;
+                let slowAdjustments = 0;
+
+                // Age adjustment
+                if (this._age > 50) {
+                    slowAdjustments += 5;
+                }
+
+                // Sex adjustment
+                if (this._sex === 'male') {
+                    fastAdjustments += 3;
+                }
+
+                // BMI adjustments
+                const bmi = this.bmi;
+                if (bmi < 20) {
+                    fastAdjustments += 3;
+                } else if (bmi > 27) {
+                    slowAdjustments += 3;
+                }
+
+                // Heart rate adjustments
+                if (this._heartRate < 60) {
+                    fastAdjustments += 5;
+                } else if (this._heartRate > 80) {
+                    slowAdjustments += 5;
+                }
+
+                // Temperature adjustments
+                if (this._temperature < 36.2) {
+                    slowAdjustments += 5;
+                } else if (this._temperature >= 36.8) {
+                    fastAdjustments += 5;
+                }
+
+                // Calculate totals
+                const totalFast = fastBase + fastAdjustments;
+                const totalSlow = slowBase + slowAdjustments;
+
+                // Normalize to 0-100
+                const sum = totalFast + totalSlow;
+                const fast0_100 = sum > 0 ? Math.round((totalFast / sum) * 100) : 50;
+                const slow0_100 = 100 - fast0_100;
+
+                return {
+                    fast: fast0_100,
+                    slow: slow0_100
+                };
             }
 
             get classification() {
-                const fast = this.fastMetabolismScore;
-                const slow = this.slowMetabolismScore;
+                const fast = this.scores.fast;
 
-                if (fast >= 60) {
+                if (fast >= 65) {
                     return 'rápido';
-                } else if (slow >= 60) {
-                    return 'lento';
-                } else {
+                } else if (fast >= 40) {
                     return 'intermedio';
+                } else {
+                    return 'lento';
                 }
             }
 
             get confidence() {
-                const fast = this.fastMetabolismScore;
-                const slow = this.slowMetabolismScore;
-                const diff = Math.abs(fast - slow);
+                const scores = this.scores;
+                const diff = Math.abs(scores.fast - scores.slow);
 
-                if (diff >= 40) {
+                if (diff >= 25) {
                     return 'alta';
-                } else if (diff >= 20) {
+                } else if (diff >= 10) {
                     return 'media';
                 } else {
                     return 'baja';
@@ -215,19 +288,94 @@
 
                 if (classification === 'rápido') {
                     return 'Tu organismo parece funcionar con alta eficiencia y gasto energético; prioriza suficiente ingesta calórica y proteínas.';
-                } else if (classification === 'lento') {
-                    return 'Tu metabolismo parece más conservador; prioriza descanso, ejercicio regular y comidas ligeras pero frecuentes.';
-                } else {
+                } else if (classification === 'intermedio') {
                     return 'Tienes un metabolismo equilibrado y adaptable; ajusta tu alimentación según tu nivel de actividad.';
+                } else {
+                    return 'Tu metabolismo parece más conservador; prioriza descanso, ejercicio regular y comidas ligeras pero frecuentes.';
                 }
             }
+
+            get warnings() {
+                const warnings = [];
+
+                // Temperature warnings
+                if (this._temperature < 35.8 || this._temperature > 37.5) {
+                    warnings.push('Valor de temperatura atípico; revisa si la medición fue correcta.');
+                }
+
+                // Heart rate warnings
+                if (this._heartRate < 45 || this._heartRate > 100) {
+                    warnings.push('Valor de frecuencia cardíaca atípico; revisa si la medición fue correcta.');
+                }
+
+                return warnings;
+            }
         }
+
+        //Numeric inputs
+        const AGE_INPUT = document.querySelector('#age');
+        const WEIGHT_INPUT = document.querySelector('#weight');
+        const HEIGHT_INPUT = document.querySelector('#height');
+        const HEART_RATE_INPUT = document.querySelector('#heartRate');
+        const TEMPERATURE_INPUT = document.querySelector('#temperature');
+
+        //Select inputs
+        const SEX_SELECT = document.querySelector('#sex');
+        const Q1_SELECT = document.querySelector('#q1');
+        const Q2_SELECT = document.querySelector('#q2');
+        const Q3_SELECT = document.querySelector('#q3');
+        const Q4_SELECT = document.querySelector('#q4');
+        const Q5_SELECT = document.querySelector('#q5');
+        const Q6_SELECT = document.querySelector('#q6');
+        const Q7_SELECT = document.querySelector('#q7');
+        const Q8_SELECT = document.querySelector('#q8');
 
         const FORM = document.querySelector('.form-container');
         const RESULT_BOX = document.querySelector('.result');
         const CALCULATE_BTN = document.querySelector('#calculate-btn');
-        const SELECTS = document.querySelectorAll('select');
 
+        //Regex to validate decimal numbers
+        const DECIMALS_REGEX = new RegExp(/^(\d+|\d+,\d{1,2}|\d+\.\d{1,2})$/);
+        const INTEGERS_REGEX = new RegExp(/^\d+$/);
+
+        //Helper function to add validation to numeric inputs
+        function addNumericValidation(input, isInteger = false) {
+            input.addEventListener('input', () => {
+                if (input.value === '') {
+                    input.setCustomValidity('');
+                    return;
+                }
+
+                const regex = isInteger ? INTEGERS_REGEX : DECIMALS_REGEX;
+                if (!regex.test(input.value)) {
+                    const msg = isInteger ? 'Introduce un número entero válido' : 'Introduce un número válido (máximo 2 decimales)';
+                    input.setCustomValidity(msg);
+                    input.reportValidity();
+                    return;
+                }
+
+                const value = parseFloat(input.value.replace(',', '.'));
+                const min = parseFloat(input.getAttribute('min'));
+                const max = parseFloat(input.getAttribute('max'));
+
+                if (value < min || value > max || isNaN(value)) {
+                    input.setCustomValidity(`El valor debe estar entre ${min} y ${max}`);
+                    input.reportValidity();
+                } else {
+                    input.setCustomValidity('');
+                }
+            });
+        }
+
+        //Add validation to numeric inputs
+        addNumericValidation(AGE_INPUT, true);
+        addNumericValidation(WEIGHT_INPUT);
+        addNumericValidation(HEIGHT_INPUT, true);
+        addNumericValidation(HEART_RATE_INPUT, true);
+        addNumericValidation(TEMPERATURE_INPUT);
+
+        //Validate selects
+        const SELECTS = document.querySelectorAll('select');
         SELECTS.forEach(select => {
             select.addEventListener('change', () => {
                 if (select.value !== "" && select.selectedIndex !== 0) {
@@ -239,6 +387,7 @@
         FORM.addEventListener('submit', (e) => {
             e.preventDefault();
 
+            //Validate all selects
             let isValid = true;
             SELECTS.forEach(select => {
                 if (select.value === "" || select.selectedIndex === 0) {
@@ -252,38 +401,57 @@
 
             if (!isValid) return;
 
+            //Parse values
+            const age = parseInt(AGE_INPUT.value);
+            const sex = SEX_SELECT.value;
+            const weight = parseFloat(WEIGHT_INPUT.value.replace(',', '.'));
+            const height = parseInt(HEIGHT_INPUT.value);
+            const heartRate = parseInt(HEART_RATE_INPUT.value);
+            const temperature = parseFloat(TEMPERATURE_INPUT.value.replace(',', '.'));
+
+            const q1 = parseInt(Q1_SELECT.value);
+            const q2 = parseInt(Q2_SELECT.value);
+            const q3 = parseInt(Q3_SELECT.value);
+            const q4 = parseInt(Q4_SELECT.value);
+            const q5 = parseInt(Q5_SELECT.value);
+            const q6 = parseInt(Q6_SELECT.value);
+            const q7 = parseInt(Q7_SELECT.value);
+            const q8 = parseInt(Q8_SELECT.value);
+
             CALCULATE_BTN.innerHTML = 'Calculando...';
             RESULT_BOX.style.visibility = 'hidden';
 
             const calculator = new MetabolismCalculator(
-                parseInt(document.getElementById('q1').value),
-                parseInt(document.getElementById('q2').value),
-                parseInt(document.getElementById('q3').value),
-                parseInt(document.getElementById('q4').value),
-                parseInt(document.getElementById('q5').value),
-                parseInt(document.getElementById('q6').value),
-                parseInt(document.getElementById('q7').value),
-                parseInt(document.getElementById('q8').value),
-                parseInt(document.getElementById('q9').value),
-                parseInt(document.getElementById('q10').value)
+                age, sex, weight, height, heartRate, temperature,
+                q1, q2, q3, q4, q5, q6, q7, q8
             );
 
             const classification = calculator.classification;
-            const fastScore = calculator.fastMetabolismScore;
-            const slowScore = calculator.slowMetabolismScore;
+            const scores = calculator.scores;
             const confidence = calculator.confidence;
             const message = calculator.interpretiveMessage;
+            const warnings = calculator.warnings;
+            const bmi = calculator.bmi;
 
             setTimeout(() => {
                 RESULT_BOX.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 CALCULATE_BTN.innerHTML = 'Ver mi tipo de metabolismo';
                 RESULT_BOX.style.visibility = 'visible';
 
-                let html = `<span>Tu metabolismo estimado es <strong>${classification}</strong>.</span><br><br>`;
-                html += `<span>Puntuación metabolismo rápido: <strong>${fastScore}/100</strong>.<br>`;
-                html += `Puntuación metabolismo lento: <strong>${slowScore}/100</strong>.<br>`;
+                let html = `<span>Tu metabolismo estimado es <strong>${classification.toUpperCase()}</strong>.</span><br><br>`;
+                html += `<span>Puntuación metabolismo rápido: <strong>${scores.fast} / 100</strong>.<br>`;
+                html += `Puntuación metabolismo lento: <strong>${scores.slow} / 100</strong>.<br>`;
                 html += `Nivel de confianza: <strong>${confidence}</strong>.</span><br><br>`;
                 html += `<span>${message}</span><br><br>`;
+
+                // Show warnings if any
+                if (warnings.length > 0) {
+                    warnings.forEach(warning => {
+                        html += `<span style="color: #FF9800; font-size: 0.9em;">⚠️ ${warning}</span><br>`;
+                    });
+                    html += '<br>';
+                }
+
                 html += `<span style="font-style: italic; font-size: 0.9em;">Los valores fisiológicos son orientativos; no sustituyen una valoración médica. El test refleja patrones generales, no el gasto energético exacto.</span>`;
 
                 RESULT_BOX.innerHTML = html;
