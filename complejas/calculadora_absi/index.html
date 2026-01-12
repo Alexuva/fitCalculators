@@ -356,7 +356,7 @@
                 CALCULATE_BTN.innerHTML = 'Calcular ABSI';
                 RESULT_BOX.style.visibility = 'visible';
 
-                let html = `<span>Tu A Body Shape Index (ABSI) es <strong>${absi.toFixed(5)}</strong>.</span><br><br>`;
+                let html = `<span>Tu A Body Shape Index (ABSI) es <strong>${absi.toFixed(5).replace('.', ',')}</strong>.</span><br><br>`;
                 html += `<span>Clasificación: <strong>${classification}</strong>.</span><br><br>`;
                 html += `<span>${message}</span><br><br>`;
                 html += `<span style="font-style: italic; font-size: 0.9em;">El ABSI es una medida poblacional y no sustituye una valoración médica individual. Para un análisis más preciso, se recomienda incluir edad, sexo y valores de referencia del país o población.</span>`;
