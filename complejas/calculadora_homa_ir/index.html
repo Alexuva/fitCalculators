@@ -264,7 +264,7 @@
                 CALCULATE_BTN.innerHTML = 'Calcular HOMA-IR';
                 RESULT_BOX.style.visibility = 'visible';
 
-                let html = `<span>El índice HOMA-IR es <strong>${homaIR}</strong>.</span><br><br>`;
+                let html = `<span>El índice HOMA-IR es <strong>${homaIR.toString().replace('.', ',')}</strong>.</span><br><br>`;
                 html += `<span>Clasificación: <strong>${category.name}</strong>.</span><br><br>`;
                 html += `<span style="font-style: italic; font-size: 0.9em;">Solo orientativo; no sustituye la valoración médica.</span>`;
 
