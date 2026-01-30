@@ -149,7 +149,7 @@
                 const VD = {
                     protein: 50,        // g
                     fiber: 25,          // g
-                    vitaminA: 5000,     // IU (or 1500 µg RAE)
+                    vitaminA: 1500,     // µg RAE
                     vitaminC: 60,       // mg
                     vitaminE: 20,       // mg
                     calcium: 1000,      // mg
@@ -221,7 +221,7 @@
 
                 // Reference values
                 const VD = {
-                    protein: 50, fiber: 25, vitaminA: 5000, vitaminC: 60, vitaminE: 20,
+                    protein: 50, fiber: 25, vitaminA: 1500, vitaminC: 60, vitaminE: 20,
                     calcium: 1000, iron: 18, magnesium: 400, potassium: 3500
                 };
                 const VM = {
@@ -377,7 +377,7 @@
                 html += `<span style="font-size: 0.9em;">% VD positivos (por 100 kcal): <strong>${breakdown.positives.toString().replace('.', ',')} %</strong></span><br>`;
                 html += `<span style="font-size: 0.9em;">% VM negativos (por 100 kcal): <strong>${breakdown.negatives.toString().replace('.', ',')} %</strong></span><br><br>`;
 
-                html += `<span style="font-style: italic; font-size: 0.85em;">Nota: El IDN se calcula como la suma de % de Valores Diarios (VD) de nutrientes positivos menos la suma de % de Valores Máximos (VM) de nutrientes negativos, normalizados a 100 kcal. IDN > 100 indica muy alta densidad, 0-100 densidad moderada, y < 0 baja densidad.</span>`;
+                html += `<span style="font-style: italic; font-size: 0.85em;">Nota: el IDN se calcula como la suma de % de Valores Diarios (VD) de nutrientes positivos menos la suma de % de Valores Máximos (VM) de nutrientes negativos, normalizados a 100 kcal. IDN > 100 indica muy alta densidad, 0-100 densidad moderada, y < 0 baja densidad.</span>`;
 
                 RESULT_BOX.innerHTML = html;
             }, 500);

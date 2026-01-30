@@ -39,7 +39,7 @@ class NutritionalDensityCalculator {
         const VD = {
             protein: 50,        // g
             fiber: 25,          // g
-            vitaminA: 5000,     // IU (or 1500 µg RAE)
+            vitaminA: 1500,     // µg RAE
             vitaminC: 60,       // mg
             vitaminE: 20,       // mg
             calcium: 1000,      // mg
@@ -111,7 +111,7 @@ class NutritionalDensityCalculator {
 
         // Reference values
         const VD = {
-            protein: 50, fiber: 25, vitaminA: 5000, vitaminC: 60, vitaminE: 20,
+            protein: 50, fiber: 25, vitaminA: 1500, vitaminC: 60, vitaminE: 20,
             calcium: 1000, iron: 18, magnesium: 400, potassium: 3500
         };
         const VM = {
